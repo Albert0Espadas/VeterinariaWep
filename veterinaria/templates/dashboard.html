@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-mt-4">
+
+<h2 class="text-center md-4"> Panel de Control </h2>
+
+<div class="row">
+
+<!-- T Mascota -->
+</div clasa= "col-md-4 md-4">
+
+<div class="card shadow-lg text-center">
+
+<div class="card-body">
+
+<h4> Mascota </h4>
+
+<p> Administrar mascotas registradas </p>
+
+<a href="#" class="btn btn-primary"> Ver</a>
+
+</div>
+</div>
+</div>
+
+<!-- T Clientes -->
+
+<div class="col-md-4 md-4">
+
+<div class="card shadow-lg text-center">
+
+<div class="card-body">
+
+<h4> Clientes </h4>
+
+<p> Administrar clientes </p>
+
+<a href="#" class="btn btn-success"> Ver</a>
+
+</div>
+</div>
+</div>
+
+<!-- T Citas -->
+
+<div class="col-md-4 md-4">
+
+<div class="card shadow-lg text-center">
+
+<div class="card-body">
+
+<h4> Citas </h4>
+
+<p> Administrar citas </p>
+
+<a href="#" class="btn btn-warning"> Ver</a>
+
+</div>
+</div>
+</div>
+
+<!-- calendario -->
+
+<div class=" card shdow-lg">
+
+<div class="card-body">
+
+<h4 class="md-3"> Calendario </h4>
+
+</div>
+</div>
+</div>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+var calendarEl = document.getElementById('calendar');
+
+var calendar = new FullCalendar.Calendar(calendarEl, {
+
+initialView: 'dayGridMonth',
+
+events: [
+{
+title: 'Consulta perro',
+start: '2026-03-15'
+},
+{
+title: 'Vacuna gato',
+start: '2026-03-18'
+}
+]
+
+});
+
+calendar.render();
+
+});
+
+</script>
+
+{% endblock %}
