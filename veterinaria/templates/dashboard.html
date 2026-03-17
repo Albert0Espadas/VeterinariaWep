@@ -1,105 +1,169 @@
-{% extends 'base.html' %}
+{% extends "BaseDashboart.html" %}
+{% load static %}
 
 {% block content %}
 
-<div class="container-mt-4">
+<div class="container-fluid">
 
-<h2 class="text-center md-4"> Panel de Control </h2>
+<!-- TITULO -->
 
-<div class="row">
+<div class="mb-4">
+<h1 class="fw-bold text-purple">Dashboard</h1>
+<p class="text-muted">Lunes, 16 de marzo de 2026</p>
+</div>
 
-<!-- T Mascota -->
-</div clasa= "col-md-4 md-4">
 
-<div class="card shadow-lg text-center">
+<!-- TARJETAS SUPERIORES -->
+
+<div class="row g-4">
+
+<div class="col-md-3">
+<div class="card shadow-sm p-3">
+<h6 class="text-muted">Citas Hoy</h6>
+<h3 class="fw-bold">12</h3>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card shadow-sm p-3">
+<h6 class="text-muted">Pacientes Totales</h6>
+<h3 class="fw-bold">248</h3>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card shadow-sm p-3">
+<h6 class="text-muted">Clientes</h6>
+<h3 class="fw-bold">186</h3>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="card shadow-sm p-3">
+<h6 class="text-muted">Ingresos del Mes</h6>
+<h3 class="fw-bold">$45,230</h3>
+</div>
+</div>
+
+</div>
+
+
+<!-- CALENDARIO Y PENDIENTES -->
+
+<div class="row mt-4">
+
+<!-- CALENDARIO -->
+
+<div class="col-md-8">
+
+<div class="card shadow-sm">
 
 <div class="card-body">
 
-<h4> Mascota </h4>
-
-<p> Administrar mascotas registradas </p>
-
-<a href="#" class="btn btn-primary"> Ver</a>
-
-</div>
-</div>
+<div class="d-flex justify-content-between mb-3">
+<h5 class="fw-bold">Calendario de Citas</h5>
+<span class="text-muted">marzo 2026</span>
 </div>
 
-<!-- T Clientes -->
+<div class="text-center text-muted p-5">
 
-<div class="col-md-4 md-4">
+Aquí irá el calendario
 
-<div class="card shadow-lg text-center">
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- PENDIENTES -->
+
+<div class="col-md-4">
+
+<div class="card shadow-sm">
 
 <div class="card-body">
 
-<h4> Clientes </h4>
+<h5 class="fw-bold">Pendientes</h5>
 
-<p> Administrar clientes </p>
+<ul class="list-group mt-3">
 
-<a href="#" class="btn btn-success"> Ver</a>
+<li class="list-group-item">
+Revisar inventario de medicamentos
+</li>
+
+<li class="list-group-item">
+Llamar a proveedor de alimentos
+</li>
+
+<li class="list-group-item">
+Preparar sala de cirugía
+</li>
+
+<li class="list-group-item">
+Enviar recordatorios de vacunación
+</li>
+
+</ul>
+
+<button class="btn btn-primary w-100 mt-3">
+Agregar Pendiente
+</button>
 
 </div>
+
 </div>
+
 </div>
 
-<!-- T Citas -->
+</div>
 
-<div class="col-md-4 md-4">
 
-<div class="card shadow-lg text-center">
+<!-- CITAS DE HOY -->
+
+<div class="row mt-4">
+
+<div class="col-md-8">
+
+<div class="card shadow-sm">
 
 <div class="card-body">
 
-<h4> Citas </h4>
+<h5 class="fw-bold mb-3">Citas de Hoy</h5>
 
-<p> Administrar citas </p>
+<div class="list-group">
 
-<a href="#" class="btn btn-warning"> Ver</a>
-
-</div>
-</div>
-</div>
-
-<!-- calendario -->
-
-<div class=" card shdow-lg">
-
-<div class="card-body">
-
-<h4 class="md-3"> Calendario </h4>
-
-</div>
-</div>
+<div class="list-group-item">
+<strong>Max</strong> - Juan Pérez
+<br>
+<span class="text-muted">Consulta general | 09:00</span>
 </div>
 
-<script>
+<div class="list-group-item">
+<strong>Luna</strong> - María García
+<br>
+<span class="text-muted">Vacunación | 10:30</span>
+</div>
 
-document.addEventListener('DOMContentLoaded', function () {
+<div class="list-group-item">
+<strong>Rocky</strong> - Carlos López
+<br>
+<span class="text-muted">Control | 12:00</span>
+</div>
 
-var calendarEl = document.getElementById('calendar');
+</div>
 
-var calendar = new FullCalendar.Calendar(calendarEl, {
+</div>
 
-initialView: 'dayGridMonth',
+</div>
 
-events: [
-{
-title: 'Consulta perro',
-start: '2026-03-15'
-},
-{
-title: 'Vacuna gato',
-start: '2026-03-18'
-}
-]
+</div>
 
-});
+</div>
 
-calendar.render();
 
-});
-
-</script>
+</div>
 
 {% endblock %}
