@@ -1,13 +1,13 @@
-# Python cache
+# Python
 __pycache__/
 *.pyc
 
-# Entorno virtual
-venv/
-env/
-
-# Base de datos local
+# Django
 db.sqlite3
 
-# Archivos temporales
-*.log
+# PyCharm
+.idea/
+
+# Entornos virtuales
+.venv/
+env/
