@@ -3,8 +3,12 @@ from django.urls import path
 from mascotas import views
 
 urlpatterns = [
-    path('', views.login_view),
-    path('login/', views.login_view, name='login'),
-    path('Registro/', views.registro_view, name= 'registro'),
-    path('dashboard/', views.dashboard_view, name= 'dashboard'),
+    path('admin/', admin.site.urls),
+    path('', views.login_view, name='login'),
+    path('registro/', views.registro_view, name='registro'),
+    path('completar/<int:id>/', views.completar_pendiente, name='completar'),
+    path('eliminar/<int:id>/', views.eliminar_pendiente, name='eliminar'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+
+    
 ]
