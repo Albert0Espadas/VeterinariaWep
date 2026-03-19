@@ -1,3 +1,4 @@
+
 git {% extends "BaseDashboart.html" %}
 {% load static %}
 
@@ -47,7 +48,22 @@ git {% extends "BaseDashboart.html" %}
 
 </div>
 
+<script>
 
+let citas = [
+
+{% for cita in citas %}
+
+{
+title: "{{ cita.mascota }} - {{ cita.motivo }}",
+start: "{{ cita.fecha|date:'Y-m-d H:i:s' }}"
+},
+
+{% endfor %}
+
+]
+
+</script>
 <!-- CALENDARIO Y PENDIENTES -->
 
 <div class="row mt-4">
@@ -64,18 +80,32 @@ git {% extends "BaseDashboart.html" %}
 <h5 class="fw-bold">Calendario de Citas</h5>
 <span class="text-muted">marzo 2026</span>
 </div>
+<div id="calendar"></div>
+<script>
 
-<div class="text-center text-muted p-5">
+document.addEventListener('DOMContentLoaded', function() {
 
-Aquí irá el calendario
+var calendarEl = document.getElementById('calendar');
 
+var calendar = new FullCalendar.Calendar(calendarEl, {
+
+initialView: 'dayGridMonth',
+
+events: citas
+
+});
+
+calendar.render();
+
+});
+
+</script>
 </div>
 
 </div>
 
 </div>
 
-</div>
 
 
 <!-- PENDIENTES -->
@@ -141,6 +171,7 @@ Aquí irá el calendario
 
 </div>
 
+</div>
 
 <!-- CITAS DE HOY -->
 

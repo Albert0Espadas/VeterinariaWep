@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from .models import Pendiente
 from django.contrib.auth import logout
+from .models import Pendiente, Cita
 def login_view(request):
 
     if request.method == "POST":
@@ -64,11 +65,13 @@ def dashboard(request):
 
     # OBTENER TODOS LOS PENDIENTES
     pendientes = Pendiente.objects.order_by('-fecha')
+    citas = Cita.objects.all()
     total_pendientes = Pendiente.objects.count()
     pendientes_completados = Pendiente.objects.filter(completado=True).count()
     pendientes_pendientes = Pendiente.objects.filter(completado=False).count()
     return render(request, 'dashboard.html', {
         'pendientes': pendientes,
+        'citas': citas,
         'total_pendientes': total_pendientes,
         'pendientes_completados': pendientes_completados,
         'pendientes_pendientes': pendientes_pendientes
