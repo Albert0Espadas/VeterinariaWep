@@ -87,6 +87,16 @@ Veterinaria Aviles
 
 <div class="col-md-10 content">
 
+<div class="d-flex justify-content-end mb-3">
+
+    Usuario: <strong>{{ request.user.username }}</strong>
+
+    <a href="{% url 'logout' %}" class="btn btn-sm btn-danger ms-2">
+        Cerrar sesión
+    </a>
+
+</div>
+
 {% block content %}
 
 {% endblock %}
