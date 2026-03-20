@@ -1,116 +1,173 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
-from django.shortcuts import get_object_or_404
-from django.shortcuts import render, redirect
-from .models import Pendiente
-from django.contrib.auth import logout
-from .models import Pendiente, Cita
-from django.http import JsonResponse
 import json
-from .models import Cita
-from datetime import date
-from .models import Cita, Mascota
+from datetime import datetime
+
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.utils.timezone import now
-from .models import Cita, Mascota
 from django.views.decorators.csrf import csrf_exempt
+
+from .models import Cita, Cliente, Mascota, Pendiente
+
+
+def ping(request):
+    return JsonResponse({"status": "ok", "message": "VeterinariaWep activa"})
+
 
 @csrf_exempt
 def crear_cita(request):
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "Metodo no permitido"}, status=405)
 
-    if request.method == "POST":
-
+    try:
         data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"status": "error", "message": "JSON invalido"}, status=400)
 
-        nombre_mascota = data.get("mascota")
-        motivo = data.get("motivo")
-        fecha = data.get("fecha")
+    nombre_mascota = (data.get("mascota") or "").strip()
+    nombre_dueno = (data.get("dueno") or "").strip() or "Cliente temporal"
+    motivo = (data.get("motivo") or "").strip()
+    fecha = data.get("fecha")
 
-        mascota, created = Mascota.objects.get_or_create(
-            nombre=nombre_mascota,
-            defaults={
-                "especie": "Desconocido",
-                "raza": "Desconocido",
-                "edad": 0,
-                "dueno_id": 1
-            }
+    if not nombre_mascota or not motivo or not fecha:
+        return JsonResponse(
+            {"status": "error", "message": "Mascota, motivo y fecha son obligatorios"},
+            status=400,
         )
 
-        Cita.objects.create(
-            mascota=mascota,
-            motivo=motivo,
-            fecha=fecha
-        )
+    try:
+        fecha_cita = datetime.fromisoformat(fecha)
+        if timezone.is_naive(fecha_cita):
+            fecha_cita = timezone.make_aware(fecha_cita, timezone.get_current_timezone())
+    except ValueError:
+        return JsonResponse({"status": "error", "message": "Fecha invalida"}, status=400)
 
-        return JsonResponse({"status": "ok"})
+    cliente, _ = Cliente.objects.get_or_create(
+        nombre=nombre_dueno,
+        defaults={
+            "telefono": "Pendiente",
+            "email": f"{nombre_dueno.lower().replace(' ', '.')}@temporal.local",
+        },
+    )
+
+    mascota, creada = Mascota.objects.get_or_create(
+        nombre=nombre_mascota,
+        defaults={
+            "especie": "Desconocido",
+            "raza": "Desconocido",
+            "edad": 0,
+            "dueno": cliente,
+        },
+    )
+
+    if not creada and mascota.dueno_id != cliente.id:
+        cliente = mascota.dueno
+
+    cita = Cita.objects.create(
+        mascota=mascota,
+        motivo=motivo,
+        fecha=fecha_cita,
+    )
+
+    return JsonResponse(
+        {
+            "status": "ok",
+            "message": "Cita agendada correctamente",
+            "cita": {
+                "id": cita.id,
+                "mascota": mascota.nombre,
+                "dueno": cliente.nombre,
+                "motivo": cita.motivo,
+                "fecha": timezone.localtime(cita.fecha).strftime("%d/%m/%Y %H:%M"),
+            },
+        }
+    )
+
+
 def login_view(request):
-
     if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST["username"]
+        password = request.POST["password"]
 
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
             login(request, user)
-            return redirect('/dashboard')
-        else:
-            return render(request, 'login.html', {'error': 'Usuario o contraseña incorrectos'})
+            return redirect("/dashboard")
 
-    return render(request, 'login.html')
+        return render(request, "login.html", {"error": "Usuario o contrasena incorrectos"})
+
+    return render(request, "login.html")
 
 
 def registro_view(request):
-
     if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST["username"]
+        password = request.POST["password"]
 
         User.objects.create_user(username=username, password=password)
+        return redirect("login")
 
-        return redirect('login')
+    return render(request, "registro.html")
 
-    return render(request, 'registro.html')
 
 def completar_pendiente(request, id):
     pendiente = get_object_or_404(Pendiente, id=id)
     pendiente.completado = True
     pendiente.save()
-    return redirect('dashboard')
+    return redirect("dashboard")
 
 
 def eliminar_pendiente(request, id):
     pendiente = get_object_or_404(Pendiente, id=id)
     pendiente.delete()
-    return redirect('dashboard')
+    return redirect("dashboard")
+
 
 @login_required
 def dashboard(request):
-
-    if request.method == 'POST':
-        titulo = request.POST.get('titulo')
-        descripcion = request.POST.get('descripcion')
+    if request.method == "POST":
+        titulo = request.POST.get("titulo")
+        descripcion = request.POST.get("descripcion")
 
         if titulo:
             Pendiente.objects.create(
                 titulo=titulo,
-                descripcion=descripcion
+                descripcion=descripcion,
             )
 
-        return redirect('dashboard')
+        return redirect("dashboard")
 
-    pendientes = Pendiente.objects.order_by('-fecha')
-    citas = Cita.objects.all()
+    pendientes = Pendiente.objects.order_by("-fecha")
+    citas = Cita.objects.select_related("mascota", "mascota__dueno").all()
 
-    hoy = now().date()
-    citas_hoy = Cita.objects.filter(fecha__date=hoy)
+    fecha_actual = now()
+    hoy = fecha_actual.date()
+    citas_hoy = citas.filter(fecha__date=hoy).order_by("fecha")
+    futuras_citas = list(citas.filter(fecha__gte=fecha_actual).order_by("fecha")[:6])
+    pendientes_completados = pendientes.filter(completado=True).count()
+    pendientes_pendientes = pendientes.filter(completado=False).count()
 
-    return render(request, 'dashboard.html', {
-        'pendientes': pendientes,
-        'citas': citas,
-        'citas_hoy': citas_hoy
-    })
+    return render(
+        request,
+        "dashboard.html",
+        {
+            "pendientes": pendientes,
+            "citas": citas,
+            "citas_hoy": citas_hoy,
+            "fecha_actual": fecha_actual,
+            "total_mascotas": Mascota.objects.count(),
+            "total_clientes": Cliente.objects.count(),
+            "pendientes_completados": pendientes_completados,
+            "pendientes_pendientes": pendientes_pendientes,
+            "futuras_citas": futuras_citas,
+        },
+    )
+
+
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect("login")

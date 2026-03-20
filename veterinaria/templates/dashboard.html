@@ -4,263 +4,707 @@
 
 {% block content %}
 
-<div class="container-fluid">
+<style>
+:root {
+--dashboard-bg: linear-gradient(180deg, #fcfbff 0%, #f6f2ff 52%, #ffffff 100%);
+--panel-bg: rgba(255, 255, 255, 0.94);
+--panel-border: rgba(123, 74, 226, 0.12);
+--panel-shadow: 0 18px 40px rgba(60, 28, 120, 0.08);
+--panel-shadow-soft: 0 12px 24px rgba(60, 28, 120, 0.06);
+--purple-900: #3b1c78;
+--purple-700: #5e35b1;
+--purple-600: #6f42c1;
+--purple-200: #ebe1ff;
+--purple-100: #f6f0ff;
+--text-main: #25153f;
+--text-soft: #786f8f;
+--success-soft: #edf8f2;
+--danger-soft: #fff0f2;
+}
 
-<!-- TITULO -->
+.dashboard-shell {
+background: var(--dashboard-bg);
+border-radius: 28px;
+padding: 28px;
+border: 1px solid rgba(123, 74, 226, 0.08);
+box-shadow: var(--panel-shadow);
+}
 
-<div class="mb-4">
-<h1 class="fw-bold text-purple">Dashboard</h1>
-<p class="text-muted">Lunes, 16 de marzo de 2026</p>
+.dashboard-hero {
+background:
+radial-gradient(circle at top right, rgba(146, 110, 255, 0.24), transparent 32%),
+linear-gradient(135deg, #ffffff 0%, #f5efff 55%, #f8f4ff 100%);
+border: 1px solid var(--panel-border);
+border-radius: 28px;
+padding: 26px 28px;
+box-shadow: var(--panel-shadow-soft);
+}
+
+.eyebrow {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 8px 14px;
+border-radius: 999px;
+background: rgba(123, 74, 226, 0.1);
+color: var(--purple-900);
+font-size: 0.82rem;
+font-weight: 700;
+letter-spacing: 0.04em;
+text-transform: uppercase;
+}
+
+.hero-title {
+margin: 14px 0 8px;
+font-size: 2.2rem;
+font-weight: 800;
+letter-spacing: -0.03em;
+color: var(--text-main);
+}
+
+.hero-copy {
+margin: 0;
+max-width: 680px;
+color: var(--text-soft);
+font-size: 1rem;
+line-height: 1.6;
+}
+
+.hero-date-card {
+height: 100%;
+padding: 22px;
+border-radius: 24px;
+background: linear-gradient(160deg, #4b228f 0%, #6f42c1 100%);
+color: #fff;
+box-shadow: 0 18px 34px rgba(79, 37, 153, 0.28);
+}
+
+.hero-date-card small {
+display: block;
+opacity: 0.8;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+font-weight: 600;
+margin-bottom: 6px;
+}
+
+.hero-date-card strong {
+display: block;
+font-size: 1.2rem;
+font-weight: 700;
+margin-bottom: 10px;
+}
+
+.hero-date-card p {
+margin: 0;
+opacity: 0.9;
+}
+
+.metric-card {
+height: 100%;
+padding: 20px 22px;
+border: 1px solid var(--panel-border);
+border-radius: 22px;
+background: var(--panel-bg);
+box-shadow: var(--panel-shadow-soft);
+}
+
+.metric-label {
+margin-bottom: 10px;
+color: var(--text-soft);
+font-size: 0.86rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+}
+
+.metric-value {
+margin: 0;
+font-size: 2rem;
+font-weight: 800;
+color: var(--text-main);
+line-height: 1;
+}
+
+.metric-helper {
+margin-top: 10px;
+color: var(--text-soft);
+font-size: 0.92rem;
+}
+
+.premium-panel {
+height: 100%;
+border: 1px solid var(--panel-border);
+border-radius: 24px;
+background: var(--panel-bg);
+box-shadow: var(--panel-shadow-soft);
+overflow: hidden;
+}
+
+.premium-panel-body {
+padding: 22px;
+}
+
+.panel-title {
+margin: 0;
+font-size: 1.08rem;
+font-weight: 800;
+color: var(--text-main);
+}
+
+.panel-subtitle {
+margin: 6px 0 0;
+color: var(--text-soft);
+font-size: 0.94rem;
+}
+
+.section-badge {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+min-width: 34px;
+padding: 6px 10px;
+border-radius: 999px;
+background: var(--purple-100);
+color: var(--purple-900);
+font-weight: 700;
+font-size: 0.84rem;
+}
+
+.calendar-panel .premium-panel-body {
+padding-bottom: 12px;
+}
+
+.calendar-frame {
+margin-top: 18px;
+padding: 12px;
+border-radius: 20px;
+background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
+border: 1px solid rgba(123, 74, 226, 0.08);
+}
+
+.scheduler-panel {
+background: linear-gradient(180deg, #fff 0%, #faf7ff 100%);
+}
+
+.scheduler-date-pill {
+display: inline-flex;
+align-items: center;
+padding: 8px 12px;
+border-radius: 999px;
+background: #efe7ff;
+color: #5b2ca0;
+font-weight: 700;
+}
+
+.scheduler-helper {
+font-size: 0.95rem;
+color: var(--text-soft);
+}
+
+.scheduler-feedback {
+display: none;
+border-radius: 14px;
+padding: 12px 14px;
+margin-bottom: 16px;
+}
+
+.scheduler-feedback.is-visible {
+display: block;
+}
+
+.scheduler-feedback.is-success {
+background: #eafaf1;
+color: #146c43;
+border: 1px solid #badbcc;
+}
+
+.scheduler-feedback.is-error {
+background: #fdeaea;
+color: #b02a37;
+border: 1px solid #f1b0b7;
+}
+
+.form-label {
+font-weight: 700;
+color: var(--text-main);
+}
+
+.form-control {
+border-radius: 14px;
+border-color: rgba(123, 74, 226, 0.16);
+padding: 11px 14px;
+}
+
+.form-control:focus {
+border-color: rgba(111, 66, 193, 0.55);
+box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.14);
+}
+
+.btn-primary {
+background: linear-gradient(135deg, #5e35b1 0%, #7b4ae2 100%);
+border: none;
+border-radius: 14px;
+padding: 11px 18px;
+font-weight: 700;
+}
+
+.btn-outline-secondary {
+border-radius: 14px;
+padding: 11px 18px;
+font-weight: 700;
+}
+
+.future-appointments-list,
+.today-list {
+display: grid;
+gap: 12px;
+}
+
+.future-appointment-item,
+.today-appointment-item,
+.pending-item {
+border: 1px solid rgba(123, 74, 226, 0.1);
+border-radius: 18px;
+background: linear-gradient(180deg, #ffffff 0%, #fbf9ff 100%);
+padding: 16px 18px;
+box-shadow: 0 8px 18px rgba(60, 28, 120, 0.04);
+}
+
+.future-appointment-item {
+min-height: 96px;
+}
+
+.appointment-name {
+margin-bottom: 4px;
+font-weight: 800;
+color: var(--text-main);
+}
+
+.appointment-owner,
+.appointment-meta {
+margin: 0;
+color: var(--text-soft);
+}
+
+.appointment-time {
+margin-top: 8px;
+font-weight: 700;
+color: var(--purple-700);
+}
+
+.pending-list {
+display: grid;
+gap: 12px;
+margin-top: 18px;
+}
+
+.pending-item {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 14px;
+}
+
+.pending-item s {
+color: var(--text-soft);
+}
+
+.pending-actions {
+display: flex;
+gap: 8px;
+}
+
+.pending-actions .btn {
+min-width: 42px;
+border-radius: 12px;
+font-weight: 700;
+}
+
+.pending-form {
+margin-top: 22px;
+padding-top: 20px;
+border-top: 1px solid rgba(123, 74, 226, 0.12);
+}
+
+.empty-state {
+padding: 18px;
+border-radius: 18px;
+background: #faf8ff;
+border: 1px dashed rgba(123, 74, 226, 0.18);
+color: var(--text-soft);
+}
+
+@media (max-width: 991px) {
+.dashboard-shell {
+padding: 18px;
+border-radius: 22px;
+}
+
+.dashboard-hero {
+padding: 20px;
+}
+
+.hero-title {
+font-size: 1.8rem;
+}
+}
+</style>
+
+<div class="dashboard-shell">
+<div class="dashboard-hero mb-4">
+<div class="row g-4 align-items-center">
+<div class="col-lg-8">
+<span class="eyebrow">Centro Clinico Veterinario</span>
+<h1 class="hero-title">Panel de control profesional para recepcion, agenda y seguimiento clinico</h1>
+<p class="hero-copy">Mantiene en un solo lugar las citas del dia, la programacion futura y las tareas pendientes. El objetivo es que el equipo vea primero lo importante y actue mas rapido.</p>
+</div>
+<div class="col-lg-4">
+<div class="hero-date-card">
+<small>Jornada activa</small>
+<strong>{{ fecha_actual|date:"l, d \\d\\e F \\d\\e Y" }}</strong>
+<p>{{ citas_hoy|length }} citas previstas para hoy y {{ pendientes_pendientes }} pendientes en seguimiento.</p>
+</div>
+</div>
+</div>
 </div>
 
-
-<!-- TARJETAS SUPERIORES -->
-
-<div class="row g-4">
-
-<div class="col-md-3">
-<div class="card shadow-sm p-3">
-<h6 class="text-muted">Citas Hoy</h6>
-<h3 class="fw-bold">{{ citas_hoy|length }}</h3>
+<div class="row g-4 mb-4">
+<div class="col-md-6 col-xl-3">
+<div class="metric-card">
+<div class="metric-label">Citas Hoy</div>
+<p class="metric-value">{{ citas_hoy|length }}</p>
+<div class="metric-helper">Agenda inmediata del dia</div>
 </div>
 </div>
-
-<div class="col-md-3">
-<div class="card shadow-sm p-3">
-<h6 class="text-muted">Pacientes Totales</h6>
-<h3 class="fw-bold">-1</h3>
+<div class="col-md-6 col-xl-3">
+<div class="metric-card">
+<div class="metric-label">Pacientes Totales</div>
+<p class="metric-value">{{ total_mascotas }}</p>
+<div class="metric-helper">Mascotas registradas</div>
 </div>
 </div>
-
-<div class="col-md-3">
-<div class="card shadow-sm p-3">
-<h6 class="text-muted">Clientes</h6>
-<h3 class="fw-bold">0</h3>
+<div class="col-md-6 col-xl-3">
+<div class="metric-card">
+<div class="metric-label">Clientes</div>
+<p class="metric-value">{{ total_clientes }}</p>
+<div class="metric-helper">Propietarios activos</div>
 </div>
 </div>
-
-<div class="col-md-3">
-<div class="card shadow-sm p-3">
-<h6 class="text-muted">Ingresos del Mes</h6>
-<h3 class="fw-bold">$0</h3>
+<div class="col-md-6 col-xl-3">
+<div class="metric-card">
+<div class="metric-label">Pendientes Activos</div>
+<p class="metric-value">{{ pendientes_pendientes }}</p>
+<div class="metric-helper">{{ pendientes_completados }} completados</div>
 </div>
 </div>
-
 </div>
 
 <script>
-
 let citas = [
-
 {% for cita in citas %}
-
 {
 title: "{{ cita.mascota.nombre }} - {{ cita.motivo }}",
 start: "{{ cita.fecha|date:'Y-m-d\\TH:i:s' }}"
 },
-
 {% endfor %}
-
 ]
-
 </script>
-<!-- CALENDARIO Y PENDIENTES -->
 
-<div class="row mt-4">
-
-<!-- CALENDARIO -->
-
-<div class="col-md-8">
-
-<div class="card shadow-sm">
-
-<div class="card-body">
-
-<div class="d-flex justify-content-between mb-3">
-<h5 class="fw-bold">Calendario de Citas</h5>
-<span class="text-muted">marzo 2026</span>
+<div class="row g-4 align-items-stretch">
+<div class="col-xl-8">
+<div class="premium-panel calendar-panel">
+<div class="premium-panel-body">
+<div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+<div>
+<h5 class="panel-title">Calendario de Citas</h5>
+<p class="panel-subtitle">Vista principal de la operacion diaria y programacion semanal.</p>
 </div>
+<span class="section-badge">{{ fecha_actual|date:"F Y" }}</span>
+</div>
+<div class="calendar-frame">
 <div id="calendar"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="col-xl-4">
+<div class="premium-panel scheduler-panel">
+<div class="premium-panel-body">
+<div class="d-flex justify-content-between align-items-start mb-3 gap-3">
+<div>
+<h5 class="panel-title">Nueva Cita</h5>
+<p class="panel-subtitle">Selecciona una fecha en el calendario y completa el registro clinico.</p>
+</div>
+<span id="selected-date-pill" class="scheduler-date-pill">Sin fecha</span>
+</div>
+
+<div id="scheduler-feedback" class="scheduler-feedback"></div>
+
+<form id="appointment-form">
+{% csrf_token %}
+<input type="hidden" id="appointment-datetime" name="fecha">
+
+<div class="mb-3">
+<label for="appointment-owner" class="form-label">Dueno</label>
+<input type="text" id="appointment-owner" name="dueno" class="form-control" placeholder="Ej. Carla Gomez">
+</div>
+
+<div class="mb-3">
+<label for="appointment-pet" class="form-label">Mascota</label>
+<input type="text" id="appointment-pet" name="mascota" class="form-control" placeholder="Ej. Milo" required>
+</div>
+
+<div class="row g-3">
+<div class="col-md-6">
+<label for="appointment-date" class="form-label">Fecha</label>
+<input type="date" id="appointment-date" class="form-control" required>
+</div>
+<div class="col-md-6">
+<label for="appointment-time" class="form-label">Hora</label>
+<input type="time" id="appointment-time" class="form-control" value="10:00" required>
+</div>
+</div>
+
+<div class="mt-3 mb-3">
+<label for="appointment-reason" class="form-label">Motivo</label>
+<textarea id="appointment-reason" name="motivo" class="form-control" rows="3" placeholder="Consulta general, vacuna, revision..." required></textarea>
+</div>
+
+<div class="d-flex gap-2">
+<button type="submit" id="appointment-submit" class="btn btn-primary">Guardar cita</button>
+<button type="button" id="appointment-reset" class="btn btn-outline-secondary">Limpiar</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+
+<div class="col-xl-5">
+<div class="premium-panel">
+<div class="premium-panel-body">
+<div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
+<div>
+<h5 class="panel-title">Proximas Citas</h5>
+<p class="panel-subtitle">Seguimiento inmediato de la agenda proxima.</p>
+</div>
+<span class="section-badge">{{ futuras_citas|length }}</span>
+</div>
+
+{% if futuras_citas %}
+<div class="future-appointments-list">
+{% for cita in futuras_citas %}
+<div class="future-appointment-item">
+<div class="appointment-name">{{ cita.mascota.nombre }}</div>
+<p class="appointment-owner">{{ cita.mascota.dueno.nombre }}</p>
+<p class="appointment-meta">{{ cita.motivo }}</p>
+<div class="appointment-time">{{ cita.fecha|date:"d/m/Y H:i" }}</div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state">No hay citas futuras registradas.</div>
+{% endif %}
+</div>
+</div>
+</div>
+
+<div class="col-xl-7">
+<div class="premium-panel">
+<div class="premium-panel-body">
+<div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-2">
+<div>
+<h5 class="panel-title">Citas de Hoy</h5>
+<p class="panel-subtitle">Pacientes que requieren atencion durante la jornada.</p>
+</div>
+<span class="section-badge">{{ citas_hoy|length }}</span>
+</div>
+
+{% if citas_hoy %}
+<div class="today-list mt-3">
+{% for cita in citas_hoy %}
+<div class="today-appointment-item">
+<div class="appointment-name">{{ cita.mascota.nombre }}</div>
+<p class="appointment-owner">{{ cita.mascota.dueno.nombre }}</p>
+<p class="appointment-meta">{{ cita.motivo }}</p>
+<div class="appointment-time">{{ cita.fecha|time:"H:i" }}</div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state mt-3">No hay citas hoy.</div>
+{% endif %}
+</div>
+</div>
+</div>
+
+<div class="col-12">
+<div class="premium-panel">
+<div class="premium-panel-body">
+<div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+<div>
+<h5 class="panel-title">Pendientes</h5>
+<p class="panel-subtitle">Control interno de tareas para recepcion y seguimiento administrativo.</p>
+</div>
+<span class="section-badge">{{ pendientes_pendientes }}</span>
+</div>
+
+{% if pendientes %}
+<div class="pending-list">
+{% for p in pendientes %}
+<div class="pending-item">
+<div>
+{% if p.completado %}
+<div class="appointment-name"><s>{{ p.titulo }}</s></div>
+{% else %}
+<div class="appointment-name">{{ p.titulo }}</div>
+{% endif %}
+<p class="appointment-meta">{{ p.descripcion }}</p>
+</div>
+<div class="pending-actions">
+<a href="{% url 'completar' p.id %}" class="btn btn-success btn-sm">OK</a>
+<a href="{% url 'eliminar' p.id %}" class="btn btn-danger btn-sm">X</a>
+</div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state mt-3">No hay pendientes registrados.</div>
+{% endif %}
+
+<div class="pending-form">
+<h6 class="panel-title mb-3">Agregar Pendiente</h6>
+<form method="POST">
+{% csrf_token %}
+<input type="text" name="titulo" placeholder="Titulo" class="form-control mb-2" required>
+<textarea name="descripcion" placeholder="Descripcion" class="form-control mb-3"></textarea>
+<button class="btn btn-primary" type="submit">Agregar</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
 <script>
-
 document.addEventListener('DOMContentLoaded', function() {
+const calendarEl = document.getElementById('calendar');
+const form = document.getElementById('appointment-form');
+const feedback = document.getElementById('scheduler-feedback');
+const ownerInput = document.getElementById('appointment-owner');
+const petInput = document.getElementById('appointment-pet');
+const dateInput = document.getElementById('appointment-date');
+const timeInput = document.getElementById('appointment-time');
+const datetimeInput = document.getElementById('appointment-datetime');
+const reasonInput = document.getElementById('appointment-reason');
+const submitButton = document.getElementById('appointment-submit');
+const resetButton = document.getElementById('appointment-reset');
+const datePill = document.getElementById('selected-date-pill');
 
-var calendarEl = document.getElementById('calendar');
+function showFeedback(message, type) {
+feedback.textContent = message;
+feedback.className = 'scheduler-feedback is-visible ' + (type === 'success' ? 'is-success' : 'is-error');
+}
 
-var calendar = new FullCalendar.Calendar(calendarEl, {
+function clearFeedback() {
+feedback.textContent = '';
+feedback.className = 'scheduler-feedback';
+}
 
+function syncDateTime() {
+if (!dateInput.value || !timeInput.value) {
+datetimeInput.value = '';
+datePill.textContent = 'Sin fecha';
+return;
+}
+
+datetimeInput.value = dateInput.value + 'T' + timeInput.value + ':00';
+datePill.textContent = dateInput.value + ' ' + timeInput.value;
+}
+
+function resetAppointmentForm() {
+form.reset();
+timeInput.value = '10:00';
+datetimeInput.value = '';
+datePill.textContent = 'Sin fecha';
+clearFeedback();
+}
+
+dateInput.addEventListener('change', syncDateTime);
+timeInput.addEventListener('change', syncDateTime);
+resetButton.addEventListener('click', resetAppointmentForm);
+
+const calendar = new FullCalendar.Calendar(calendarEl, {
 initialView: 'dayGridMonth',
-
 headerToolbar: {
 left: 'prev,next today',
 center: 'title',
 right: 'dayGridMonth,timeGridWeek,timeGridDay'
 },
-
 events: citas,
-
 eventColor: '#6a0dad',
 eventTextColor: 'white',
-
 dateClick: function(info) {
+dateInput.value = info.dateStr;
+syncDateTime();
+clearFeedback();
+petInput.focus();
+form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+});
 
-let fecha = info.dateStr
+calendar.render();
+syncDateTime();
 
-let mascota = prompt("Nombre de la mascota:")
-let motivo = prompt("Motivo de la consulta:")
+form.addEventListener('submit', async function(event) {
+event.preventDefault();
+syncDateTime();
+clearFeedback();
 
-if(mascota){
+if (!datetimeInput.value) {
+showFeedback('Selecciona una fecha y una hora para la cita.', 'error');
+return;
+}
 
-fetch("/crear-cita/", {
+submitButton.disabled = true;
+submitButton.textContent = 'Guardando...';
 
-method: "POST",
-
+try {
+const response = await fetch('/crear-cita/', {
+method: 'POST',
 headers: {
 'Content-Type': 'application/json',
 'X-CSRFToken': '{{ csrf_token }}'
 },
-
 body: JSON.stringify({
-mascota: mascota,
-motivo: motivo,
-fecha: fecha
+dueno: ownerInput.value,
+mascota: petInput.value,
+motivo: reasonInput.value,
+fecha: datetimeInput.value
 })
-
-}).then(() => {
-location.reload()
-})
-
-}
-
-}
-
 });
 
-calendar.render();
+const result = await response.json();
 
+if (!response.ok) {
+showFeedback(result.message || 'No se pudo guardar la cita.', 'error');
+return;
+}
+
+showFeedback(result.message + ': ' + result.cita.mascota + ' - ' + result.cita.fecha, 'success');
+setTimeout(function() {
+window.location.reload();
+}, 900);
+} catch (error) {
+showFeedback('Ocurrio un error al conectar con el servidor.', 'error');
+} finally {
+submitButton.disabled = false;
+submitButton.textContent = 'Guardar cita';
+}
 });
-
+});
 </script>
-</div>
-
-</div>
-
-</div>
-
-
-
-<!-- PENDIENTES -->
- <!-- PENDIENTES -->
-
-<div class="col-md-4">
-
-<div class="card shadow-sm">
-
-<div class="card-body">
-
-<h5 class="fw-bold">Pendientes</h5>
-
-<!-- LISTA DE PENDIENTES -->
-<ul class="list-group mt-3">
-
-    {% for p in pendientes %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            
-            <div>
-                {% if p.completado %}
-                    <s>{{ p.titulo }}</s>
-                {% else %}
-                    {{ p.titulo }}
-                {% endif %}
-                <br>
-                <small>{{ p.descripcion }}</small>
-            </div>
-
-            <div>
-                <!-- COMPLETAR -->
-                <a href="{% url 'completar' p.id %}" class="btn btn-success btn-sm">✔</a>
-
-                <!-- ELIMINAR -->
-                <a href="{% url 'eliminar' p.id %}" class="btn btn-danger btn-sm">🗑</a>
-            </div>
-
-        </li>
-    {% empty %}
-        <li class="list-group-item">No hay pendientes</li>
-    {% endfor %}
-
-</ul>
-
-<hr>
-
-<!-- FORMULARIO -->
-<h5 class="fw-bold mt-3">Agregar Pendiente</h5>
-
-<form method="POST">
-    {% csrf_token %}
-    
-    <input type="text" name="titulo" placeholder="Título" class="form-control mb-2" required>
-
-    <textarea name="descripcion" placeholder="Descripción" class="form-control mb-2"></textarea>
-
-    <button class="btn btn-purple w-100" type="submit">Agregar</button>
-</form>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- CITAS DE HOY -->
-
-<div class="row mt-4">
-
-<div class="col-md-8">
-
-<div class="card shadow-sm">
-
-<div class="card-body">
-
-<h5 class="fw-bold mb-3">Citas de Hoy</h5>
-
-<div class="list-group-item">
-<div class="list-group">
-
-{% for cita in citas_hoy %}
-
-<div class="list-group-item">
-
-<strong>{{ cita.mascota.nombre }}</strong> - {{ cita.mascota.dueno.nombre }}
-
-<br>
-
-<span class="text-muted">
-{{ cita.motivo }} | {{ cita.fecha|time:"H:i" }}
-</span>
-
-</div>
-
-{% empty %}
-
-<div class="list-group-item text-muted">
-No hay citas hoy
-</div>
-
-{% endfor %}
-
-</div>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-</div>
 
 {% endblock %}
