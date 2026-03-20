@@ -7,6 +7,43 @@ from django.shortcuts import render, redirect
 from .models import Pendiente
 from django.contrib.auth import logout
 from .models import Pendiente, Cita
+from django.http import JsonResponse
+import json
+from .models import Cita
+from datetime import date
+from .models import Cita, Mascota
+from django.utils.timezone import now
+from .models import Cita, Mascota
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def crear_cita(request):
+
+    if request.method == "POST":
+
+        data = json.loads(request.body)
+
+        nombre_mascota = data.get("mascota")
+        motivo = data.get("motivo")
+        fecha = data.get("fecha")
+
+        mascota, created = Mascota.objects.get_or_create(
+            nombre=nombre_mascota,
+            defaults={
+                "especie": "Desconocido",
+                "raza": "Desconocido",
+                "edad": 0,
+                "dueno_id": 1
+            }
+        )
+
+        Cita.objects.create(
+            mascota=mascota,
+            motivo=motivo,
+            fecha=fecha
+        )
+
+        return JsonResponse({"status": "ok"})
 def login_view(request):
 
     if request.method == "POST":
@@ -50,12 +87,12 @@ def eliminar_pendiente(request, id):
 
 @login_required
 def dashboard(request):
+
     if request.method == 'POST':
         titulo = request.POST.get('titulo')
         descripcion = request.POST.get('descripcion')
 
         if titulo:
-            # GUARDAR EN BD
             Pendiente.objects.create(
                 titulo=titulo,
                 descripcion=descripcion
@@ -63,18 +100,16 @@ def dashboard(request):
 
         return redirect('dashboard')
 
-    # OBTENER TODOS LOS PENDIENTES
     pendientes = Pendiente.objects.order_by('-fecha')
     citas = Cita.objects.all()
-    total_pendientes = Pendiente.objects.count()
-    pendientes_completados = Pendiente.objects.filter(completado=True).count()
-    pendientes_pendientes = Pendiente.objects.filter(completado=False).count()
+
+    hoy = now().date()
+    citas_hoy = Cita.objects.filter(fecha__date=hoy)
+
     return render(request, 'dashboard.html', {
         'pendientes': pendientes,
         'citas': citas,
-        'total_pendientes': total_pendientes,
-        'pendientes_completados': pendientes_completados,
-        'pendientes_pendientes': pendientes_pendientes
+        'citas_hoy': citas_hoy
     })
 def logout_view(request):
     logout(request)

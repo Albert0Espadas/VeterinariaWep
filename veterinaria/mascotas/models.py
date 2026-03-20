@@ -16,7 +16,7 @@ class Mascota(models.Model):
     raza = models.CharField(max_length=100)
     edad = models.IntegerField()
 
-    dueño = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    dueno = models.ForeignKey(Cliente, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.nombre
@@ -39,12 +39,3 @@ class Pendiente(models.Model):
 
     def __str__(self):
         return self.titulo
-class Cita(models.Model):
-
-    mascota = models.CharField(max_length=100)
-    dueno = models.CharField(max_length=100, default="Desconocido")
-    motivo = models.CharField(max_length=200)
-    fecha = models.DateTimeField()
-
-    def __str__(self):
-        return f"{self.mascota} - {self.fecha}"

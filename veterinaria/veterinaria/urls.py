@@ -10,5 +10,6 @@ urlpatterns = [
     path('eliminar/<int:id>/', views.eliminar_pendiente, name='eliminar'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('logout/', views.logout_view, name='logout'),
+    path('crear-cita/', views.crear_cita, name='crear_cita'),
     
 ]

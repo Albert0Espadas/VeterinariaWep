@@ -1,5 +1,5 @@
 
-git {% extends "BaseDashboart.html" %}
+{% extends "BaseDashboart.html" %}
 {% load static %}
 
 {% block content %}
@@ -21,7 +21,7 @@ git {% extends "BaseDashboart.html" %}
 <div class="col-md-3">
 <div class="card shadow-sm p-3">
 <h6 class="text-muted">Citas Hoy</h6>
-<h3 class="fw-bold">{{ total_pendientes }}</h3>
+<h3 class="fw-bold">{{ citas_hoy|length }}</h3>
 </div>
 </div>
 
@@ -55,8 +55,8 @@ let citas = [
 {% for cita in citas %}
 
 {
-title: "{{ cita.mascota }} - {{ cita.motivo }}",
-start: "{{ cita.fecha|date:'Y-m-d H:i:s' }}"
+title: "{{ cita.mascota.nombre }} - {{ cita.motivo }}",
+start: "{{ cita.fecha|date:'Y-m-d\\TH:i:s' }}"
 },
 
 {% endfor %}
@@ -91,7 +91,48 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
 
 initialView: 'dayGridMonth',
 
-events: citas
+headerToolbar: {
+left: 'prev,next today',
+center: 'title',
+right: 'dayGridMonth,timeGridWeek,timeGridDay'
+},
+
+events: citas,
+
+eventColor: '#6a0dad',
+eventTextColor: 'white',
+
+dateClick: function(info) {
+
+let fecha = info.dateStr
+
+let mascota = prompt("Nombre de la mascota:")
+let motivo = prompt("Motivo de la consulta:")
+
+if(mascota){
+
+fetch("/crear-cita/", {
+
+method: "POST",
+
+headers: {
+'Content-Type': 'application/json',
+'X-CSRFToken': '{{ csrf_token }}'
+},
+
+body: JSON.stringify({
+mascota: mascota,
+motivo: motivo,
+fecha: fecha
+})
+
+}).then(() => {
+location.reload()
+})
+
+}
+
+}
 
 });
 
@@ -185,31 +226,35 @@ calendar.render();
 
 <h5 class="fw-bold mb-3">Citas de Hoy</h5>
 
+<div class="list-group-item">
 <div class="list-group">
 
-<div class="list-group-item">
-<strong>Max</strong> - Juan Pérez
-<br>
-<span class="text-muted">Consulta general | 09:00</span>
-</div>
+{% for cita in citas_hoy %}
 
 <div class="list-group-item">
-<strong>Luna</strong> - María García
+
+<strong>{{ cita.mascota.nombre }}</strong> - {{ cita.mascota.dueno.nombre }}
+
 <br>
-<span class="text-muted">Vacunación | 10:30</span>
-</div>
 
-<div class="list-group-item">
-<strong>Rocky</strong> - Carlos López
-<br>
-<span class="text-muted">Control | 12:00</span>
-</div>
+<span class="text-muted">
+{{ cita.motivo }} | {{ cita.fecha|time:"H:i" }}
+</span>
 
 </div>
 
+{% empty %}
+
+<div class="list-group-item text-muted">
+No hay citas hoy
+</div>
+
+{% endfor %}
+
 </div>
 
 </div>
+
 
 </div>
 
