@@ -1,0 +1,222 @@
+{% extends "BaseDashboart.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.container-recepcion {
+    padding: 30px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.tab {
+    padding: 10px 30px;
+    border-radius: 20px;
+    background: #eae6f7;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: #6c2bd9;
+    color: white;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: #6c2bd9;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.list-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+}
+
+.actions a {
+    margin-left: 10px;
+    text-decoration: none;
+    color: #6c2bd9;
+    font-size: 14px;
+}
+</style>
+
+<div class="container-recepcion">
+
+    <h2 style="text-align:center;"> Recepción Veterinaria</h2>
+    <p style="text-align:center;">Gestión de clientes y mascotas</p>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('clientes')">Clientes</div>
+        <div class="tab" onclick="showTab('mascotas')">Mascotas</div>
+    </div>
+
+    <!-- ================= CLIENTES ================= -->
+    <div id="clientes" class="tab-content">
+
+        <div class="grid">
+
+            <!-- FORM CLIENTE -->
+            <div class="card">
+                <h3>Registrar Cliente</h3>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <input type="text" name="nombre" placeholder="Nombre completo" required>
+                    <input type="text" name="telefono" placeholder="Teléfono" required>
+                    <input type="email" name="email" placeholder="Email">
+                    <input type="text" name="direccion" placeholder="Dirección">
+
+                    <button class="btn" name="registrar_cliente">
+                        Registrar Cliente
+                    </button>
+                </form>
+            </div>
+
+            <!-- LISTA CLIENTES -->
+            <div class="card">
+                <h3>Clientes</h3>
+
+                <input type="text" placeholder="Buscar cliente...">
+
+                <div class="list">
+                    {% for cliente in clientes %}
+                    <div class="list-item">
+                        {{ cliente.nombre }}
+                        <div class="actions">
+                            <a href="{% url 'crear_cita' %}?cliente={{ cliente.id }}">
+                                Cita
+                            </a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p style="text-align:center; color:gray;">
+                        No hay clientes registrados
+                    </p>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================= MASCOTAS ================= -->
+    <div id="mascotas" class="tab-content" style="display:none;">
+
+        <div class="grid">
+
+            <!-- FORM MASCOTA -->
+            <div class="card">
+                <h3>Registrar Mascota</h3>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <input type="text" name="nombre_mascota" placeholder="Nombre de la mascota" required>
+
+                    <select name="especie">
+                        <option value="Perro">Perro</option>
+                        <option value="Gato">Gato</option>
+                    </select>
+
+                    <input type="text" name="raza" placeholder="Raza">
+                    <input type="text" name="edad" placeholder="Edad">
+
+                    <select name="cliente" required>
+                        <option value="">Seleccionar dueño</option>
+                        {% for cliente in clientes %}
+                            <option value="{{ cliente.id }}">
+                                {{ cliente.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <button class="btn" name="registrar_mascota">
+                        Registrar Mascota
+                    </button>
+                </form>
+            </div>
+
+            <!-- LISTA MASCOTAS -->
+            <div class="card">
+                <h3>Mascotas</h3>
+
+                <input type="text" placeholder="Buscar mascota...">
+
+                <div class="list">
+                    {% for mascota in mascotas %}
+                    <div class="list-item">
+                        {{ mascota.nombre }} ({{ mascota.especie }})
+                        <div class="actions">
+                            <a href="{% url 'crear_cita' %}?cliente={{ mascota.cliente.id }}&mascota={{ mascota.id }}">
+                                Cita
+                            </a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p style="text-align:center; color:gray;">
+                        No hay mascotas registradas
+                    </p>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+function showTab(tabName) {
+    document.getElementById('clientes').style.display = 'none';
+    document.getElementById('mascotas').style.display = 'none';
+
+    document.getElementById(tabName).style.display = 'block';
+
+    let tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+
+    if(tabName === 'clientes'){
+        tabs[0].classList.add('active');
+    } else {
+        tabs[1].classList.add('active');
+    }
+}
+</script>
+
+{% endblock %}

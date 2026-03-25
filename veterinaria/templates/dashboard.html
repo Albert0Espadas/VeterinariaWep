@@ -404,11 +404,11 @@ font-size: 1.8rem;
 let citas = [
 {% for cita in citas %}
 {
-title: "{{ cita.mascota.nombre }} - {{ cita.motivo }}",
+title: "{{ cita.mascota.nombre|escapejs }} - {{ cita.motivo|escapejs }}",
 start: "{{ cita.fecha|date:'Y-m-d\\TH:i:s' }}"
-},
+}{% if not forloop.last %},{% endif %}
 {% endfor %}
-]
+];
 </script>
 
 <div class="row g-4 align-items-stretch">

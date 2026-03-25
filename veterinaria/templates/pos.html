@@ -1,0 +1,178 @@
+{% extends "BaseDashboart.html" %}
+
+{% block content %}
+
+<div class="pos-container">
+
+    <!-- PRODUCTOS -->
+    <div class="productos">
+        <input type="text" placeholder="🔍 Buscar productos..." class="search">
+
+        <div class="grid">
+            {% for producto in productos %}
+            <div class="card" onclick="agregarCarrito('{{ producto.nombre }}', {{ producto.precio }})">
+                <h4>{{ producto.nombre }}</h4>
+                <p>{{ producto.categoria }}</p>
+                <span class="precio">${{ producto.precio }}</span>
+                <small>Stock: {{ producto.stock }}</small>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- CARRITO -->
+    <div class="carrito">
+        <h3>Carrito</h3>
+
+        <div id="listaCarrito"></div>
+
+        <hr>
+
+        <p>Subtotal: $<span id="subtotal">0</span></p>
+        <h2>Total: $<span id="total">0</span></h2>
+
+        <button onclick="abrirModal()">Procesar Pago</button>
+    </div>
+
+</div>
+
+<!-- MODAL PAGO -->
+<div id="modalPago" class="modal">
+    <div class="modal-content">
+        <h3>Método de Pago</h3>
+
+        <select id="metodoPago" onchange="toggleEfectivo()">
+            <option value="efectivo">Efectivo</option>
+            <option value="tarjeta">Tarjeta</option>
+            <option value="transferencia">Transferencia</option>
+        </select>
+
+        <div id="efectivoDiv">
+            <input type="number" id="montoPagado" placeholder="Monto recibido">
+            <p>Cambio: $<span id="cambio">0</span></p>
+        </div>
+
+        <button onclick="procesarPago()">Confirmar</button>
+    </div>
+</div>
+
+<script>
+let carrito = [];
+let total = 0;
+
+function agregarCarrito(nombre, precio) {
+    carrito.push({nombre, precio});
+    total += precio;
+    renderCarrito();
+}
+
+function renderCarrito() {
+    let lista = document.getElementById("listaCarrito");
+    lista.innerHTML = "";
+
+    carrito.forEach(item => {
+        lista.innerHTML += `<p>${item.nombre} - $${item.precio}</p>`;
+    });
+
+    document.getElementById("subtotal").innerText = total;
+    document.getElementById("total").innerText = total;
+}
+
+function abrirModal() {
+    document.getElementById("modalPago").style.display = "flex";
+}
+
+function toggleEfectivo() {
+    let metodo = document.getElementById("metodoPago").value;
+    document.getElementById("efectivoDiv").style.display =
+        metodo === "efectivo" ? "block" : "none";
+}
+
+function procesarPago() {
+    let metodo = document.getElementById("metodoPago").value;
+    let monto = parseFloat(document.getElementById("montoPagado").value) || 0;
+
+    let cambio = 0;
+
+    if (metodo === "efectivo") {
+        cambio = monto - total;
+        document.getElementById("cambio").innerText = cambio;
+    }
+
+    alert("Pago realizado ✅\nCambio: $" + cambio);
+
+    carrito = [];
+    total = 0;
+    renderCarrito();
+    document.getElementById("modalPago").style.display = "none";
+}
+</script>
+
+<style>
+.pos-container {
+    display: flex;
+    gap: 20px;
+}
+
+/* PRODUCTOS */
+.productos {
+    width: 65%;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* CARRITO */
+.carrito {
+    width: 35%;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* BOTONES */
+button {
+    background: purple;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+}
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(0,0,0,0.5);
+    justify-content:center;
+    align-items:center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+</style>
+
+{% endblock %}

@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Cita, Cliente, Mascota, Pendiente
+from .models import Cita, Cliente, Mascota, Pendiente, Venta
 
 
 def ping(request):
@@ -171,3 +171,72 @@ def dashboard(request):
 def logout_view(request):
     logout(request)
     return redirect("login")
+
+def recepcion(request):
+    
+    # GUARDAR CLIENTE
+    if request.method == 'POST' and 'registrar_cliente' in request.POST:
+        nombre = request.POST.get('nombre')
+        telefono = request.POST.get('telefono')
+        email = request.POST.get('email')
+        direccion = request.POST.get('direccion')
+
+        Cliente.objects.create(
+            nombre=nombre,
+            telefono=telefono,
+            email=email,
+            direccion=direccion
+        )
+
+        return redirect('recepcion')
+
+    # GUARDAR MASCOTA
+    if request.method == 'POST' and 'registrar_mascota' in request.POST:
+        nombre = request.POST.get('nombre_mascota')
+        especie = request.POST.get('especie')
+        raza = request.POST.get('raza')
+        edad = request.POST.get('edad')
+        cliente_id = request.POST.get('cliente')
+
+        Mascota.objects.create(
+            nombre=nombre,
+            especie=especie,
+            raza=raza,
+            edad=edad,
+            cliente_id=cliente_id
+        )
+
+        return redirect('recepcion')
+
+    clientes = Cliente.objects.all()
+    mascotas = Mascota.objects.all()
+
+    return render(request, 'recepcion.html', {
+        'clientes': clientes,
+        'mascotas': mascotas
+    })
+
+def punto_venta(request):
+    if request.method == 'POST':
+        total = float(request.POST.get('total'))
+        metodo = request.POST.get('metodo_pago')
+        monto_pagado = float(request.POST.get('monto_pagado'))
+
+        cambio = 0
+
+        if metodo == 'efectivo':
+            cambio = monto_pagado - total if monto_pagado >= total else 0
+
+        venta = Venta.objects.create(
+            total=total,
+            metodo_pago=metodo,
+            monto_pagado=monto_pagado,
+            cambio=cambio
+        )
+
+        return render(request, 'pos.html', {
+            'mensaje': 'Venta realizada con éxito',
+            'cambio': cambio
+        })
+
+    return render(request, 'pos.html')

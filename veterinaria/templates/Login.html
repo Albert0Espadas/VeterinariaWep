@@ -101,7 +101,7 @@ Sistema de gestión veterinaria
 
 <label>Usuario</label>
 
-<input type="text" name="username" class="form-control">
+<input type="text" name="username" class="form-control" required>
 
 </div>
 
@@ -109,7 +109,12 @@ Sistema de gestión veterinaria
 
 <label>Contraseña</label>
 
-<input type="password" name="password" class="form-control">
+<div class="input-group">
+<input type="password" name="password" id="password" class="form-control" required>
+<button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
+👁️
+</button>
+</div>
 
 </div>
 
@@ -149,6 +154,18 @@ Registrarse
 </div>
 
 </div>
+
+<!-- SCRIPT PARA MOSTRAR/OCULTAR CONTRASEÑA -->
+<script>
+function togglePassword() {
+    const passwordInput = document.getElementById("password");
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+    } else {
+        passwordInput.type = "password";
+    }
+}
+</script>
 
 </body>
 </html>
