@@ -4,218 +4,350 @@
 {% block content %}
 
 <style>
-.container-recepcion {
-    padding: 30px;
+.recepcion-shell {
+background: linear-gradient(180deg, #fcfbff 0%, #f7f2ff 100%);
+border: 1px solid rgba(108, 43, 217, 0.08);
+border-radius: 28px;
+padding: 28px;
+box-shadow: 0 18px 42px rgba(58, 29, 112, 0.07);
+}
+
+.recepcion-hero,
+.recepcion-panel,
+.recepcion-metric {
+background: rgba(255, 255, 255, 0.94);
+border: 1px solid rgba(108, 43, 217, 0.12);
+border-radius: 24px;
+box-shadow: 0 12px 24px rgba(58, 29, 112, 0.05);
+}
+
+.recepcion-hero {
+padding: 24px 26px;
+margin-bottom: 22px;
+background:
+radial-gradient(circle at top right, rgba(144, 105, 255, 0.18), transparent 30%),
+linear-gradient(135deg, #ffffff 0%, #f7f1ff 100%);
+}
+
+.recepcion-title {
+font-size: 2rem;
+font-weight: 800;
+color: #29144a;
+margin-bottom: 8px;
+}
+
+.recepcion-copy {
+margin: 0;
+color: #776d90;
+max-width: 740px;
+}
+
+.recepcion-metric {
+padding: 18px 20px;
+height: 100%;
+}
+
+.recepcion-metric-label {
+font-size: 0.82rem;
+letter-spacing: 0.06em;
+text-transform: uppercase;
+font-weight: 700;
+color: #7b6b9f;
+}
+
+.recepcion-metric-value {
+font-size: 2rem;
+font-weight: 800;
+color: #2d1652;
+margin: 8px 0 0;
+}
+
+.recepcion-panel {
+padding: 22px;
+height: 100%;
+}
+
+.panel-title {
+font-size: 1.08rem;
+font-weight: 800;
+color: #2d1652;
+margin-bottom: 6px;
+}
+
+.panel-copy {
+color: #7b6b9f;
+font-size: 0.94rem;
+margin-bottom: 18px;
+}
+
+.form-label {
+font-weight: 700;
+color: #2d1652;
+}
+
+.form-control,
+.form-select {
+border-radius: 14px;
+border-color: rgba(108, 43, 217, 0.16);
+padding: 11px 14px;
+}
+
+.form-control:focus,
+.form-select:focus {
+border-color: rgba(108, 43, 217, 0.5);
+box-shadow: 0 0 0 0.25rem rgba(108, 43, 217, 0.12);
+}
+
+.btn-premium {
+background: linear-gradient(135deg, #5f31b0 0%, #7c4de3 100%);
+border: none;
+color: #fff;
+padding: 12px 18px;
+border-radius: 14px;
+font-weight: 700;
+width: 100%;
 }
 
 .tabs {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
+display: inline-flex;
+gap: 10px;
+padding: 8px;
+background: #f1eafe;
+border-radius: 999px;
+margin-bottom: 18px;
 }
 
 .tab {
-    padding: 10px 30px;
-    border-radius: 20px;
-    background: #eae6f7;
-    margin: 0 10px;
-    cursor: pointer;
+padding: 10px 18px;
+border-radius: 999px;
+cursor: pointer;
+font-weight: 700;
+color: #654c9b;
+transition: 0.2s ease;
 }
 
 .tab.active {
-    background: #6c2bd9;
-    color: white;
+background: linear-gradient(135deg, #5f31b0 0%, #7c4de3 100%);
+color: #fff;
+box-shadow: 0 12px 20px rgba(95, 49, 176, 0.18);
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+.record-list {
+display: grid;
+gap: 12px;
 }
 
-.card {
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+.record-item {
+padding: 16px 18px;
+border-radius: 18px;
+border: 1px solid rgba(108, 43, 217, 0.1);
+background: linear-gradient(180deg, #fff 0%, #fbf9ff 100%);
 }
 
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 8px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
+.record-name {
+font-weight: 800;
+color: #2d1652;
+margin-bottom: 4px;
 }
 
-.btn {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    background: #6c2bd9;
-    color: white;
-    border-radius: 10px;
-    cursor: pointer;
+.record-meta {
+color: #786c97;
+font-size: 0.92rem;
+margin: 0;
 }
 
-.list-item {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
+.empty-state {
+padding: 18px;
+border-radius: 18px;
+background: #faf7ff;
+border: 1px dashed rgba(108, 43, 217, 0.18);
+color: #7b6b9f;
+text-align: center;
 }
 
-.actions a {
-    margin-left: 10px;
-    text-decoration: none;
-    color: #6c2bd9;
-    font-size: 14px;
+.feedback-note {
+margin-bottom: 16px;
+padding: 12px 14px;
+border-radius: 14px;
+background: #efe7ff;
+color: #4d2b8a;
+font-weight: 600;
 }
 </style>
 
-<div class="container-recepcion">
+<div class="recepcion-shell">
+<div class="recepcion-hero">
+<h1 class="recepcion-title">Recepcion Veterinaria</h1>
+<p class="recepcion-copy">Registra clientes y mascotas desde una sola vista y manten una recepcion mas ordenada, clara y lista para agendar.</p>
+</div>
 
-    <h2 style="text-align:center;"> Recepción Veterinaria</h2>
-    <p style="text-align:center;">Gestión de clientes y mascotas</p>
+<div class="row g-4 mb-4">
+<div class="col-md-6 col-xl-3">
+<div class="recepcion-metric">
+<div class="recepcion-metric-label">Clientes</div>
+<div class="recepcion-metric-value">{{ total_clientes }}</div>
+</div>
+</div>
+<div class="col-md-6 col-xl-3">
+<div class="recepcion-metric">
+<div class="recepcion-metric-label">Mascotas</div>
+<div class="recepcion-metric-value">{{ total_mascotas }}</div>
+</div>
+</div>
+<div class="col-md-6 col-xl-3">
+<div class="recepcion-metric">
+<div class="recepcion-metric-label">Ultimos Clientes</div>
+<div class="recepcion-metric-value">{{ clientes_recientes|length }}</div>
+</div>
+</div>
+<div class="col-md-6 col-xl-3">
+<div class="recepcion-metric">
+<div class="recepcion-metric-label">Ultimas Mascotas</div>
+<div class="recepcion-metric-value">{{ mascotas_recientes|length }}</div>
+</div>
+</div>
+</div>
 
-    <!-- TABS -->
-    <div class="tabs">
-        <div class="tab active" onclick="showTab('clientes')">Clientes</div>
-        <div class="tab" onclick="showTab('mascotas')">Mascotas</div>
-    </div>
+{% if mensaje %}
+<div class="feedback-note">{{ mensaje }}</div>
+{% endif %}
 
-    <!-- ================= CLIENTES ================= -->
-    <div id="clientes" class="tab-content">
+<div class="tabs">
+<div class="tab active" onclick="showTab('clientes', event)">Clientes</div>
+<div class="tab" onclick="showTab('mascotas', event)">Mascotas</div>
+</div>
 
-        <div class="grid">
+<div id="clientes" class="tab-content">
+<div class="row g-4">
+<div class="col-lg-5">
+<div class="recepcion-panel">
+<h3 class="panel-title">Registrar Cliente</h3>
+<p class="panel-copy">Captura informacion basica del propietario para tener la recepcion al dia.</p>
 
-            <!-- FORM CLIENTE -->
-            <div class="card">
-                <h3>Registrar Cliente</h3>
+<form method="POST">
+{% csrf_token %}
+<div class="mb-3">
+<label class="form-label" for="nombre">Nombre completo</label>
+<input class="form-control" id="nombre" type="text" name="nombre" placeholder="Ej. Andrea Salinas" required>
+</div>
+<div class="mb-3">
+<label class="form-label" for="telefono">Telefono</label>
+<input class="form-control" id="telefono" type="text" name="telefono" placeholder="Ej. 5512345678" required>
+</div>
+<div class="mb-4">
+<label class="form-label" for="email">Email</label>
+<input class="form-control" id="email" type="email" name="email" placeholder="Ej. correo@cliente.com">
+</div>
+<button class="btn-premium" name="registrar_cliente">Registrar cliente</button>
+</form>
+</div>
+</div>
 
-                <form method="POST">
-                    {% csrf_token %}
+<div class="col-lg-7">
+<div class="recepcion-panel">
+<h3 class="panel-title">Clientes Registrados</h3>
+<p class="panel-copy">Vista rapida de los propietarios activos dentro del sistema.</p>
 
-                    <input type="text" name="nombre" placeholder="Nombre completo" required>
-                    <input type="text" name="telefono" placeholder="Teléfono" required>
-                    <input type="email" name="email" placeholder="Email">
-                    <input type="text" name="direccion" placeholder="Dirección">
+{% if clientes %}
+<div class="record-list">
+{% for cliente in clientes %}
+<div class="record-item">
+<div class="record-name">{{ cliente.nombre }}</div>
+<p class="record-meta">{{ cliente.telefono }}{% if cliente.email %} | {{ cliente.email }}{% endif %}</p>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state">No hay clientes registrados.</div>
+{% endif %}
+</div>
+</div>
+</div>
+</div>
 
-                    <button class="btn" name="registrar_cliente">
-                        Registrar Cliente
-                    </button>
-                </form>
-            </div>
+<div id="mascotas" class="tab-content" style="display:none;">
+<div class="row g-4">
+<div class="col-lg-5">
+<div class="recepcion-panel">
+<h3 class="panel-title">Registrar Mascota</h3>
+<p class="panel-copy">Asocia cada mascota a su dueno y deja lista la ficha para futuras citas.</p>
 
-            <!-- LISTA CLIENTES -->
-            <div class="card">
-                <h3>Clientes</h3>
+<form method="POST">
+{% csrf_token %}
+<div class="mb-3">
+<label class="form-label" for="nombre_mascota">Nombre de la mascota</label>
+<input class="form-control" id="nombre_mascota" type="text" name="nombre_mascota" placeholder="Ej. Nala" required>
+</div>
 
-                <input type="text" placeholder="Buscar cliente...">
+<div class="row g-3">
+<div class="col-md-6">
+<label class="form-label" for="especie">Especie</label>
+<select class="form-select" id="especie" name="especie">
+<option value="Perro">Perro</option>
+<option value="Gato">Gato</option>
+<option value="Ave">Ave</option>
+<option value="Otro">Otro</option>
+</select>
+</div>
+<div class="col-md-6">
+<label class="form-label" for="edad">Edad</label>
+<input class="form-control" id="edad" type="number" min="0" name="edad" placeholder="Ej. 3">
+</div>
+</div>
 
-                <div class="list">
-                    {% for cliente in clientes %}
-                    <div class="list-item">
-                        {{ cliente.nombre }}
-                        <div class="actions">
-                            <a href="{% url 'crear_cita' %}?cliente={{ cliente.id }}">
-                                Cita
-                            </a>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <p style="text-align:center; color:gray;">
-                        No hay clientes registrados
-                    </p>
-                    {% endfor %}
-                </div>
-            </div>
+<div class="mt-3 mb-3">
+<label class="form-label" for="raza">Raza</label>
+<input class="form-control" id="raza" type="text" name="raza" placeholder="Ej. Mestizo">
+</div>
 
-        </div>
-    </div>
+<div class="mb-4">
+<label class="form-label" for="cliente">Dueno</label>
+<select class="form-select" id="cliente" name="cliente" required>
+<option value="">Seleccionar dueno</option>
+{% for cliente in clientes %}
+<option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+{% endfor %}
+</select>
+</div>
 
-    <!-- ================= MASCOTAS ================= -->
-    <div id="mascotas" class="tab-content" style="display:none;">
+<button class="btn-premium" name="registrar_mascota">Registrar mascota</button>
+</form>
+</div>
+</div>
 
-        <div class="grid">
+<div class="col-lg-7">
+<div class="recepcion-panel">
+<h3 class="panel-title">Mascotas Registradas</h3>
+<p class="panel-copy">Consulta rapida de pacientes y su propietario asociado.</p>
 
-            <!-- FORM MASCOTA -->
-            <div class="card">
-                <h3>Registrar Mascota</h3>
-
-                <form method="POST">
-                    {% csrf_token %}
-
-                    <input type="text" name="nombre_mascota" placeholder="Nombre de la mascota" required>
-
-                    <select name="especie">
-                        <option value="Perro">Perro</option>
-                        <option value="Gato">Gato</option>
-                    </select>
-
-                    <input type="text" name="raza" placeholder="Raza">
-                    <input type="text" name="edad" placeholder="Edad">
-
-                    <select name="cliente" required>
-                        <option value="">Seleccionar dueño</option>
-                        {% for cliente in clientes %}
-                            <option value="{{ cliente.id }}">
-                                {{ cliente.nombre }}
-                            </option>
-                        {% endfor %}
-                    </select>
-
-                    <button class="btn" name="registrar_mascota">
-                        Registrar Mascota
-                    </button>
-                </form>
-            </div>
-
-            <!-- LISTA MASCOTAS -->
-            <div class="card">
-                <h3>Mascotas</h3>
-
-                <input type="text" placeholder="Buscar mascota...">
-
-                <div class="list">
-                    {% for mascota in mascotas %}
-                    <div class="list-item">
-                        {{ mascota.nombre }} ({{ mascota.especie }})
-                        <div class="actions">
-                            <a href="{% url 'crear_cita' %}?cliente={{ mascota.cliente.id }}&mascota={{ mascota.id }}">
-                                Cita
-                            </a>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <p style="text-align:center; color:gray;">
-                        No hay mascotas registradas
-                    </p>
-                    {% endfor %}
-                </div>
-            </div>
-
-        </div>
-    </div>
-
+{% if mascotas %}
+<div class="record-list">
+{% for mascota in mascotas %}
+<div class="record-item">
+<div class="record-name">{{ mascota.nombre }} - {{ mascota.especie }}</div>
+<p class="record-meta">{{ mascota.raza }} | {{ mascota.edad }} anos | Dueno: {{ mascota.dueno.nombre }}</p>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state">No hay mascotas registradas.</div>
+{% endif %}
+</div>
+</div>
+</div>
+</div>
 </div>
 
 <script>
-function showTab(tabName) {
-    document.getElementById('clientes').style.display = 'none';
-    document.getElementById('mascotas').style.display = 'none';
+function showTab(tabName, event) {
+document.getElementById('clientes').style.display = 'none';
+document.getElementById('mascotas').style.display = 'none';
+document.getElementById(tabName).style.display = 'block';
 
-    document.getElementById(tabName).style.display = 'block';
-
-    let tabs = document.querySelectorAll('.tab');
-    tabs.forEach(tab => tab.classList.remove('active'));
-
-    if(tabName === 'clientes'){
-        tabs[0].classList.add('active');
-    } else {
-        tabs[1].classList.add('active');
-    }
+document.querySelectorAll('.tab').forEach((tab) => tab.classList.remove('active'));
+if (event && event.currentTarget) {
+event.currentTarget.classList.add('active');
+}
 }
 </script>
 

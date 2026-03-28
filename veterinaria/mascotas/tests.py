@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.utils import timezone
 import json
 
-from .models import Cita, Cliente, Mascota
+from .models import Cita, Cliente, Mascota, Venta
 
 
 class PingViewTests(TestCase):
@@ -54,7 +54,7 @@ class DashboardViewTests(TestCase):
         self.assertContains(response, "Proximas Citas")
         self.assertContains(response, "Luna")
         self.assertContains(response, "Revision")
-        self.assertContains(response, "Nueva cita")
+        self.assertContains(response, "Nueva Cita")
 
 
 class CrearCitaViewTests(TestCase):
@@ -78,3 +78,68 @@ class CrearCitaViewTests(TestCase):
         self.assertEqual(Cliente.objects.count(), 1)
         self.assertEqual(Cita.objects.first().motivo, "Desparasitacion")
         self.assertEqual(Mascota.objects.first().nombre, "Milo")
+
+
+class RecepcionViewTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="staff", password="12345")
+        self.client.login(username="staff", password="12345")
+
+    def test_recepcion_registers_client(self):
+        response = self.client.post(
+            reverse("recepcion"),
+            {
+                "registrar_cliente": "1",
+                "nombre": "Laura Mendez",
+                "telefono": "5511223344",
+                "email": "laura@example.com",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Cliente.objects.count(), 1)
+        self.assertEqual(Cliente.objects.first().nombre, "Laura Mendez")
+
+    def test_recepcion_registers_pet_with_owner(self):
+        cliente = Cliente.objects.create(
+            nombre="Diego",
+            telefono="5512345678",
+            email="diego@example.com",
+        )
+
+        response = self.client.post(
+            reverse("recepcion"),
+            {
+                "registrar_mascota": "1",
+                "nombre_mascota": "Nina",
+                "especie": "Gato",
+                "raza": "Criollo",
+                "edad": 2,
+                "cliente": cliente.id,
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Mascota.objects.count(), 1)
+        self.assertEqual(Mascota.objects.first().dueno, cliente)
+
+
+class PuntoVentaViewTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="cashier", password="12345")
+        self.client.login(username="cashier", password="12345")
+
+    def test_pos_registers_cash_sale_and_change(self):
+        response = self.client.post(
+            reverse("pos"),
+            {
+                "total": "250.00",
+                "metodo_pago": "efectivo",
+                "monto_pagado": "300.00",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Venta.objects.count(), 1)
+        self.assertContains(response, "Venta registrada con exito.")
+        self.assertEqual(Venta.objects.first().cambio, 50)

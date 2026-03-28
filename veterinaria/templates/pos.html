@@ -2,177 +2,330 @@
 
 {% block content %}
 
-<div class="pos-container">
+<style>
+.pos-shell {
+background: linear-gradient(180deg, #fcfbff 0%, #f7f2ff 100%);
+border: 1px solid rgba(108, 43, 217, 0.08);
+border-radius: 28px;
+padding: 28px;
+box-shadow: 0 18px 42px rgba(58, 29, 112, 0.07);
+}
 
-    <!-- PRODUCTOS -->
-    <div class="productos">
-        <input type="text" placeholder="🔍 Buscar productos..." class="search">
+.pos-hero,
+.pos-panel,
+.pos-metric {
+background: rgba(255, 255, 255, 0.96);
+border: 1px solid rgba(108, 43, 217, 0.12);
+border-radius: 24px;
+box-shadow: 0 12px 24px rgba(58, 29, 112, 0.05);
+}
 
-        <div class="grid">
-            {% for producto in productos %}
-            <div class="card" onclick="agregarCarrito('{{ producto.nombre }}', {{ producto.precio }})">
-                <h4>{{ producto.nombre }}</h4>
-                <p>{{ producto.categoria }}</p>
-                <span class="precio">${{ producto.precio }}</span>
-                <small>Stock: {{ producto.stock }}</small>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
+.pos-hero {
+padding: 24px 26px;
+margin-bottom: 22px;
+background:
+radial-gradient(circle at top right, rgba(144, 105, 255, 0.18), transparent 30%),
+linear-gradient(135deg, #ffffff 0%, #f7f1ff 100%);
+}
 
-    <!-- CARRITO -->
-    <div class="carrito">
-        <h3>Carrito</h3>
+.pos-title {
+font-size: 2rem;
+font-weight: 800;
+color: #29144a;
+margin-bottom: 8px;
+}
 
-        <div id="listaCarrito"></div>
+.pos-copy {
+margin: 0;
+color: #776d90;
+max-width: 720px;
+}
 
-        <hr>
+.pos-metric {
+padding: 18px 20px;
+height: 100%;
+}
 
-        <p>Subtotal: $<span id="subtotal">0</span></p>
-        <h2>Total: $<span id="total">0</span></h2>
+.pos-metric-label {
+font-size: 0.82rem;
+letter-spacing: 0.06em;
+text-transform: uppercase;
+font-weight: 700;
+color: #7b6b9f;
+}
 
-        <button onclick="abrirModal()">Procesar Pago</button>
-    </div>
+.pos-metric-value {
+font-size: 2rem;
+font-weight: 800;
+color: #2d1652;
+margin: 8px 0 0;
+}
 
+.pos-panel {
+padding: 22px;
+height: 100%;
+}
+
+.panel-title {
+font-size: 1.08rem;
+font-weight: 800;
+color: #2d1652;
+margin-bottom: 6px;
+}
+
+.panel-copy {
+color: #7b6b9f;
+font-size: 0.94rem;
+margin-bottom: 18px;
+}
+
+.form-label {
+font-weight: 700;
+color: #2d1652;
+}
+
+.form-control,
+.form-select {
+border-radius: 14px;
+border-color: rgba(108, 43, 217, 0.16);
+padding: 11px 14px;
+}
+
+.form-control:focus,
+.form-select:focus {
+border-color: rgba(108, 43, 217, 0.5);
+box-shadow: 0 0 0 0.25rem rgba(108, 43, 217, 0.12);
+}
+
+.btn-premium {
+background: linear-gradient(135deg, #5f31b0 0%, #7c4de3 100%);
+border: none;
+color: #fff;
+padding: 12px 18px;
+border-radius: 14px;
+font-weight: 700;
+width: 100%;
+}
+
+.feedback-success,
+.feedback-error {
+padding: 12px 14px;
+border-radius: 14px;
+font-weight: 600;
+margin-bottom: 16px;
+}
+
+.feedback-success {
+background: #edf8f2;
+border: 1px solid #badbcc;
+color: #146c43;
+}
+
+.feedback-error {
+background: #fff0f2;
+border: 1px solid #f1b0b7;
+color: #b02a37;
+}
+
+.quick-values {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 10px;
+margin-top: 10px;
+}
+
+.quick-value {
+border: 1px solid rgba(108, 43, 217, 0.14);
+background: #faf7ff;
+color: #5a35a2;
+border-radius: 14px;
+padding: 10px;
+font-weight: 700;
+cursor: pointer;
+}
+
+.sale-summary {
+display: grid;
+gap: 12px;
+}
+
+.sale-item {
+padding: 16px 18px;
+border-radius: 18px;
+border: 1px solid rgba(108, 43, 217, 0.1);
+background: linear-gradient(180deg, #fff 0%, #fbf9ff 100%);
+}
+
+.sale-topline {
+display: flex;
+justify-content: space-between;
+gap: 12px;
+font-weight: 800;
+color: #2d1652;
+}
+
+.sale-meta {
+margin: 6px 0 0;
+color: #7b6b9f;
+font-size: 0.92rem;
+}
+
+.cash-preview {
+padding: 14px 16px;
+border-radius: 16px;
+background: #f6f0ff;
+border: 1px solid rgba(108, 43, 217, 0.12);
+font-weight: 700;
+color: #5e35b1;
+}
+
+.empty-state {
+padding: 18px;
+border-radius: 18px;
+background: #faf7ff;
+border: 1px dashed rgba(108, 43, 217, 0.18);
+color: #7b6b9f;
+text-align: center;
+}
+</style>
+
+<div class="pos-shell">
+<div class="pos-hero">
+<h1 class="pos-title">Punto de Venta</h1>
+<p class="pos-copy">Registra cobros de forma limpia y revisa el ritmo comercial del dia con una vista mas profesional y clara.</p>
 </div>
 
-<!-- MODAL PAGO -->
-<div id="modalPago" class="modal">
-    <div class="modal-content">
-        <h3>Método de Pago</h3>
+<div class="row g-4 mb-4">
+<div class="col-md-6 col-xl-4">
+<div class="pos-metric">
+<div class="pos-metric-label">Ventas de Hoy</div>
+<div class="pos-metric-value">{{ ventas_hoy_count }}</div>
+</div>
+</div>
+<div class="col-md-6 col-xl-4">
+<div class="pos-metric">
+<div class="pos-metric-label">Ingreso del Dia</div>
+<div class="pos-metric-value">${{ ventas_hoy_total }}</div>
+</div>
+</div>
+<div class="col-md-12 col-xl-4">
+<div class="pos-metric">
+<div class="pos-metric-label">Ultimo Metodo</div>
+<div class="pos-metric-value" style="font-size:1.3rem; text-transform:capitalize;">{{ ultimo_metodo }}</div>
+</div>
+</div>
+</div>
 
-        <select id="metodoPago" onchange="toggleEfectivo()">
-            <option value="efectivo">Efectivo</option>
-            <option value="tarjeta">Tarjeta</option>
-            <option value="transferencia">Transferencia</option>
-        </select>
+<div class="row g-4">
+<div class="col-lg-5">
+<div class="pos-panel">
+<h3 class="panel-title">Procesar Venta</h3>
+<p class="panel-copy">Captura el total, el metodo de pago y el monto recibido para cerrar la operacion.</p>
 
-        <div id="efectivoDiv">
-            <input type="number" id="montoPagado" placeholder="Monto recibido">
-            <p>Cambio: $<span id="cambio">0</span></p>
-        </div>
+{% if mensaje %}
+<div class="feedback-success">{{ mensaje }}</div>
+{% endif %}
+{% if error %}
+<div class="feedback-error">{{ error }}</div>
+{% endif %}
 
-        <button onclick="procesarPago()">Confirmar</button>
-    </div>
+<form method="POST" id="pos-form">
+{% csrf_token %}
+<div class="mb-3">
+<label class="form-label" for="total">Total</label>
+<input class="form-control" id="total" type="number" min="0" step="0.01" name="total" placeholder="Ej. 350.00" required>
+</div>
+
+<div class="mb-3">
+<label class="form-label" for="metodo_pago">Metodo de pago</label>
+<select class="form-select" id="metodo_pago" name="metodo_pago">
+<option value="efectivo">Efectivo</option>
+<option value="tarjeta">Tarjeta</option>
+<option value="transferencia">Transferencia</option>
+</select>
+</div>
+
+<div class="mb-3">
+<label class="form-label" for="monto_pagado">Monto pagado</label>
+<input class="form-control" id="monto_pagado" type="number" min="0" step="0.01" name="monto_pagado" placeholder="Ej. 500.00" required>
+</div>
+
+<div class="cash-preview mb-3">
+Cambio estimado: $<span id="cash-preview-value">0.00</span>
+</div>
+
+<div class="quick-values">
+<button class="quick-value" type="button" onclick="setQuickTotal(150)">150</button>
+<button class="quick-value" type="button" onclick="setQuickTotal(300)">300</button>
+<button class="quick-value" type="button" onclick="setQuickTotal(500)">500</button>
+<button class="quick-value" type="button" onclick="setQuickTotal(1000)">1000</button>
+</div>
+
+<div class="mt-4">
+<button class="btn-premium" type="submit">Registrar venta</button>
+</div>
+</form>
+</div>
+</div>
+
+<div class="col-lg-7">
+<div class="pos-panel">
+<h3 class="panel-title">Ventas Recientes</h3>
+<p class="panel-copy">Historial rapido para validar cobros recientes y metodo utilizado.</p>
+
+{% if ventas_recientes %}
+<div class="sale-summary">
+{% for venta in ventas_recientes %}
+<div class="sale-item">
+<div class="sale-topline">
+<span>Venta #{{ venta.id }}</span>
+<span>${{ venta.total }}</span>
+</div>
+<p class="sale-meta">Metodo: {{ venta.metodo_pago }} | Pagado: ${{ venta.monto_pagado }} | Cambio: ${{ venta.cambio }}</p>
+<p class="sale-meta">{{ venta.fecha|date:"d/m/Y H:i" }}</p>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state">Aun no hay ventas registradas.</div>
+{% endif %}
+</div>
+</div>
+</div>
 </div>
 
 <script>
-let carrito = [];
-let total = 0;
+const totalInput = document.getElementById('total');
+const paidInput = document.getElementById('monto_pagado');
+const methodInput = document.getElementById('metodo_pago');
+const previewValue = document.getElementById('cash-preview-value');
 
-function agregarCarrito(nombre, precio) {
-    carrito.push({nombre, precio});
-    total += precio;
-    renderCarrito();
+function updateCashPreview() {
+const total = parseFloat(totalInput.value || '0');
+const paid = parseFloat(paidInput.value || '0');
+const method = methodInput.value;
+
+if (method !== 'efectivo') {
+previewValue.textContent = '0.00';
+return;
 }
 
-function renderCarrito() {
-    let lista = document.getElementById("listaCarrito");
-    lista.innerHTML = "";
-
-    carrito.forEach(item => {
-        lista.innerHTML += `<p>${item.nombre} - $${item.precio}</p>`;
-    });
-
-    document.getElementById("subtotal").innerText = total;
-    document.getElementById("total").innerText = total;
+const cambio = Math.max(paid - total, 0);
+previewValue.textContent = cambio.toFixed(2);
 }
 
-function abrirModal() {
-    document.getElementById("modalPago").style.display = "flex";
+function setQuickTotal(value) {
+totalInput.value = value.toFixed(2);
+if (!paidInput.value) {
+paidInput.value = value.toFixed(2);
+}
+updateCashPreview();
 }
 
-function toggleEfectivo() {
-    let metodo = document.getElementById("metodoPago").value;
-    document.getElementById("efectivoDiv").style.display =
-        metodo === "efectivo" ? "block" : "none";
-}
-
-function procesarPago() {
-    let metodo = document.getElementById("metodoPago").value;
-    let monto = parseFloat(document.getElementById("montoPagado").value) || 0;
-
-    let cambio = 0;
-
-    if (metodo === "efectivo") {
-        cambio = monto - total;
-        document.getElementById("cambio").innerText = cambio;
-    }
-
-    alert("Pago realizado ✅\nCambio: $" + cambio);
-
-    carrito = [];
-    total = 0;
-    renderCarrito();
-    document.getElementById("modalPago").style.display = "none";
-}
+totalInput.addEventListener('input', updateCashPreview);
+paidInput.addEventListener('input', updateCashPreview);
+methodInput.addEventListener('change', updateCashPreview);
+updateCashPreview();
 </script>
-
-<style>
-.pos-container {
-    display: flex;
-    gap: 20px;
-}
-
-/* PRODUCTOS */
-.productos {
-    width: 65%;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-}
-
-.card {
-    background: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.card:hover {
-    transform: scale(1.05);
-}
-
-/* CARRITO */
-.carrito {
-    width: 35%;
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-}
-
-/* BOTONES */
-button {
-    background: purple;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    width: 100%;
-}
-
-/* MODAL */
-.modal {
-    display: none;
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: rgba(0,0,0,0.5);
-    justify-content:center;
-    align-items:center;
-}
-
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-}
-</style>
 
 {% endblock %}

@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -114,6 +115,7 @@ def registro_view(request):
     return render(request, "registro.html")
 
 
+@login_required
 def completar_pendiente(request, id):
     pendiente = get_object_or_404(Pendiente, id=id)
     pendiente.completado = True
@@ -121,6 +123,7 @@ def completar_pendiente(request, id):
     return redirect("dashboard")
 
 
+@login_required
 def eliminar_pendiente(request, id):
     pendiente = get_object_or_404(Pendiente, id=id)
     pendiente.delete()
@@ -172,71 +175,126 @@ def logout_view(request):
     logout(request)
     return redirect("login")
 
+
+@login_required
 def recepcion(request):
-    
-    # GUARDAR CLIENTE
-    if request.method == 'POST' and 'registrar_cliente' in request.POST:
-        nombre = request.POST.get('nombre')
-        telefono = request.POST.get('telefono')
-        email = request.POST.get('email')
-        direccion = request.POST.get('direccion')
+    mensaje = None
 
-        Cliente.objects.create(
-            nombre=nombre,
-            telefono=telefono,
-            email=email,
-            direccion=direccion
-        )
+    if request.method == "POST" and "registrar_cliente" in request.POST:
+        nombre = (request.POST.get("nombre") or "").strip()
+        telefono = (request.POST.get("telefono") or "").strip()
+        email = (request.POST.get("email") or "").strip() or "sin-correo@temporal.local"
 
-        return redirect('recepcion')
+        if nombre and telefono:
+            Cliente.objects.create(
+                nombre=nombre,
+                telefono=telefono,
+                email=email,
+            )
+            return redirect("recepcion")
 
-    # GUARDAR MASCOTA
-    if request.method == 'POST' and 'registrar_mascota' in request.POST:
-        nombre = request.POST.get('nombre_mascota')
-        especie = request.POST.get('especie')
-        raza = request.POST.get('raza')
-        edad = request.POST.get('edad')
-        cliente_id = request.POST.get('cliente')
+        mensaje = "Completa al menos nombre y telefono del cliente."
 
-        Mascota.objects.create(
-            nombre=nombre,
-            especie=especie,
-            raza=raza,
-            edad=edad,
-            cliente_id=cliente_id
-        )
+    if request.method == "POST" and "registrar_mascota" in request.POST:
+        nombre = (request.POST.get("nombre_mascota") or "").strip()
+        especie = (request.POST.get("especie") or "").strip() or "Mascota"
+        raza = (request.POST.get("raza") or "").strip() or "Sin especificar"
+        edad = request.POST.get("edad") or 0
+        cliente_id = request.POST.get("cliente")
 
-        return redirect('recepcion')
+        if nombre and cliente_id:
+            Mascota.objects.create(
+                nombre=nombre,
+                especie=especie,
+                raza=raza,
+                edad=edad,
+                dueno_id=cliente_id,
+            )
+            return redirect("recepcion")
 
-    clientes = Cliente.objects.all()
-    mascotas = Mascota.objects.all()
+        mensaje = "Selecciona un dueno y el nombre de la mascota."
 
-    return render(request, 'recepcion.html', {
-        'clientes': clientes,
-        'mascotas': mascotas
-    })
+    clientes = Cliente.objects.order_by("nombre")
+    mascotas = Mascota.objects.select_related("dueno").order_by("nombre")
+    mascotas_recientes = mascotas.order_by("-id")[:5]
+    clientes_recientes = clientes.order_by("-id")[:5]
 
+    return render(
+        request,
+        "recepcion.html",
+        {
+            "clientes": clientes,
+            "mascotas": mascotas,
+            "mensaje": mensaje,
+            "total_clientes": clientes.count(),
+            "total_mascotas": mascotas.count(),
+            "clientes_recientes": clientes_recientes,
+            "mascotas_recientes": mascotas_recientes,
+        },
+    )
+
+
+@login_required
 def punto_venta(request):
-    if request.method == 'POST':
-        total = float(request.POST.get('total'))
-        metodo = request.POST.get('metodo_pago')
-        monto_pagado = float(request.POST.get('monto_pagado'))
+    mensaje = None
+    error = None
 
-        cambio = 0
+    if request.method == "POST":
+        try:
+            total = Decimal(request.POST.get("total", "0"))
+            metodo = request.POST.get("metodo_pago")
+            monto_pagado = Decimal(request.POST.get("monto_pagado", "0"))
+        except InvalidOperation:
+            total = Decimal("0")
+            metodo = request.POST.get("metodo_pago")
+            monto_pagado = Decimal("0")
+            error = "Ingresa montos validos para procesar la venta."
+        else:
+            cambio = Decimal("0.00")
 
-        if metodo == 'efectivo':
-            cambio = monto_pagado - total if monto_pagado >= total else 0
+            if total <= 0:
+                error = "El total debe ser mayor a cero."
+            elif metodo == "efectivo" and monto_pagado < total:
+                error = "El monto recibido no puede ser menor al total."
+            else:
+                if metodo == "efectivo":
+                    cambio = monto_pagado - total
+                else:
+                    monto_pagado = total
 
-        venta = Venta.objects.create(
-            total=total,
-            metodo_pago=metodo,
-            monto_pagado=monto_pagado,
-            cambio=cambio
-        )
+                Venta.objects.create(
+                    total=total,
+                    metodo_pago=metodo,
+                    monto_pagado=monto_pagado,
+                    cambio=cambio,
+                )
+                mensaje = "Venta registrada con exito."
 
-        return render(request, 'pos.html', {
-            'mensaje': 'Venta realizada con éxito',
-            'cambio': cambio
-        })
+    ventas = Venta.objects.order_by("-fecha")
 
-    return render(request, 'pos.html')
+    try:
+        ventas_recientes = list(ventas[:6])
+        ventas_hoy = list(ventas.filter(fecha__date=now().date()))
+        total_hoy = sum((venta.total for venta in ventas_hoy), Decimal("0.00"))
+        ventas_hoy_count = len(ventas_hoy)
+        ultimo_metodo = ventas_recientes[0].metodo_pago if ventas_recientes else "sin ventas"
+    except InvalidOperation:
+        ventas_recientes = []
+        total_hoy = Decimal("0.00")
+        ventas_hoy_count = 0
+        ultimo_metodo = "datos invalidos"
+        if not error:
+            error = "Hay ventas antiguas con formato invalido. La pagina sigue disponible, pero conviene limpiar esos registros."
+
+    return render(
+        request,
+        "pos.html",
+        {
+            "mensaje": mensaje,
+            "error": error,
+            "ventas_recientes": ventas_recientes,
+            "ventas_hoy_total": total_hoy,
+            "ventas_hoy_count": ventas_hoy_count,
+            "ultimo_metodo": ultimo_metodo,
+        },
+    )
