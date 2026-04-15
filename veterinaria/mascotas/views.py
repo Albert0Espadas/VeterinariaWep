@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth import authenticate, login, logout
@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.timezone import now
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 from .models import Cita, Cliente, Mascota, Pendiente, Venta
 
@@ -18,11 +18,9 @@ def ping(request):
     return JsonResponse({"status": "ok", "message": "VeterinariaWep activa"})
 
 
-@csrf_exempt
+@login_required
+@require_POST
 def crear_cita(request):
-    if request.method != "POST":
-        return JsonResponse({"status": "error", "message": "Metodo no permitido"}, status=405)
-
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
@@ -116,6 +114,7 @@ def registro_view(request):
 
 
 @login_required
+@require_POST
 def completar_pendiente(request, id):
     pendiente = get_object_or_404(Pendiente, id=id)
     pendiente.completado = True
@@ -124,10 +123,30 @@ def completar_pendiente(request, id):
 
 
 @login_required
+@require_POST
 def eliminar_pendiente(request, id):
     pendiente = get_object_or_404(Pendiente, id=id)
     pendiente.delete()
     return redirect("dashboard")
+
+
+def _dashboard_context():
+    pendientes = Pendiente.objects.order_by("-fecha")
+    citas = Cita.objects.select_related("mascota", "mascota__dueno").order_by("fecha")
+    fecha_actual = now()
+    hoy = fecha_actual.date()
+
+    return {
+        "pendientes": pendientes,
+        "citas": citas,
+        "fecha_actual": fecha_actual,
+        "citas_hoy": citas.filter(fecha__date=hoy),
+        "futuras_citas": list(citas.filter(fecha__gte=fecha_actual)[:8]),
+        "pendientes_completados": pendientes.filter(completado=True).count(),
+        "pendientes_pendientes": pendientes.filter(completado=False).count(),
+        "total_mascotas": Mascota.objects.count(),
+        "total_clientes": Cliente.objects.count(),
+    }
 
 
 @login_required
@@ -144,31 +163,7 @@ def dashboard(request):
 
         return redirect("dashboard")
 
-    pendientes = Pendiente.objects.order_by("-fecha")
-    citas = Cita.objects.select_related("mascota", "mascota__dueno").all()
-
-    fecha_actual = now()
-    hoy = fecha_actual.date()
-    citas_hoy = citas.filter(fecha__date=hoy).order_by("fecha")
-    futuras_citas = list(citas.filter(fecha__gte=fecha_actual).order_by("fecha")[:6])
-    pendientes_completados = pendientes.filter(completado=True).count()
-    pendientes_pendientes = pendientes.filter(completado=False).count()
-
-    return render(
-        request,
-        "dashboard.html",
-        {
-            "pendientes": pendientes,
-            "citas": citas,
-            "citas_hoy": citas_hoy,
-            "fecha_actual": fecha_actual,
-            "total_mascotas": Mascota.objects.count(),
-            "total_clientes": Cliente.objects.count(),
-            "pendientes_completados": pendientes_completados,
-            "pendientes_pendientes": pendientes_pendientes,
-            "futuras_citas": futuras_citas,
-        },
-    )
+    return render(request, "dashboard.html", _dashboard_context())
 
 
 def logout_view(request):
@@ -216,8 +211,6 @@ def recepcion(request):
 
     clientes = Cliente.objects.order_by("nombre")
     mascotas = Mascota.objects.select_related("dueno").order_by("nombre")
-    mascotas_recientes = mascotas.order_by("-id")[:5]
-    clientes_recientes = clientes.order_by("-id")[:5]
 
     return render(
         request,
@@ -228,8 +221,8 @@ def recepcion(request):
             "mensaje": mensaje,
             "total_clientes": clientes.count(),
             "total_mascotas": mascotas.count(),
-            "clientes_recientes": clientes_recientes,
-            "mascotas_recientes": mascotas_recientes,
+            "clientes_recientes": clientes.order_by("-id")[:5],
+            "mascotas_recientes": mascotas.order_by("-id")[:5],
         },
     )
 
@@ -298,3 +291,43 @@ def punto_venta(request):
             "ultimo_metodo": ultimo_metodo,
         },
     )
+
+
+@login_required
+def consultas(request):
+    citas = Cita.objects.select_related("mascota", "mascota__dueno").order_by("fecha")
+    fecha_actual = now()
+    hoy = fecha_actual.date()
+    proximas_24h = citas.filter(fecha__gte=fecha_actual, fecha__lte=fecha_actual + timedelta(hours=24))
+    citas_hoy = citas.filter(fecha__date=hoy)
+    mascotas = Mascota.objects.select_related("dueno").order_by("nombre")
+
+    return render(
+        request,
+        "consultas.html",
+        {
+            "fecha_actual": fecha_actual,
+            "citas_hoy": citas_hoy,
+            "proximas_24h": proximas_24h,
+            "mascotas": mascotas[:8],
+            "total_consultas_hoy": citas_hoy.count(),
+            "total_proximas": proximas_24h.count(),
+            "total_pacientes": Mascota.objects.count(),
+        },
+    )
+
+
+@login_required
+def citas(request):
+    context = _dashboard_context()
+    context.update(
+        {
+            "proximas_semanales": Cita.objects.select_related("mascota", "mascota__dueno")
+            .filter(fecha__gte=now(), fecha__lte=now() + timedelta(days=7))
+            .order_by("fecha"),
+            "citas_pasadas": Cita.objects.select_related("mascota", "mascota__dueno")
+            .filter(fecha__lt=now())
+            .order_by("-fecha")[:6],
+        }
+    )
+    return render(request, "citas.html", context)

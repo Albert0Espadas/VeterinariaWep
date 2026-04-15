@@ -1,4 +1,3 @@
-
 {% extends "BaseDashboart.html" %}
 {% load static %}
 
@@ -7,7 +6,7 @@
 <style>
 :root {
 --dashboard-bg: linear-gradient(180deg, #fcfbff 0%, #f6f2ff 52%, #ffffff 100%);
---panel-bg: rgba(255, 255, 255, 0.94);
+--panel-bg: rgba(255, 255, 255, 0.95);
 --panel-border: rgba(123, 74, 226, 0.12);
 --panel-shadow: 0 18px 40px rgba(60, 28, 120, 0.08);
 --panel-shadow-soft: 0 12px 24px rgba(60, 28, 120, 0.06);
@@ -18,8 +17,6 @@
 --purple-100: #f6f0ff;
 --text-main: #25153f;
 --text-soft: #786f8f;
---success-soft: #edf8f2;
---danger-soft: #fff0f2;
 }
 
 .dashboard-shell {
@@ -30,14 +27,20 @@ border: 1px solid rgba(123, 74, 226, 0.08);
 box-shadow: var(--panel-shadow);
 }
 
+.dashboard-hero,
+.metric-card,
+.premium-panel {
+background: var(--panel-bg);
+border: 1px solid var(--panel-border);
+border-radius: 24px;
+box-shadow: var(--panel-shadow-soft);
+}
+
 .dashboard-hero {
+padding: 26px 28px;
 background:
 radial-gradient(circle at top right, rgba(146, 110, 255, 0.24), transparent 32%),
 linear-gradient(135deg, #ffffff 0%, #f5efff 55%, #f8f4ff 100%);
-border: 1px solid var(--panel-border);
-border-radius: 28px;
-padding: 26px 28px;
-box-shadow: var(--panel-shadow-soft);
 }
 
 .eyebrow {
@@ -95,18 +98,9 @@ font-weight: 700;
 margin-bottom: 10px;
 }
 
-.hero-date-card p {
-margin: 0;
-opacity: 0.9;
-}
-
 .metric-card {
 height: 100%;
 padding: 20px 22px;
-border: 1px solid var(--panel-border);
-border-radius: 22px;
-background: var(--panel-bg);
-box-shadow: var(--panel-shadow-soft);
 }
 
 .metric-label {
@@ -126,18 +120,15 @@ color: var(--text-main);
 line-height: 1;
 }
 
-.metric-helper {
-margin-top: 10px;
+.metric-helper,
+.panel-subtitle,
+.appointment-owner,
+.appointment-meta {
 color: var(--text-soft);
-font-size: 0.92rem;
 }
 
 .premium-panel {
 height: 100%;
-border: 1px solid var(--panel-border);
-border-radius: 24px;
-background: var(--panel-bg);
-box-shadow: var(--panel-shadow-soft);
 overflow: hidden;
 }
 
@@ -150,12 +141,6 @@ margin: 0;
 font-size: 1.08rem;
 font-weight: 800;
 color: var(--text-main);
-}
-
-.panel-subtitle {
-margin: 6px 0 0;
-color: var(--text-soft);
-font-size: 0.94rem;
 }
 
 .section-badge {
@@ -171,16 +156,59 @@ font-weight: 700;
 font-size: 0.84rem;
 }
 
-.calendar-panel .premium-panel-body {
-padding-bottom: 12px;
-}
-
 .calendar-frame {
 margin-top: 18px;
-padding: 12px;
-border-radius: 20px;
+padding: 16px;
+border-radius: 22px;
 background: linear-gradient(180deg, #ffffff 0%, #faf7ff 100%);
 border: 1px solid rgba(123, 74, 226, 0.08);
+}
+
+.fc {
+--fc-border-color: rgba(123, 74, 226, 0.12);
+--fc-page-bg-color: transparent;
+--fc-today-bg-color: rgba(123, 74, 226, 0.08);
+}
+
+.fc .fc-toolbar-title {
+font-size: 1.15rem;
+font-weight: 800;
+color: var(--text-main);
+}
+
+.fc .fc-button {
+background: #fff;
+border: 1px solid rgba(123, 74, 226, 0.14);
+color: var(--purple-900);
+border-radius: 12px;
+font-weight: 700;
+box-shadow: none;
+}
+
+.fc .fc-button:hover,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+background: linear-gradient(135deg, #5e35b1 0%, #7b4ae2 100%);
+border-color: transparent;
+color: #fff;
+}
+
+.fc .fc-daygrid-day-number,
+.fc .fc-col-header-cell-cushion {
+color: var(--text-main);
+font-weight: 700;
+text-decoration: none;
+}
+
+.fc .fc-event {
+border: none;
+padding: 4px 6px;
+border-radius: 10px;
+background: linear-gradient(135deg, #5e35b1 0%, #8b5cf6 100%);
+box-shadow: 0 10px 16px rgba(94, 53, 177, 0.18);
+}
+
+.fc .fc-daygrid-event-dot {
+display: none;
 }
 
 .scheduler-panel {
@@ -195,11 +223,6 @@ border-radius: 999px;
 background: #efe7ff;
 color: #5b2ca0;
 font-weight: 700;
-}
-
-.scheduler-helper {
-font-size: 0.95rem;
-color: var(--text-soft);
 }
 
 .scheduler-feedback {
@@ -256,7 +279,8 @@ font-weight: 700;
 }
 
 .future-appointments-list,
-.today-list {
+.today-list,
+.pending-list {
 display: grid;
 gap: 12px;
 }
@@ -271,32 +295,16 @@ padding: 16px 18px;
 box-shadow: 0 8px 18px rgba(60, 28, 120, 0.04);
 }
 
-.future-appointment-item {
-min-height: 96px;
-}
-
 .appointment-name {
 margin-bottom: 4px;
 font-weight: 800;
 color: var(--text-main);
 }
 
-.appointment-owner,
-.appointment-meta {
-margin: 0;
-color: var(--text-soft);
-}
-
 .appointment-time {
 margin-top: 8px;
 font-weight: 700;
 color: var(--purple-700);
-}
-
-.pending-list {
-display: grid;
-gap: 12px;
-margin-top: 18px;
 }
 
 .pending-item {
@@ -306,13 +314,13 @@ justify-content: space-between;
 gap: 14px;
 }
 
-.pending-item s {
-color: var(--text-soft);
-}
-
 .pending-actions {
 display: flex;
 gap: 8px;
+}
+
+.pending-actions form {
+margin: 0;
 }
 
 .pending-actions .btn {
@@ -335,19 +343,77 @@ border: 1px dashed rgba(123, 74, 226, 0.18);
 color: var(--text-soft);
 }
 
-@media (max-width: 991px) {
-.dashboard-shell {
-padding: 18px;
-border-radius: 22px;
+.quick-actions{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:12px;
+margin-top:18px;
 }
 
-.dashboard-hero {
-padding: 20px;
+.quick-action{
+padding:14px 16px;
+border-radius:18px;
+background:rgba(255,255,255,.72);
+border:1px solid rgba(123,74,226,.12);
+text-decoration:none;
+color:var(--text-main);
+transition:.2s ease;
 }
 
-.hero-title {
-font-size: 1.8rem;
+.quick-action:hover{
+transform:translateY(-2px);
+background:linear-gradient(135deg,#5e35b1 0%,#7b4ae2 100%);
+color:#fff;
 }
+
+.quick-action strong{
+display:block;
+font-size:.95rem;
+margin-bottom:4px;
+}
+
+.quick-action span{
+font-size:.85rem;
+opacity:.88;
+}
+
+.calendar-legend{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:14px;
+}
+
+.legend-pill{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 12px;
+border-radius:999px;
+background:#f6f0ff;
+color:#59359e;
+font-size:.86rem;
+font-weight:700;
+}
+
+.legend-dot{
+width:10px;
+height:10px;
+border-radius:999px;
+background:linear-gradient(135deg,#5e35b1 0%,#8b5cf6 100%);
+}
+
+.friendly-tip{
+margin-top:18px;
+padding:14px 16px;
+border-radius:18px;
+background:linear-gradient(135deg,#fff 0%,#f8f3ff 100%);
+border:1px solid rgba(123,74,226,.1);
+color:var(--text-soft);
+}
+
+.friendly-tip strong{
+color:var(--text-main);
 }
 </style>
 
@@ -356,8 +422,14 @@ font-size: 1.8rem;
 <div class="row g-4 align-items-center">
 <div class="col-lg-8">
 <span class="eyebrow">Centro Clinico Veterinario</span>
-<h1 class="hero-title">Panel de control profesional para recepcion, agenda y seguimiento clinico</h1>
-<p class="hero-copy">AQUI VA LO QUE QUIERAN PONER AJJAJAJAJAJ</p>
+<h1 class="hero-title">¿Qué haremos hoy?</h1>
+<p class="hero-copy">Panel de control profesional para recepcion, agenda y seguimiento clinico.</p>
+<div class="quick-actions">
+<a class="quick-action" href="{% url 'recepcion' %}"><strong>Nuevo cliente</strong><span>Registra propietarios y mascotas rapido</span></a>
+<a class="quick-action" href="{% url 'citas' %}"><strong>Ver agenda</strong><span>Abre el modulo completo de citas</span></a>
+<a class="quick-action" href="{% url 'consultas' %}"><strong>Entrar a consultas</strong><span>Consulta agenda clinica del dia</span></a>
+<a class="quick-action" href="{% url 'pos' %}"><strong>Registrar venta</strong><span>Abre la caja con un clic</span></a>
+</div>
 </div>
 <div class="col-lg-4">
 <div class="hero-date-card">
@@ -370,34 +442,10 @@ font-size: 1.8rem;
 </div>
 
 <div class="row g-4 mb-4">
-<div class="col-md-6 col-xl-3">
-<div class="metric-card">
-<div class="metric-label">Citas Hoy</div>
-<p class="metric-value">{{ citas_hoy|length }}</p>
-<div class="metric-helper">Agenda inmediata del dia</div>
-</div>
-</div>
-<div class="col-md-6 col-xl-3">
-<div class="metric-card">
-<div class="metric-label">Pacientes Totales</div>
-<p class="metric-value">{{ total_mascotas }}</p>
-<div class="metric-helper">Mascotas registradas</div>
-</div>
-</div>
-<div class="col-md-6 col-xl-3">
-<div class="metric-card">
-<div class="metric-label">Clientes</div>
-<p class="metric-value">{{ total_clientes }}</p>
-<div class="metric-helper">Propietarios activos</div>
-</div>
-</div>
-<div class="col-md-6 col-xl-3">
-<div class="metric-card">
-<div class="metric-label">Pendientes Activos</div>
-<p class="metric-value">{{ pendientes_pendientes }}</p>
-<div class="metric-helper">{{ pendientes_completados }} completados</div>
-</div>
-</div>
+<div class="col-md-6 col-xl-3"><div class="metric-card"><div class="metric-label">Citas Hoy</div><p class="metric-value">{{ citas_hoy|length }}</p><div class="metric-helper">Agenda inmediata del dia</div></div></div>
+<div class="col-md-6 col-xl-3"><div class="metric-card"><div class="metric-label">Pacientes Totales</div><p class="metric-value">{{ total_mascotas }}</p><div class="metric-helper">Mascotas registradas</div></div></div>
+<div class="col-md-6 col-xl-3"><div class="metric-card"><div class="metric-label">Clientes</div><p class="metric-value">{{ total_clientes }}</p><div class="metric-helper">Propietarios activos</div></div></div>
+<div class="col-md-6 col-xl-3"><div class="metric-card"><div class="metric-label">Pendientes Activos</div><p class="metric-value">{{ pendientes_pendientes }}</p><div class="metric-helper">{{ pendientes_completados }} completados</div></div></div>
 </div>
 
 <script>
@@ -413,17 +461,16 @@ start: "{{ cita.fecha|date:'Y-m-d\\TH:i:s' }}"
 
 <div class="row g-4 align-items-stretch">
 <div class="col-xl-8">
-<div class="premium-panel calendar-panel">
+<div class="premium-panel">
 <div class="premium-panel-body">
 <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
-<div>
-<h5 class="panel-title">Calendario de Citas</h5>
-<p class="panel-subtitle">Vista principal de la operacion diaria y programacion semanal.</p>
-</div>
+<div><h5 class="panel-title">Calendario de Citas</h5><p class="panel-subtitle">Vista principal de la operacion diaria y semanal.</p></div>
 <span class="section-badge">{{ fecha_actual|date:"F Y" }}</span>
 </div>
-<div class="calendar-frame">
-<div id="calendar"></div>
+<div class="calendar-frame"><div id="calendar"></div></div>
+<div class="calendar-legend">
+<span class="legend-pill"><span class="legend-dot"></span>Citas programadas</span>
+<span class="legend-pill">Haz clic en un dia para preparar una nueva cita</span>
 </div>
 </div>
 </div>
@@ -433,45 +480,23 @@ start: "{{ cita.fecha|date:'Y-m-d\\TH:i:s' }}"
 <div class="premium-panel scheduler-panel">
 <div class="premium-panel-body">
 <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
-<div>
-<h5 class="panel-title">Nueva Cita</h5>
-<p class="panel-subtitle">Selecciona una fecha en el calendario y completa el registro clinico.</p>
-</div>
+<div><h5 class="panel-title">Nueva Cita</h5><p class="panel-subtitle">Selecciona una fecha y captura la informacion del paciente.</p></div>
 <span id="selected-date-pill" class="scheduler-date-pill">Sin fecha</span>
 </div>
 
 <div id="scheduler-feedback" class="scheduler-feedback"></div>
+<div class="friendly-tip"><strong>Tip rapido:</strong> usa <strong>Alt + 5</strong> para abrir el modulo completo de citas y <strong>Alt + 2</strong> para registrar pacientes nuevos.</div>
 
 <form id="appointment-form">
 {% csrf_token %}
 <input type="hidden" id="appointment-datetime" name="fecha">
-
-<div class="mb-3">
-<label for="appointment-owner" class="form-label">Dueno</label>
-<input type="text" id="appointment-owner" name="dueno" class="form-control" placeholder="Ej. Carla Gomez">
-</div>
-
-<div class="mb-3">
-<label for="appointment-pet" class="form-label">Mascota</label>
-<input type="text" id="appointment-pet" name="mascota" class="form-control" placeholder="Ej. Milo" required>
-</div>
-
+<div class="mb-3"><label for="appointment-owner" class="form-label">Dueno</label><input type="text" id="appointment-owner" name="dueno" class="form-control" placeholder="Ej. Carla Gomez"></div>
+<div class="mb-3"><label for="appointment-pet" class="form-label">Mascota</label><input type="text" id="appointment-pet" name="mascota" class="form-control" placeholder="Ej. Milo" required></div>
 <div class="row g-3">
-<div class="col-md-6">
-<label for="appointment-date" class="form-label">Fecha</label>
-<input type="date" id="appointment-date" class="form-control" required>
+<div class="col-md-6"><label for="appointment-date" class="form-label">Fecha</label><input type="date" id="appointment-date" class="form-control" required></div>
+<div class="col-md-6"><label for="appointment-time" class="form-label">Hora</label><input type="time" id="appointment-time" class="form-control" value="10:00" required></div>
 </div>
-<div class="col-md-6">
-<label for="appointment-time" class="form-label">Hora</label>
-<input type="time" id="appointment-time" class="form-control" value="10:00" required>
-</div>
-</div>
-
-<div class="mt-3 mb-3">
-<label for="appointment-reason" class="form-label">Motivo</label>
-<textarea id="appointment-reason" name="motivo" class="form-control" rows="3" placeholder="Consulta general, vacuna, revision..." required></textarea>
-</div>
-
+<div class="mt-3 mb-3"><label for="appointment-reason" class="form-label">Motivo</label><textarea id="appointment-reason" name="motivo" class="form-control" rows="3" placeholder="Consulta general, vacuna, revision..." required></textarea></div>
 <div class="d-flex gap-2">
 <button type="submit" id="appointment-submit" class="btn btn-primary">Guardar cita</button>
 <button type="button" id="appointment-reset" class="btn btn-outline-secondary">Limpiar</button>
@@ -485,10 +510,7 @@ start: "{{ cita.fecha|date:'Y-m-d\\TH:i:s' }}"
 <div class="premium-panel">
 <div class="premium-panel-body">
 <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
-<div>
-<h5 class="panel-title">Proximas Citas</h5>
-<p class="panel-subtitle">Seguimiento inmediato de la agenda proxima.</p>
-</div>
+<div><h5 class="panel-title">Proximas Citas</h5><p class="panel-subtitle">Seguimiento inmediato de la agenda proxima.</p></div>
 <span class="section-badge">{{ futuras_citas|length }}</span>
 </div>
 
@@ -514,10 +536,7 @@ start: "{{ cita.fecha|date:'Y-m-d\\TH:i:s' }}"
 <div class="premium-panel">
 <div class="premium-panel-body">
 <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-2">
-<div>
-<h5 class="panel-title">Citas de Hoy</h5>
-<p class="panel-subtitle">Pacientes que requieren atencion durante la jornada.</p>
-</div>
+<div><h5 class="panel-title">Citas de Hoy</h5><p class="panel-subtitle">Pacientes que requieren atencion durante la jornada.</p></div>
 <span class="section-badge">{{ citas_hoy|length }}</span>
 </div>
 
@@ -543,10 +562,7 @@ start: "{{ cita.fecha|date:'Y-m-d\\TH:i:s' }}"
 <div class="premium-panel">
 <div class="premium-panel-body">
 <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
-<div>
-<h5 class="panel-title">Pendientes</h5>
-<p class="panel-subtitle">Control interno de tareas para recepcion y seguimiento administrativo.</p>
-</div>
+<div><h5 class="panel-title">Pendientes</h5><p class="panel-subtitle">Control interno de tareas para recepcion y seguimiento administrativo.</p></div>
 <span class="section-badge">{{ pendientes_pendientes }}</span>
 </div>
 
@@ -563,8 +579,8 @@ start: "{{ cita.fecha|date:'Y-m-d\\TH:i:s' }}"
 <p class="appointment-meta">{{ p.descripcion }}</p>
 </div>
 <div class="pending-actions">
-<a href="{% url 'completar' p.id %}" class="btn btn-success btn-sm">OK</a>
-<a href="{% url 'eliminar' p.id %}" class="btn btn-danger btn-sm">X</a>
+<form method="POST" action="{% url 'completar' p.id %}">{% csrf_token %}<button class="btn btn-success btn-sm" type="submit">OK</button></form>
+<form method="POST" action="{% url 'eliminar' p.id %}">{% csrf_token %}<button class="btn btn-danger btn-sm" type="submit">X</button></form>
 </div>
 </div>
 {% endfor %}
@@ -619,7 +635,6 @@ datetimeInput.value = '';
 datePill.textContent = 'Sin fecha';
 return;
 }
-
 datetimeInput.value = dateInput.value + 'T' + timeInput.value + ':00';
 datePill.textContent = dateInput.value + ' ' + timeInput.value;
 }
@@ -638,14 +653,13 @@ resetButton.addEventListener('click', resetAppointmentForm);
 
 const calendar = new FullCalendar.Calendar(calendarEl, {
 initialView: 'dayGridMonth',
-headerToolbar: {
-left: 'prev,next today',
-center: 'title',
-right: 'dayGridMonth,timeGridWeek,timeGridDay'
-},
+headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
 events: citas,
 eventColor: '#6a0dad',
 eventTextColor: 'white',
+height: 680,
+dayMaxEventRows: 3,
+moreLinkClassNames: 'fc-more-link',
 dateClick: function(info) {
 dateInput.value = info.dateStr;
 syncDateTime();
@@ -657,6 +671,8 @@ form.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
 calendar.render();
 syncDateTime();
+ownerInput.setAttribute('title', 'Dueno de la mascota');
+petInput.setAttribute('title', 'Nombre del paciente');
 
 form.addEventListener('submit', async function(event) {
 event.preventDefault();
@@ -687,16 +703,13 @@ fecha: datetimeInput.value
 });
 
 const result = await response.json();
-
 if (!response.ok) {
 showFeedback(result.message || 'No se pudo guardar la cita.', 'error');
 return;
 }
 
 showFeedback(result.message + ': ' + result.cita.mascota + ' - ' + result.cita.fecha, 'success');
-setTimeout(function() {
-window.location.reload();
-}, 900);
+setTimeout(function() { window.location.reload(); }, 900);
 } catch (error) {
 showFeedback('Ocurrio un error al conectar con el servidor.', 'error');
 } finally {
