@@ -6,6 +6,9 @@ class Cliente(models.Model):
     telefono = models.CharField(max_length=20)
     email = models.EmailField()
 
+    class Meta:
+        db_table = "anavet_clientes"
+
     def __str__(self):
         return self.nombre
 
@@ -18,6 +21,9 @@ class Mascota(models.Model):
 
     dueno = models.ForeignKey(Cliente, on_delete=models.CASCADE)
 
+    class Meta:
+        db_table = "anavet_mascotas"
+
     def __str__(self):
         return self.nombre
 
@@ -26,6 +32,9 @@ class Cita(models.Model):
     mascota = models.ForeignKey(Mascota, on_delete=models.CASCADE)
     fecha = models.DateTimeField()
     motivo = models.CharField(max_length=200)
+
+    class Meta:
+        db_table = "anavet_citas"
 
     def __str__(self):
         return f"{self.mascota.nombre} - {self.fecha}"
@@ -36,6 +45,9 @@ class Pendiente(models.Model):
     descripcion = models.TextField()
     fecha = models.DateTimeField(auto_now_add=True)
     completado = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = "anavet_pendientes"
 
     def __str__(self):
         return self.titulo
@@ -52,6 +64,9 @@ class Venta(models.Model):
     monto_pagado = models.DecimalField(max_digits=10, decimal_places=2)
     cambio = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "anavet_ventas"
 
     def __str__(self):
         return f"Venta #{self.id} - {self.total}"
