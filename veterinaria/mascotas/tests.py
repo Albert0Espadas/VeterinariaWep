@@ -1,10 +1,11 @@
+import json
+
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-import json
 
-from .models import Cita, Cliente, Mascota
+from .models import Cita, Cliente, Mascota, Pendiente, Venta
 
 
 class PingViewTests(TestCase):
@@ -18,9 +19,14 @@ class PingViewTests(TestCase):
         )
 
 
-class DashboardViewTests(TestCase):
+class AuthenticatedViewsMixin(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="demo", password="12345")
+        self.client.login(username="demo", password="12345")
+
+
+class DashboardViewTests(AuthenticatedViewsMixin):
     def test_dashboard_shows_real_metrics_and_future_appointments(self):
-        User.objects.create_user(username="demo", password="12345")
         cliente = Cliente.objects.create(
             nombre="Ana Perez",
             telefono="5551234567",
@@ -44,7 +50,6 @@ class DashboardViewTests(TestCase):
             fecha=timezone.now() + timezone.timedelta(days=1),
         )
 
-        self.client.login(username="demo", password="12345")
         response = self.client.get(reverse("dashboard"))
 
         self.assertEqual(response.status_code, 200)
@@ -52,12 +57,23 @@ class DashboardViewTests(TestCase):
         self.assertContains(response, "Clientes")
         self.assertContains(response, "Pendientes Activos")
         self.assertContains(response, "Proximas Citas")
+        self.assertContains(response, "Nueva Cita")
         self.assertContains(response, "Luna")
-        self.assertContains(response, "Revision")
-        self.assertContains(response, "Nueva cita")
+
+    def test_complete_and_delete_pending_require_post(self):
+        pendiente = Pendiente.objects.create(titulo="Llamar", descripcion="Confirmar cita")
+
+        get_response = self.client.get(reverse("completar", args=[pendiente.id]))
+        self.assertEqual(get_response.status_code, 405)
+
+        post_response = self.client.post(reverse("completar", args=[pendiente.id]))
+        self.assertEqual(post_response.status_code, 302)
+
+        pendiente.refresh_from_db()
+        self.assertTrue(pendiente.completado)
 
 
-class CrearCitaViewTests(TestCase):
+class CrearCitaViewTests(AuthenticatedViewsMixin):
     def test_crear_cita_returns_json_and_creates_related_records(self):
         response = self.client.post(
             reverse("crear_cita"),
@@ -66,7 +82,7 @@ class CrearCitaViewTests(TestCase):
                     "mascota": "Milo",
                     "dueno": "Carla Gomez",
                     "motivo": "Desparasitacion",
-                    "fecha": "2026-03-21T10:30:00",
+                    "fecha": "2026-04-08T10:30:00",
                 }
             ),
             content_type="application/json",
@@ -78,3 +94,74 @@ class CrearCitaViewTests(TestCase):
         self.assertEqual(Cliente.objects.count(), 1)
         self.assertEqual(Cita.objects.first().motivo, "Desparasitacion")
         self.assertEqual(Mascota.objects.first().nombre, "Milo")
+
+
+class RecepcionViewTests(AuthenticatedViewsMixin):
+    def test_recepcion_registers_client(self):
+        response = self.client.post(
+            reverse("recepcion"),
+            {
+                "registrar_cliente": "1",
+                "nombre": "Laura Mendez",
+                "telefono": "5511223344",
+                "email": "laura@example.com",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Cliente.objects.count(), 1)
+        self.assertEqual(Cliente.objects.first().nombre, "Laura Mendez")
+
+    def test_recepcion_registers_pet_with_owner(self):
+        cliente = Cliente.objects.create(
+            nombre="Diego",
+            telefono="5512345678",
+            email="diego@example.com",
+        )
+
+        response = self.client.post(
+            reverse("recepcion"),
+            {
+                "registrar_mascota": "1",
+                "nombre_mascota": "Nina",
+                "especie": "Gato",
+                "raza": "Criollo",
+                "edad": 2,
+                "cliente": cliente.id,
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Mascota.objects.count(), 1)
+        self.assertEqual(Mascota.objects.first().dueno, cliente)
+
+
+class PuntoVentaViewTests(AuthenticatedViewsMixin):
+    def test_pos_registers_cash_sale_and_change(self):
+        response = self.client.post(
+            reverse("pos"),
+            {
+                "total": "250.00",
+                "metodo_pago": "efectivo",
+                "monto_pagado": "300.00",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Venta.objects.count(), 1)
+        self.assertContains(response, "Venta registrada con exito.")
+        self.assertEqual(Venta.objects.first().cambio, 50)
+
+
+class NewModulesViewTests(AuthenticatedViewsMixin):
+    def test_consultas_page_loads(self):
+        response = self.client.get(reverse("consultas"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Area de Consultas")
+
+    def test_citas_page_loads(self):
+        response = self.client.get(reverse("citas"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Modulo de Citas")

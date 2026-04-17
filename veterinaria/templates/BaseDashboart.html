@@ -3,20 +3,20 @@
 <html>
 <head>
 
-<title>Veterinaria Aviles </title>
+<title>AnaVet</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 <style>
-
 body{
 background:#f6f6fb;
+color:#24153f;
 }
 
 .sidebar{
-height:100vh;
-background:white;
+min-height:100vh;
+background:linear-gradient(180deg, #ffffff 0%, #f7f1ff 100%);
 border-right:1px solid #eee;
 padding-top:20px;
 }
@@ -25,13 +25,12 @@ padding-top:20px;
 display:block;
 padding:12px 20px;
 margin:6px 10px;
-border-radius:10px;
+border-radius:14px;
 text-decoration:none;
 color:#6a0dad;
-font-weight:500;
+font-weight:600;
 transition:0.3s;
 }
-
 
 .sidebar a:hover{
 background:#6a0dad;
@@ -42,8 +41,6 @@ color:white;
 background:#6a0dad;
 color:white;
 }
-
-
 
 .logo{
 font-weight:bold;
@@ -56,6 +53,84 @@ margin-bottom:20px;
 padding:30px;
 }
 
+.section-title{
+padding:10px 20px 4px 20px;
+font-size:12px;
+font-weight:700;
+text-transform:uppercase;
+letter-spacing:0.08em;
+color:#9d8db9;
+}
+
+.top-shortcuts{
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+margin-bottom:18px;
+}
+
+.shortcut-chip{
+display:inline-flex;
+align-items:center;
+gap:10px;
+padding:10px 14px;
+border-radius:16px;
+border:1px solid rgba(106,13,173,.12);
+background:rgba(255,255,255,.92);
+text-decoration:none;
+color:#3b1c78;
+font-weight:700;
+box-shadow:0 10px 18px rgba(60,28,120,.05);
+transition:.2s ease;
+}
+
+.shortcut-chip:hover{
+transform:translateY(-2px);
+background:linear-gradient(135deg,#5e35b1 0%,#7b4ae2 100%);
+color:#fff;
+}
+
+.shortcut-key{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+min-width:32px;
+height:32px;
+padding:0 8px;
+border-radius:10px;
+background:#f5efff;
+color:#5e35b1;
+font-size:.82rem;
+font-weight:800;
+}
+
+.shortcut-chip:hover .shortcut-key{
+background:rgba(255,255,255,.18);
+color:#fff;
+}
+
+.helper-banner{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:14px;
+flex-wrap:wrap;
+padding:14px 16px;
+border-radius:18px;
+background:linear-gradient(135deg,#ffffff 0%,#f7f1ff 100%);
+border:1px solid rgba(106,13,173,.1);
+margin-bottom:18px;
+}
+
+.helper-banner p{
+margin:0;
+color:#7a6d96;
+font-size:.94rem;
+}
+
+.helper-banner strong{
+color:#28164d;
+}
 </style>
 
 </head>
@@ -63,50 +138,70 @@ padding:30px;
 <body>
 
 <div class="container-fluid">
-
 <div class="row">
 
-<!-- SIDEBAR -->
-
 <div class="col-md-2 sidebar">
-
 <div class="logo">
-Veterinaria Aviles
+Veterinaria AnaVet
 <br>
 <small class="text-muted">Sistema Veterinario</small>
 </div>
 
-<a href="{% url 'dashboard' %}" class="active">Dashboard</a>
-<a href="{% url 'recepcion' %}" class="active">Recepción</a>
-<a href="{% url 'pos' %}" class="active">point of shoping </a>
-<a href="#">Consultas</a>
-<a href="#">Citas</a>
+<div class="section-title">Principal</div>
+<a href="{% url 'dashboard' %}" class="{% if request.path == '/dashboard/' %}active{% endif %}">Dashboard</a>
+<a href="{% url 'recepcion' %}" class="{% if request.path == '/recepcion/' %}active{% endif %}">Recepcion</a>
+<a href="{% url 'pos' %}" class="{% if request.path == '/pos/' %}active{% endif %}">Punto de Venta</a>
 
+<div class="section-title">Modulos</div>
+<a href="{% url 'consultas' %}" class="{% if request.path == '/consultas/' %}active{% endif %}">Consultas</a>
+<a href="{% url 'citas' %}" class="{% if request.path == '/citas/' %}active{% endif %}">Citas</a>
 </div>
 
-<!-- CONTENIDO -->
-
 <div class="col-md-10 content">
-
 <div class="d-flex justify-content-end mb-3">
+Usuario: <strong>{{ request.user.username }}</strong>
+<a href="{% url 'logout' %}" class="btn btn-sm btn-danger ms-2">Cerrar sesion</a>
+</div>
 
-    Usuario: <strong>{{ request.user.username }}</strong>
-
-    <a href="{% url 'logout' %}" class="btn btn-sm btn-danger ms-2">
-        Cerrar sesión
-    </a>
-
+<div class="helper-banner">
+<p><strong>Atajos disponibles:</strong> usa los botones rapidos o presiona <strong>Alt + 1..5</strong> para navegar entre areas.</p>
+<div class="top-shortcuts">
+<a class="shortcut-chip" href="{% url 'dashboard' %}"><span class="shortcut-key">Alt+1</span><span>Inicio</span></a>
+<a class="shortcut-chip" href="{% url 'recepcion' %}"><span class="shortcut-key">Alt+2</span><span>Recepcion</span></a>
+<a class="shortcut-chip" href="{% url 'pos' %}"><span class="shortcut-key">Alt+3</span><span>Ventas</span></a>
+<a class="shortcut-chip" href="{% url 'consultas' %}"><span class="shortcut-key">Alt+4</span><span>Consultas</span></a>
+<a class="shortcut-chip" href="{% url 'citas' %}"><span class="shortcut-key">Alt+5</span><span>Citas</span></a>
+</div>
 </div>
 
 {% block content %}
-
 {% endblock %}
 
 </div>
 
 </div>
-
 </div>
+
+<script>
+document.addEventListener('keydown', function(event) {
+if (!event.altKey) return;
+const tag = document.activeElement && document.activeElement.tagName;
+if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+const routes = {
+'1': "{% url 'dashboard' %}",
+'2': "{% url 'recepcion' %}",
+'3': "{% url 'pos' %}",
+'4': "{% url 'consultas' %}",
+'5': "{% url 'citas' %}"
+};
+
+if (routes[event.key]) {
+event.preventDefault();
+window.location.href = routes[event.key];
+}
+});
+</script>
 
 </body>
 </html>

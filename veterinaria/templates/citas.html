@@ -1,0 +1,203 @@
+{% extends "BaseDashboart.html" %}
+
+{% block content %}
+<style>
+.citas-shell{background:linear-gradient(180deg,#fcfbff 0%,#f7f2ff 100%);border:1px solid rgba(108,43,217,.08);border-radius:28px;padding:28px;box-shadow:0 18px 42px rgba(58,29,112,.07)}
+.citas-hero,.citas-panel,.citas-metric{background:rgba(255,255,255,.96);border:1px solid rgba(108,43,217,.12);border-radius:24px;box-shadow:0 12px 24px rgba(58,29,112,.05)}
+.citas-hero{padding:24px 26px;margin-bottom:22px;background:radial-gradient(circle at top right, rgba(144,105,255,.18), transparent 30%),linear-gradient(135deg,#fff 0%,#f7f1ff 100%)}
+.citas-title{font-size:2rem;font-weight:800;color:#29144a;margin-bottom:8px}
+.citas-copy,.panel-copy,.item-meta{color:#776d90}
+.citas-metric{padding:18px 20px;height:100%}
+.metric-label{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:#7b6b9f}
+.metric-value{font-size:2rem;font-weight:800;color:#2d1652;margin:8px 0 0}
+.citas-panel{padding:22px;height:100%}
+.panel-title{font-size:1.08rem;font-weight:800;color:#2d1652;margin-bottom:6px}
+.calendar-frame{margin-top:18px;padding:16px;border-radius:22px;background:linear-gradient(180deg,#fff 0%,#faf7ff 100%);border:1px solid rgba(123,74,226,.08)}
+.fc{--fc-border-color:rgba(123,74,226,.12);--fc-page-bg-color:transparent;--fc-today-bg-color:rgba(123,74,226,.08)}
+.fc .fc-toolbar-title{font-size:1.15rem;font-weight:800;color:#25153f}
+.fc .fc-button{background:#fff;border:1px solid rgba(123,74,226,.14);color:#3b1c78;border-radius:12px;font-weight:700;box-shadow:none}
+.fc .fc-button:hover,.fc .fc-button-primary:not(:disabled).fc-button-active{background:linear-gradient(135deg,#5e35b1 0%,#7b4ae2 100%);border-color:transparent;color:#fff}
+.fc .fc-event{border:none;padding:4px 6px;border-radius:10px;background:linear-gradient(135deg,#5e35b1 0%,#8b5cf6 100%);box-shadow:0 10px 16px rgba(94,53,177,.18)}
+.scheduler-feedback{display:none;border-radius:14px;padding:12px 14px;margin-bottom:16px}
+.scheduler-feedback.is-visible{display:block}
+.scheduler-feedback.is-success{background:#eafaf1;color:#146c43;border:1px solid #badbcc}
+.scheduler-feedback.is-error{background:#fdeaea;color:#b02a37;border:1px solid #f1b0b7}
+.form-label{font-weight:700;color:#2d1652}.form-control{border-radius:14px;border-color:rgba(108,43,217,.16);padding:11px 14px}
+.form-control:focus{border-color:rgba(108,43,217,.5);box-shadow:0 0 0 .25rem rgba(108,43,217,.12)}
+.btn-premium{background:linear-gradient(135deg,#5f31b0 0%,#7c4de3 100%);border:none;color:#fff;padding:12px 18px;border-radius:14px;font-weight:700}
+.list-grid{display:grid;gap:12px}
+.list-item{padding:16px 18px;border-radius:18px;border:1px solid rgba(108,43,217,.1);background:linear-gradient(180deg,#fff 0%,#fbf9ff 100%)}
+.item-title{font-weight:800;color:#2d1652;margin-bottom:4px}.item-time{margin-top:8px;color:#5e35b1;font-weight:700}.empty-state{padding:18px;border-radius:18px;background:#faf7ff;border:1px dashed rgba(108,43,217,.18);color:#7b6b9f;text-align:center}
+.citas-shortcuts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.shortcut-card{padding:14px 16px;border-radius:18px;background:linear-gradient(180deg,#fff 0%,#fbf9ff 100%);border:1px solid rgba(108,43,217,.12);text-decoration:none;color:#2d1652;transition:.2s ease}
+.shortcut-card:hover{transform:translateY(-2px);background:linear-gradient(135deg,#5f31b0 0%,#7c4de3 100%);color:#fff}
+.shortcut-card strong{display:block;margin-bottom:4px}
+.micro-tip{margin-bottom:16px;padding:12px 14px;border-radius:14px;background:#f6f0ff;border:1px solid rgba(108,43,217,.12);color:#6d5b92}
+</style>
+
+<div class="citas-shell">
+<div class="citas-hero">
+<h1 class="citas-title">Modulo de Citas</h1>
+<p class="citas-copy">Gestion centralizada para programar, visualizar y seguir la agenda clinica con un calendario mas elegante y legible.</p>
+<div class="citas-shortcuts">
+<a class="shortcut-card" href="{% url 'dashboard' %}"><strong>Volver al panel</strong><span>Resumen general del sistema</span></a>
+<a class="shortcut-card" href="{% url 'consultas' %}"><strong>Ir a consultas</strong><span>Vista clinica del dia</span></a>
+<a class="shortcut-card" href="{% url 'recepcion' %}"><strong>Registrar paciente</strong><span>Alta rapida de dueno y mascota</span></a>
+</div>
+</div>
+
+<div class="row g-4 mb-4">
+<div class="col-md-4"><div class="citas-metric"><div class="metric-label">Citas Hoy</div><div class="metric-value">{{ citas_hoy|length }}</div></div></div>
+<div class="col-md-4"><div class="citas-metric"><div class="metric-label">Siguientes 7 Dias</div><div class="metric-value">{{ proximas_semanales|length }}</div></div></div>
+<div class="col-md-4"><div class="citas-metric"><div class="metric-label">Historial Reciente</div><div class="metric-value">{{ citas_pasadas|length }}</div></div></div>
+</div>
+
+<script>
+let citas = [
+{% for cita in citas %}
+{ title: "{{ cita.mascota.nombre|escapejs }} - {{ cita.motivo|escapejs }}", start: "{{ cita.fecha|date:'Y-m-d\\TH:i:s' }}" }{% if not forloop.last %},{% endif %}
+{% endfor %}
+];
+</script>
+
+<div class="row g-4">
+<div class="col-xl-8">
+<div class="citas-panel">
+<h3 class="panel-title">Calendario General</h3>
+<p class="panel-copy">Agenda visual con mejor contraste para operacion diaria y semanal.</p>
+<div class="calendar-frame"><div id="calendar"></div></div>
+</div>
+</div>
+
+<div class="col-xl-4">
+<div class="citas-panel">
+<h3 class="panel-title">Agendar Nueva Cita</h3>
+<p class="panel-copy">Formulario protegido con sesion activa y CSRF para registrar citas nuevas.</p>
+<div id="scheduler-feedback" class="scheduler-feedback"></div>
+<div class="micro-tip">Atajo: presiona <strong>Alt + 2</strong> para ir a recepcion o haz clic en una fecha del calendario para precargarla.</div>
+<form id="appointment-form">
+{% csrf_token %}
+<input type="hidden" id="appointment-datetime" name="fecha">
+<div class="mb-3"><label class="form-label" for="appointment-owner">Dueno</label><input class="form-control" id="appointment-owner" type="text" placeholder="Ej. Andrea Salinas"></div>
+<div class="mb-3"><label class="form-label" for="appointment-pet">Mascota</label><input class="form-control" id="appointment-pet" type="text" placeholder="Ej. Nala" required></div>
+<div class="row g-3">
+<div class="col-md-6"><label class="form-label" for="appointment-date">Fecha</label><input class="form-control" id="appointment-date" type="date" required></div>
+<div class="col-md-6"><label class="form-label" for="appointment-time">Hora</label><input class="form-control" id="appointment-time" type="time" value="10:00" required></div>
+</div>
+<div class="mt-3 mb-3"><label class="form-label" for="appointment-reason">Motivo</label><textarea class="form-control" id="appointment-reason" rows="3" placeholder="Consulta general, vacuna, seguimiento..." required></textarea></div>
+<button class="btn-premium w-100" id="appointment-submit" type="submit">Guardar cita</button>
+</form>
+</div>
+</div>
+
+<div class="col-lg-6">
+<div class="citas-panel">
+<h3 class="panel-title">Proximas Citas Semanales</h3>
+<p class="panel-copy">Bloque operativo para recepcion y seguimiento.</p>
+{% if proximas_semanales %}
+<div class="list-grid">
+{% for cita in proximas_semanales %}
+<div class="list-item">
+<div class="item-title">{{ cita.mascota.nombre }} - {{ cita.mascota.dueno.nombre }}</div>
+<p class="item-meta">{{ cita.motivo }}</p>
+<div class="item-time">{{ cita.fecha|date:"d/m/Y H:i" }}</div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state">No hay citas programadas para los proximos siete dias.</div>
+{% endif %}
+</div>
+</div>
+
+<div class="col-lg-6">
+<div class="citas-panel">
+<h3 class="panel-title">Historial Reciente</h3>
+<p class="panel-copy">Ultimas citas registradas en el sistema.</p>
+{% if citas_pasadas %}
+<div class="list-grid">
+{% for cita in citas_pasadas %}
+<div class="list-item">
+<div class="item-title">{{ cita.mascota.nombre }} - {{ cita.mascota.dueno.nombre }}</div>
+<p class="item-meta">{{ cita.motivo }}</p>
+<div class="item-time">{{ cita.fecha|date:"d/m/Y H:i" }}</div>
+</div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state">No hay historial reciente para mostrar.</div>
+{% endif %}
+</div>
+</div>
+</div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+initialView: 'timeGridWeek',
+headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+events: citas,
+height: 760,
+eventColor: '#6a0dad',
+eventTextColor: 'white',
+dayMaxEventRows: 3,
+dateClick: function(info) {
+document.getElementById('appointment-date').value = info.dateStr;
+}
+});
+calendar.render();
+
+const feedback = document.getElementById('scheduler-feedback');
+const submitButton = document.getElementById('appointment-submit');
+
+function showFeedback(message, type) {
+feedback.textContent = message;
+feedback.className = 'scheduler-feedback is-visible ' + (type === 'success' ? 'is-success' : 'is-error');
+}
+
+document.getElementById('appointment-form').addEventListener('submit', async function(event) {
+event.preventDefault();
+const date = document.getElementById('appointment-date').value;
+const time = document.getElementById('appointment-time').value;
+const datetime = date && time ? `${date}T${time}:00` : '';
+
+if (!datetime) {
+showFeedback('Selecciona fecha y hora para la cita.', 'error');
+return;
+}
+
+submitButton.disabled = true;
+submitButton.textContent = 'Guardando...';
+
+try {
+const response = await fetch('/crear-cita/', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json',
+'X-CSRFToken': '{{ csrf_token }}'
+},
+body: JSON.stringify({
+dueno: document.getElementById('appointment-owner').value,
+mascota: document.getElementById('appointment-pet').value,
+motivo: document.getElementById('appointment-reason').value,
+fecha: datetime
+})
+});
+const result = await response.json();
+if (!response.ok) {
+showFeedback(result.message || 'No se pudo guardar la cita.', 'error');
+return;
+}
+showFeedback(result.message, 'success');
+setTimeout(function() { window.location.reload(); }, 900);
+} catch (error) {
+showFeedback('Ocurrio un error al conectar con el servidor.', 'error');
+} finally {
+submitButton.disabled = false;
+submitButton.textContent = 'Guardar cita';
+}
+});
+});
+</script>
+{% endblock %}
