@@ -41,6 +41,14 @@ background-color:#c915bd;
 
 <h3 class="text-center mb-4">Registro</h3>
 
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-danger">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
 <form method="POST">
 
 {% csrf_token %}
@@ -52,13 +60,34 @@ background-color:#c915bd;
 
 <div class="mb-3">
 <label>Contraseña</label>
-<input type="password" name="password" class="form-control" required>
+
+<div style="position: relative;">
+    <input type="password" id="password" name="password" class="form-control" required style="padding-right: 40px;">
+    
+    <span onclick="togglePassword('password')" 
+          style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+        👁️
+    </span>
+</div>
+
+<small id="errorPassword" style="color:red;"></small>
 </div>
 
 <div class="mb-3">
 <label>Confirmar contraseña</label>
-<input type="password" name="password2" class="form-control" required>
+
+<div style="position: relative;">
+    <input type="password" id="password2" name="password2" class="form-control" required style="padding-right: 40px;">
+    
+    <span onclick="togglePassword('password2')" 
+          style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+        👁️
+    </span>
 </div>
+
+<small id="errorPassword2" style="color:red;"></small>
+</div>
+
 
 <button class="btn btn-register w-100">
 Registrarse
@@ -87,5 +116,43 @@ Volver a Iniciar Sesión
 </div>
 
 </div>
+
+<script>
+// Mostrar / ocultar contraseña
+function togglePassword(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
+}
+
+// Validación en tiempo real
+const password = document.getElementById("password");
+const password2 = document.getElementById("password2");
+const error = document.getElementById("errorPassword");
+const error2 = document.getElementById("errorPassword2");
+
+password.addEventListener("input", function() {
+    const value = password.value;
+
+    const tieneMayuscula = /[A-Z]/.test(value);
+    const tieneMinuscula = /[a-z]/.test(value);
+    const tieneNumero = /\d/.test(value);
+    const tieneLongitud = value.length >= 8;
+
+    if (!tieneMayuscula || !tieneMinuscula || !tieneNumero || !tieneLongitud) {
+        error.textContent = "Debe tener mayúscula, minúscula y número y 8 caracteres ";
+    } else {
+        error.textContent = "";
+    }
+});
+
+// Verificar que coincidan
+password2.addEventListener("input", function() {
+    if (password.value !== password2.value) {
+        error2.textContent = "Las contraseñas no coinciden";
+    } else {
+        error2.textContent = "";
+    }
+});
+</script>
 
 {% endblock %}

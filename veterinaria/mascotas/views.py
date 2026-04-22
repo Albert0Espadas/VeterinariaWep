@@ -10,9 +10,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.timezone import now
 from django.views.decorators.http import require_POST
+from django.contrib import messages
 
 from .models import Cita, Cliente, Mascota, Pendiente, Venta
-
+import re
 
 def ping(request):
     return JsonResponse({"status": "ok", "message": "VeterinariaWep activa"})
@@ -104,13 +105,37 @@ def login_view(request):
 
 def registro_view(request):
     if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
+        username = request.POST['username']
+        password = request.POST['password']
+        password2 = request.POST['password2']
 
-        User.objects.create_user(username=username, password=password)
-        return redirect("login")
+        # Verificar que coincidan
+        if password != password2:
+            messages.error(request, "Las contraseñas no coinciden")
+            return redirect('registro')
 
-    return render(request, "registro.html")
+        # 🔐 Validar formato (mayúscula, minúscula y número)
+        if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$', password):
+            messages.error(request, "La contraseña debe tener mayúscula, minúscula y número y 8 caracteres ")
+            return redirect('registro')
+
+        # (Opcional pero PRO) mínimo 8 caracteres
+        if len(password) < 8:
+            messages.error(request, "La contraseña debe tener al menos 8 caracteres")
+            return redirect('registro')
+        
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "El usuario ya existe")
+            return redirect('registro')       
+         
+        # Crear usuario
+        user = User.objects.create_user(username=username, password=password)
+        user.save()
+
+        return redirect('login')
+
+    return render(request, 'Registro.html')
 
 
 @login_required
