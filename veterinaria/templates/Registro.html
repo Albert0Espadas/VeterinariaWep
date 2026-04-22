@@ -139,7 +139,7 @@ password.addEventListener("input", function() {
     const tieneLongitud = value.length >= 8;
 
     if (!tieneMayuscula || !tieneMinuscula || !tieneNumero || !tieneLongitud) {
-        error.textContent = "Debe tener mayúscula, minúscula y número y 8 caracteres ";
+        error.textContent = "Debe tener mayúscula, minúscula, números y minimo 8 caracteres ";
     } else {
         error.textContent = "";
     }
