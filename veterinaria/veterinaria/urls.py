@@ -17,4 +17,8 @@ urlpatterns = [
     path("crear-cita/", views.crear_cita, name="crear_cita"),
     path("completar/<int:id>/", views.completar_pendiente, name="completar"),
     path("eliminar/<int:id>/", views.eliminar_pendiente, name="eliminar"),
+    path("cliente/<int:id>/eliminar/", views.eliminar_cliente, name="eliminar_cliente"),
+    path("cliente/<int:id>/editar/", views.editar_cliente, name="editar_cliente"),
+    path("mascota/<int:id>/eliminar/", views.eliminar_mascota, name="eliminar_mascota"),
+    path("mascota/<int:id>/editar/", views.editar_mascota, name="editar_mascota"),
 ]

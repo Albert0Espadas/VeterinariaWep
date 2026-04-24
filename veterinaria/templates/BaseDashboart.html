@@ -2,206 +2,199 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <title>AnaVet</title>
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 <style>
-body{
-background:#f6f6fb;
-color:#24153f;
+:root {
+  --v: #5b2fa0; --v2: #7c3aed; --v3: #a78bfa;
+  --v-bg: #f5f0ff; --v-sidebar: #3d1a78;
+  --sidebar-w: 220px;
+  --text: #1a1033; --muted: #7a6f90;
+  --card-br: 14px;
+  --card-border: 1px solid rgba(91,47,160,.1);
+  --card-shadow: 0 2px 12px rgba(91,47,160,.07);
 }
-
-.sidebar{
-min-height:100vh;
-background:linear-gradient(180deg, #ffffff 0%, #f7f1ff 100%);
-border-right:1px solid #eee;
-padding-top:20px;
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: #f4f1fb; color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; }
+.av-layout { display: flex; min-height: 100vh; }
+.av-sidebar {
+  width: var(--sidebar-w); min-height: 100vh; background: var(--v-sidebar);
+  display: flex; flex-direction: column; flex-shrink: 0;
+  position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
 }
-
-.sidebar a{
-display:block;
-padding:12px 20px;
-margin:6px 10px;
-border-radius:14px;
-text-decoration:none;
-color:#6a0dad;
-font-weight:600;
-transition:0.3s;
+.av-sidebar-logo {
+  padding: 22px 20px 16px; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
 }
-
-.sidebar a:hover{
-background:#6a0dad;
-color:white;
+.av-sidebar-logo .logo-icon {
+  width: 38px; height: 38px; background: rgba(255,255,255,.15);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;
 }
-
-.sidebar .active{
-background:#6a0dad;
-color:white;
+.av-sidebar-logo-text .brand { font-size: 15px; font-weight: 700; color: #fff; line-height: 1.2; }
+.av-sidebar-logo-text .sub   { font-size: 11px; color: rgba(255,255,255,.5); }
+.av-nav-section {
+  padding: 18px 14px 4px; font-size: 10px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.4);
 }
-
-.logo{
-font-weight:bold;
-font-size:20px;
-margin-left:15px;
-margin-bottom:20px;
+.av-nav-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; margin: 2px 8px; border-radius: 10px;
+  text-decoration: none; color: rgba(255,255,255,.7);
+  font-size: 14px; font-weight: 500; transition: .2s;
 }
-
-.content{
-padding:30px;
+.av-nav-link:hover  { background: rgba(255,255,255,.1); color: #fff; }
+.av-nav-link.active { background: rgba(255,255,255,.18); color: #fff; font-weight: 600; }
+.av-nav-link .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.av-sidebar-footer { margin-top: auto; padding: 14px; border-top: 1px solid rgba(255,255,255,.1); }
+.av-user-card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px; border-radius: 10px; background: rgba(255,255,255,.08);
 }
-
-.section-title{
-padding:10px 20px 4px 20px;
-font-size:12px;
-font-weight:700;
-text-transform:uppercase;
-letter-spacing:0.08em;
-color:#9d8db9;
+.av-user-avatar {
+  width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: #fff; font-weight: 700; flex-shrink: 0;
 }
-
-.top-shortcuts{
-display:flex;
-gap:12px;
-flex-wrap:wrap;
-margin-bottom:18px;
+.av-user-name { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.2; }
+.av-user-role { font-size: 11px; color: rgba(255,255,255,.5); }
+.av-user-dot  { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
+.av-logout-link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; margin-top: 6px; border-radius: 10px;
+  text-decoration: none; color: rgba(255,255,255,.6); font-size: 13px; font-weight: 500; transition: .15s;
 }
-
-.shortcut-chip{
-display:inline-flex;
-align-items:center;
-gap:10px;
-padding:10px 14px;
-border-radius:16px;
-border:1px solid rgba(106,13,173,.12);
-background:rgba(255,255,255,.92);
-text-decoration:none;
-color:#3b1c78;
-font-weight:700;
-box-shadow:0 10px 18px rgba(60,28,120,.05);
-transition:.2s ease;
+.av-logout-link:hover { background: rgba(255,0,0,.12); color: #ff8080; }
+.av-main { margin-left: var(--sidebar-w); flex: 1; padding: 24px 26px; min-width: 0; }
+.av-card { background: #fff; border-radius: var(--card-br); border: var(--card-border); box-shadow: var(--card-shadow); overflow: hidden; }
+.av-card-head { padding: 16px 20px 12px; border-bottom: 1px solid rgba(91,47,160,.07); }
+.av-card-title { font-size: 15px; font-weight: 700; color: var(--text); margin: 0; }
+.av-card-sub   { font-size: 12px; color: var(--muted); margin: 2px 0 0; }
+.av-card-body  { padding: 16px 20px; }
+.av-btn-purple {
+  display: block; text-align: center; background: var(--v2); color: #fff;
+  border-radius: 10px; padding: 10px; font-size: 13px; font-weight: 600;
+  text-decoration: none; margin-top: 14px; transition: .2s; border: none; width: 100%; cursor: pointer;
 }
-
-.shortcut-chip:hover{
-transform:translateY(-2px);
-background:linear-gradient(135deg,#5e35b1 0%,#7b4ae2 100%);
-color:#fff;
+.av-btn-purple:hover { background: var(--v); color: #fff; }
+.av-btn-purple-sm {
+  display: inline-block; background: var(--v2); color: #fff;
+  border-radius: 10px; padding: 9px 20px; font-size: 13px; font-weight: 600;
+  text-decoration: none; margin-top: 14px; transition: .2s;
 }
-
-.shortcut-key{
-display:inline-flex;
-align-items:center;
-justify-content:center;
-min-width:32px;
-height:32px;
-padding:0 8px;
-border-radius:10px;
-background:#f5efff;
-color:#5e35b1;
-font-size:.82rem;
-font-weight:800;
+.av-btn-purple-sm:hover { background: var(--v); color: #fff; }
+.av-shortcuts { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+.av-sc {
+  display: flex; align-items: center; gap: 8px;
+  background: #fff; border: var(--card-border); border-radius: 12px;
+  padding: 10px 16px; text-decoration: none; color: var(--text);
+  font-size: 13px; font-weight: 600; transition: .2s;
+  flex: 1; min-width: 100px; box-shadow: var(--card-shadow);
 }
-
-.shortcut-chip:hover .shortcut-key{
-background:rgba(255,255,255,.18);
-color:#fff;
+.av-sc:hover { background: var(--v2); color: #fff; transform: translateY(-1px); }
+.av-sc:hover .av-sc-icon { background: rgba(255,255,255,.2); color: #fff; }
+.av-sc-icon {
+  width: 34px; height: 34px; background: var(--v-bg); border-radius: 9px;
+  display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
 }
-
-.helper-banner{
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:14px;
-flex-wrap:wrap;
-padding:14px 16px;
-border-radius:18px;
-background:linear-gradient(135deg,#ffffff 0%,#f7f1ff 100%);
-border:1px solid rgba(106,13,173,.1);
-margin-bottom:18px;
+.av-sc-key { font-size: 10px; color: var(--muted); font-weight: 500; margin-top: 1px; }
+@media (max-width: 900px) {
+  .av-sidebar { width: 60px; }
+  .av-sidebar-logo-text, .av-nav-section,
+  .av-nav-link span:not(.nav-icon), .av-user-name, .av-user-role,
+  .av-user-dot, .av-logout-link span:last-child { display: none; }
+  .av-main { margin-left: 60px; padding: 16px; }
+  .av-shortcuts { display: none; }
 }
-
-.helper-banner p{
-margin:0;
-color:#7a6d96;
-font-size:.94rem;
-}
-
-.helper-banner strong{
-color:#28164d;
-}
+@media (max-width: 600px) { .av-main { padding: 12px; } }
 </style>
-
+{% block extra_head %}{% endblock %}
 </head>
-
 <body>
+<div class="av-layout">
 
-<div class="container-fluid">
-<div class="row">
+  <aside class="av-sidebar">
+    <div class="av-sidebar-logo">
+      <div class="logo-icon">🐾</div>
+      <div class="av-sidebar-logo-text">
+        <div class="brand">Veterinaria AnaVet</div>
+        <div class="sub">Sistema Veterinario</div>
+      </div>
+    </div>
+    <div class="av-nav-section">Principal</div>
+    <a href="{% url 'dashboard' %}" class="av-nav-link {% if request.path == '/dashboard/' %}active{% endif %}">
+      <span class="nav-icon">📊</span><span>Dashboard</span>
+    </a>
+    <a href="{% url 'recepcion' %}" class="av-nav-link {% if request.path == '/recepcion/' %}active{% endif %}">
+      <span class="nav-icon">🏥</span><span>Recepcion</span>
+    </a>
+    <a href="{% url 'pos' %}" class="av-nav-link {% if request.path == '/pos/' %}active{% endif %}">
+      <span class="nav-icon">🛒</span><span>Punto de Venta</span>
+    </a>
+    <div class="av-nav-section">Módulos</div>
+    <a href="{% url 'consultas' %}" class="av-nav-link {% if request.path == '/consultas/' %}active{% endif %}">
+      <span class="nav-icon">🩺</span><span>Consultas</span>
+    </a>
+    <a href="{% url 'citas' %}" class="av-nav-link {% if request.path == '/citas/' %}active{% endif %}">
+      <span class="nav-icon">📅</span><span>Citas</span>
+    </a>
+    <div class="av-sidebar-footer">
+      <div class="av-user-card">
+        <div class="av-user-avatar">{{ request.user.username|first|upper }}</div>
+        <div style="flex:1;min-width:0">
+          <div class="av-user-name">{{ request.user.username }}</div>
+          <div class="av-user-role">Administrador</div>
+        </div>
+        <div class="av-user-dot"></div>
+      </div>
+      <a href="{% url 'logout' %}" class="av-logout-link">
+        <span>🚪</span><span>Cerrar sesión</span>
+      </a>
+    </div>
+  </aside>
 
-<div class="col-md-2 sidebar">
-<div class="logo">
-Veterinaria AnaVet
-<br>
-<small class="text-muted">Sistema Veterinario</small>
+  <main class="av-main">
+    <div class="av-shortcuts">
+      <a class="av-sc" href="{% url 'dashboard' %}">
+        <div class="av-sc-icon">🏠</div>
+        <div><div>Inicio</div><div class="av-sc-key">Alt + 1</div></div>
+      </a>
+      <a class="av-sc" href="{% url 'recepcion' %}">
+        <div class="av-sc-icon">👥</div>
+        <div><div>Recepción</div><div class="av-sc-key">Alt + 2</div></div>
+      </a>
+      <a class="av-sc" href="{% url 'pos' %}">
+        <div class="av-sc-icon">🛒</div>
+        <div><div>Ventas</div><div class="av-sc-key">Alt + 3</div></div>
+      </a>
+      <a class="av-sc" href="{% url 'consultas' %}">
+        <div class="av-sc-icon">🩺</div>
+        <div><div>Consultas</div><div class="av-sc-key">Alt + 4</div></div>
+      </a>
+      <a class="av-sc" href="{% url 'citas' %}">
+        <div class="av-sc-icon">📅</div>
+        <div><div>Citas</div><div class="av-sc-key">Alt + 5</div></div>
+      </a>
+    </div>
+    {% block content %}{% endblock %}
+  </main>
+
 </div>
-
-<div class="section-title">Principal</div>
-<a href="{% url 'dashboard' %}" class="{% if request.path == '/dashboard/' %}active{% endif %}">Dashboard</a>
-<a href="{% url 'recepcion' %}" class="{% if request.path == '/recepcion/' %}active{% endif %}">Recepcion</a>
-<a href="{% url 'pos' %}" class="{% if request.path == '/pos/' %}active{% endif %}">Punto de Venta</a>
-
-<div class="section-title">Modulos</div>
-<a href="{% url 'consultas' %}" class="{% if request.path == '/consultas/' %}active{% endif %}">Consultas</a>
-<a href="{% url 'citas' %}" class="{% if request.path == '/citas/' %}active{% endif %}">Citas</a>
-</div>
-
-<div class="col-md-10 content">
-<div class="d-flex justify-content-end mb-3">
-Usuario: <strong>{{ request.user.username }}</strong>
-<a href="{% url 'logout' %}" class="btn btn-sm btn-danger ms-2">Cerrar sesion</a>
-</div>
-
-<div class="helper-banner">
-<p><strong>Atajos disponibles:</strong> usa los botones rapidos o presiona <strong>Alt + 1..5</strong> para navegar entre areas.</p>
-<div class="top-shortcuts">
-<a class="shortcut-chip" href="{% url 'dashboard' %}"><span class="shortcut-key">Alt+1</span><span>Inicio</span></a>
-<a class="shortcut-chip" href="{% url 'recepcion' %}"><span class="shortcut-key">Alt+2</span><span>Recepcion</span></a>
-<a class="shortcut-chip" href="{% url 'pos' %}"><span class="shortcut-key">Alt+3</span><span>Ventas</span></a>
-<a class="shortcut-chip" href="{% url 'consultas' %}"><span class="shortcut-key">Alt+4</span><span>Consultas</span></a>
-<a class="shortcut-chip" href="{% url 'citas' %}"><span class="shortcut-key">Alt+5</span><span>Citas</span></a>
-</div>
-</div>
-
-{% block content %}
-{% endblock %}
-
-</div>
-
-</div>
-</div>
-
 <script>
-document.addEventListener('keydown', function(event) {
-if (!event.altKey) return;
-const tag = document.activeElement && document.activeElement.tagName;
-if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
-
-const routes = {
-'1': "{% url 'dashboard' %}",
-'2': "{% url 'recepcion' %}",
-'3': "{% url 'pos' %}",
-'4': "{% url 'consultas' %}",
-'5': "{% url 'citas' %}"
-};
-
-if (routes[event.key]) {
-event.preventDefault();
-window.location.href = routes[event.key];
-}
+document.addEventListener('keydown', function(e) {
+  if (!e.altKey) return;
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+  const routes = {
+    '1': "{% url 'dashboard' %}",
+    '2': "{% url 'recepcion' %}",
+    '3': "{% url 'pos' %}",
+    '4': "{% url 'consultas' %}",
+    '5': "{% url 'citas' %}"
+  };
+  if (routes[e.key]) { e.preventDefault(); window.location.href = routes[e.key]; }
 });
 </script>
-
 </body>
 </html>

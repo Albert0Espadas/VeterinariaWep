@@ -343,6 +343,58 @@ def consultas(request):
 
 
 @login_required
+@require_POST
+def eliminar_cliente(request, id):
+    cliente = get_object_or_404(Cliente, id=id)
+    cliente.delete()
+    return redirect("recepcion")
+
+
+@login_required
+def editar_cliente(request, id):
+    cliente = get_object_or_404(Cliente, id=id)
+    if request.method == "POST":
+        nombre = (request.POST.get("nombre") or "").strip()
+        telefono = (request.POST.get("telefono") or "").strip()
+        email = (request.POST.get("email") or "").strip()
+        if nombre and telefono:
+            cliente.nombre = nombre
+            cliente.telefono = telefono
+            cliente.email = email or "sin-correo@temporal.local"
+            cliente.save()
+        return redirect("recepcion")
+    return redirect("recepcion")
+
+
+@login_required
+@require_POST
+def eliminar_mascota(request, id):
+    mascota = get_object_or_404(Mascota, id=id)
+    mascota.delete()
+    return redirect("recepcion")
+
+
+@login_required
+def editar_mascota(request, id):
+    mascota = get_object_or_404(Mascota, id=id)
+    if request.method == "POST":
+        nombre = (request.POST.get("nombre_mascota") or "").strip()
+        especie = (request.POST.get("especie") or "").strip() or "Mascota"
+        raza = (request.POST.get("raza") or "").strip() or "Sin especificar"
+        edad = request.POST.get("edad") or 0
+        cliente_id = request.POST.get("cliente")
+        if nombre:
+            mascota.nombre = nombre
+            mascota.especie = especie
+            mascota.raza = raza
+            mascota.edad = edad
+            if cliente_id:
+                mascota.dueno_id = cliente_id
+            mascota.save()
+    return redirect("recepcion")
+
+
+@login_required
 def citas(request):
     context = _dashboard_context()
     context.update(

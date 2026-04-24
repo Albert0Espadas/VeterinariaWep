@@ -2,352 +2,716 @@
 {% load static %}
 
 {% block content %}
-
 <style>
-.recepcion-shell {
-background: linear-gradient(180deg, #fcfbff 0%, #f7f2ff 100%);
-border: 1px solid rgba(108, 43, 217, 0.08);
-border-radius: 28px;
-padding: 28px;
-box-shadow: 0 18px 42px rgba(58, 29, 112, 0.07);
+.rc-metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 22px; }
+.rc-metric {
+  background: #fff; border-radius: var(--card-br); border: var(--card-border);
+  box-shadow: var(--card-shadow); padding: 18px 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.rc-metric-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+}
+.rc-metric-icon.purple { background: #ede9fe; }
+.rc-metric-icon.blue   { background: #dbeafe; }
+.rc-metric-icon.green  { background: #dcfce7; }
+.rc-metric-icon.orange { background: #ffedd5; }
+.rc-metric-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.rc-metric-value { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1.1; }
+.rc-metric-delta { font-size: 12px; color: #16a34a; font-weight: 600; }
+.rc-metric-delta span { color: var(--muted); font-weight: 400; }
+
+.rc-header {
+  background: #fff; border-radius: var(--card-br); border: var(--card-border);
+  box-shadow: var(--card-shadow); padding: 20px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; flex-wrap: wrap; gap: 14px;
+}
+.rc-header-left { display: flex; align-items: center; gap: 14px; }
+.rc-header-icon {
+  width: 46px; height: 46px; background: var(--v-bg); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+.rc-header-title { font-size: 22px; font-weight: 700; color: var(--text); margin: 0; }
+.rc-header-sub   { font-size: 13px; color: var(--muted); margin: 2px 0 0; max-width: 380px; }
+.rc-header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.rc-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  cursor: pointer; text-decoration: none; transition: .2s; border: none;
+}
+.rc-btn-primary { background: var(--v2); color: #fff; }
+.rc-btn-primary:hover { background: var(--v); color: #fff; }
+.rc-btn-outline { background: #fff; color: var(--text); border: var(--card-border); }
+.rc-btn-outline:hover { background: var(--v-bg); color: var(--v); }
+
+.rc-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+}
+.rc-tabs { display: flex; gap: 6px; }
+.rc-tab {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: .2s; border: var(--card-border); background: #fff; color: var(--muted);
+}
+.rc-tab.active { background: var(--v2); color: #fff; border-color: var(--v2); }
+.rc-tab:not(.active):hover { background: var(--v-bg); color: var(--v); }
+.rc-search-wrap { display: flex; align-items: center; gap: 8px; }
+.rc-search {
+  display: flex; align-items: center; gap: 8px;
+  background: #fff; border: var(--card-border); border-radius: 10px; padding: 8px 14px;
+}
+.rc-search input { border: none; outline: none; background: transparent; font-size: 13px; color: var(--text); width: 180px; }
+.rc-search input::placeholder { color: var(--muted); }
+.rc-filter {
+  display: flex; align-items: center; gap: 6px;
+  background: #fff; border: var(--card-border); border-radius: 10px;
+  padding: 8px 14px; font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer;
 }
 
-.recepcion-hero,
-.recepcion-panel,
-.recepcion-metric {
-background: rgba(255, 255, 255, 0.94);
-border: 1px solid rgba(108, 43, 217, 0.12);
-border-radius: 24px;
-box-shadow: 0 12px 24px rgba(58, 29, 112, 0.05);
+.rc-body { display: grid; grid-template-columns: 1fr 380px; gap: 18px; }
+
+.rc-list-card { background: #fff; border-radius: var(--card-br); border: var(--card-border); box-shadow: var(--card-shadow); }
+.rc-list-head { padding: 16px 20px 12px; border-bottom: 1px solid rgba(91,47,160,.07); }
+.rc-list-title { font-size: 15px; font-weight: 700; color: var(--text); margin: 0; }
+.rc-list-sub   { font-size: 12px; color: var(--muted); margin: 3px 0 0; }
+.rc-list-body  { padding: 8px 0; }
+
+.rc-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 20px; transition: .15s;
+}
+.rc-item:hover { background: var(--v-bg); }
+.rc-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.rc-item-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.rc-item-meta { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.rc-status { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+.rc-status.activo    { background: #dcfce7; color: #15803d; }
+.rc-item-actions { display: flex; gap: 6px; margin-left: auto; }
+.rc-icon-btn {
+  width: 30px; height: 30px; border-radius: 8px; border: var(--card-border);
+  background: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; cursor: pointer; transition: .15s; color: var(--muted); text-decoration: none;
+}
+.rc-icon-btn:hover { background: var(--v2); color: #fff; border-color: var(--v2); }
+.rc-icon-btn.danger:hover { background: #dc2626; border-color: #dc2626; color: #fff; }
+
+.rc-ver-todos {
+  display: block; text-align: center; padding: 14px;
+  font-size: 13px; font-weight: 600; color: var(--v2);
+  text-decoration: none; border-top: 1px solid rgba(91,47,160,.07); transition: .15s;
+}
+.rc-ver-todos:hover { background: var(--v-bg); }
+
+.rc-form-card { background: #fff; border-radius: var(--card-br); border: var(--card-border); box-shadow: var(--card-shadow); }
+.rc-form-head { padding: 16px 20px 12px; border-bottom: 1px solid rgba(91,47,160,.07); }
+.rc-form-title { font-size: 15px; font-weight: 700; color: var(--text); margin: 0; }
+.rc-form-sub   { font-size: 12px; color: var(--muted); margin: 3px 0 0; }
+.rc-form-body  { padding: 18px 20px; }
+.rc-form-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.rc-label { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 5px; display: block; }
+.rc-input-wrap { position: relative; }
+.rc-input-wrap .rc-input-icon {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  font-size: 14px; color: var(--muted); pointer-events: none;
+}
+.rc-input-wrap input, .rc-input-wrap textarea, .rc-input-wrap select {
+  width: 100%; border: var(--card-border); border-radius: 10px;
+  padding: 9px 12px 9px 32px; font-size: 13px; color: var(--text);
+  outline: none; transition: .2s; background: #fff; font-family: inherit;
+}
+.rc-input-wrap input:focus, .rc-input-wrap textarea:focus, .rc-input-wrap select:focus {
+  border-color: var(--v2); box-shadow: 0 0 0 3px rgba(124,58,237,.1);
+}
+.rc-input-wrap textarea { resize: none; padding-top: 10px; }
+.rc-input-wrap.no-icon input,
+.rc-input-wrap.no-icon select,
+.rc-input-wrap.no-icon textarea { padding-left: 12px; }
+.rc-save-btn {
+  width: 100%; background: var(--v2); color: #fff; border: none;
+  border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: .2s; margin-top: 4px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.rc-save-btn:hover { background: var(--v); }
+
+.rc-quick { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-top: 20px; }
+.rc-quick-item {
+  background: #fff; border-radius: var(--card-br); border: var(--card-border);
+  box-shadow: var(--card-shadow); padding: 16px 18px;
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none; color: var(--text); transition: .2s;
+}
+.rc-quick-item:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(91,47,160,.12); }
+.rc-quick-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.rc-quick-icon.p { background: #ede9fe; }
+.rc-quick-icon.b { background: #dbeafe; }
+.rc-quick-icon.g { background: #dcfce7; }
+.rc-quick-icon.o { background: #ffedd5; }
+.rc-quick-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.rc-quick-sub   { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+.rc-feedback {
+  padding: 10px 16px; border-radius: 10px; margin-bottom: 16px;
+  font-size: 13px; font-weight: 600;
+  background: #ede9fe; color: var(--v); border: 1px solid rgba(124,58,237,.2);
 }
 
-.recepcion-hero {
-padding: 24px 26px;
-margin-bottom: 22px;
-background:
-radial-gradient(circle at top right, rgba(144, 105, 255, 0.18), transparent 30%),
-linear-gradient(135deg, #ffffff 0%, #f7f1ff 100%);
-}
+.av-c0{background:#7c3aed;} .av-c1{background:#2563eb;} .av-c2{background:#059669;}
+.av-c3{background:#d97706;} .av-c4{background:#dc2626;} .av-c5{background:#0891b2;}
 
-.recepcion-title {
-font-size: 2rem;
-font-weight: 800;
-color: #29144a;
-margin-bottom: 8px;
+/* MODAL */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,.45); align-items: center; justify-content: center;
 }
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #fff; border-radius: 16px; width: 100%; max-width: 480px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25); overflow: hidden;
+  animation: modalIn .18s ease;
+}
+@keyframes modalIn { from { opacity:0; transform: translateY(12px) scale(.97); } }
+.modal-head {
+  padding: 20px 24px 14px; border-bottom: 1px solid rgba(91,47,160,.08);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-title { font-size: 16px; font-weight: 700; color: var(--text); margin: 0; }
+.modal-close {
+  width: 30px; height: 30px; border-radius: 8px; border: var(--card-border);
+  background: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer; color: var(--muted); line-height: 1;
+}
+.modal-close:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+.modal-body { padding: 20px 24px; }
+.modal-footer { padding: 14px 24px 20px; display: flex; gap: 10px; justify-content: flex-end; border-top: 1px solid rgba(91,47,160,.08); }
+.modal-btn {
+  padding: 9px 20px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: .2s; border: none;
+}
+.modal-btn-cancel { background: #f3f4f6; color: var(--text); }
+.modal-btn-cancel:hover { background: #e5e7eb; }
+.modal-btn-save { background: var(--v2); color: #fff; }
+.modal-btn-save:hover { background: var(--v); }
+.modal-btn-danger { background: #dc2626; color: #fff; }
+.modal-btn-danger:hover { background: #b91c1c; }
 
-.recepcion-copy {
-margin: 0;
-color: #776d90;
-max-width: 740px;
-}
+.detail-row { display: flex; gap: 10px; padding: 9px 0; border-bottom: 1px solid rgba(91,47,160,.06); font-size: 13px; }
+.detail-row:last-child { border-bottom: none; }
+.detail-label { font-weight: 600; color: var(--text); width: 110px; flex-shrink: 0; }
+.detail-value { color: var(--muted); }
 
-.recepcion-metric {
-padding: 18px 20px;
-height: 100%;
-}
-
-.recepcion-metric-label {
-font-size: 0.82rem;
-letter-spacing: 0.06em;
-text-transform: uppercase;
-font-weight: 700;
-color: #7b6b9f;
-}
-
-.recepcion-metric-value {
-font-size: 2rem;
-font-weight: 800;
-color: #2d1652;
-margin: 8px 0 0;
-}
-
-.recepcion-panel {
-padding: 22px;
-height: 100%;
-}
-
-.panel-title {
-font-size: 1.08rem;
-font-weight: 800;
-color: #2d1652;
-margin-bottom: 6px;
-}
-
-.panel-copy {
-color: #7b6b9f;
-font-size: 0.94rem;
-margin-bottom: 18px;
-}
-
-.form-label {
-font-weight: 700;
-color: #2d1652;
-}
-
-.form-control,
-.form-select {
-border-radius: 14px;
-border-color: rgba(108, 43, 217, 0.16);
-padding: 11px 14px;
-}
-
-.form-control:focus,
-.form-select:focus {
-border-color: rgba(108, 43, 217, 0.5);
-box-shadow: 0 0 0 0.25rem rgba(108, 43, 217, 0.12);
-}
-
-.btn-premium {
-background: linear-gradient(135deg, #5f31b0 0%, #7c4de3 100%);
-border: none;
-color: #fff;
-padding: 12px 18px;
-border-radius: 14px;
-font-weight: 700;
-width: 100%;
-}
-
-.tabs {
-display: inline-flex;
-gap: 10px;
-padding: 8px;
-background: #f1eafe;
-border-radius: 999px;
-margin-bottom: 18px;
-}
-
-.tab {
-padding: 10px 18px;
-border-radius: 999px;
-cursor: pointer;
-font-weight: 700;
-color: #654c9b;
-transition: 0.2s ease;
-}
-
-.tab.active {
-background: linear-gradient(135deg, #5f31b0 0%, #7c4de3 100%);
-color: #fff;
-box-shadow: 0 12px 20px rgba(95, 49, 176, 0.18);
-}
-
-.record-list {
-display: grid;
-gap: 12px;
-}
-
-.record-item {
-padding: 16px 18px;
-border-radius: 18px;
-border: 1px solid rgba(108, 43, 217, 0.1);
-background: linear-gradient(180deg, #fff 0%, #fbf9ff 100%);
-}
-
-.record-name {
-font-weight: 800;
-color: #2d1652;
-margin-bottom: 4px;
-}
-
-.record-meta {
-color: #786c97;
-font-size: 0.92rem;
-margin: 0;
-}
-
-.empty-state {
-padding: 18px;
-border-radius: 18px;
-background: #faf7ff;
-border: 1px dashed rgba(108, 43, 217, 0.18);
-color: #7b6b9f;
-text-align: center;
-}
-
-.feedback-note {
-margin-bottom: 16px;
-padding: 12px 14px;
-border-radius: 14px;
-background: #efe7ff;
-color: #4d2b8a;
-font-weight: 600;
-}
+@media (max-width:1100px) { .rc-body { grid-template-columns: 1fr; } }
+@media (max-width:900px)  { .rc-metrics { grid-template-columns: repeat(2,1fr); } .rc-quick { grid-template-columns: repeat(2,1fr); } }
+@media (max-width:600px)  { .rc-form-grid { grid-template-columns: 1fr; } .rc-quick { grid-template-columns: 1fr 1fr; } .modal { max-width: 96vw; } }
 </style>
 
-<div class="recepcion-shell">
-<div class="recepcion-hero">
-<h1 class="recepcion-title">Recepcion Veterinaria</h1>
-<p class="recepcion-copy">Registra clientes y mascotas desde una sola vista y manten una recepcion mas ordenada, clara y lista para agendar.</p>
-</div>
-
-<div class="row g-4 mb-4">
-<div class="col-md-6 col-xl-3">
-<div class="recepcion-metric">
-<div class="recepcion-metric-label">Clientes</div>
-<div class="recepcion-metric-value">{{ total_clientes }}</div>
-</div>
-</div>
-<div class="col-md-6 col-xl-3">
-<div class="recepcion-metric">
-<div class="recepcion-metric-label">Mascotas</div>
-<div class="recepcion-metric-value">{{ total_mascotas }}</div>
-</div>
-</div>
-<div class="col-md-6 col-xl-3">
-<div class="recepcion-metric">
-<div class="recepcion-metric-label">Ultimos Clientes</div>
-<div class="recepcion-metric-value">{{ clientes_recientes|length }}</div>
-</div>
-</div>
-<div class="col-md-6 col-xl-3">
-<div class="recepcion-metric">
-<div class="recepcion-metric-label">Ultimas Mascotas</div>
-<div class="recepcion-metric-value">{{ mascotas_recientes|length }}</div>
-</div>
-</div>
-</div>
-
 {% if mensaje %}
-<div class="feedback-note">{{ mensaje }}</div>
+<div class="rc-feedback">{{ mensaje }}</div>
 {% endif %}
 
-<div class="tabs">
-<div class="tab active" onclick="showTab('clientes', event)">Clientes</div>
-<div class="tab" onclick="showTab('mascotas', event)">Mascotas</div>
+<div class="rc-header">
+  <div class="rc-header-left">
+    <div class="rc-header-icon">🐾</div>
+    <div>
+      <h1 class="rc-header-title">Recepcion Veterinaria</h1>
+      <p class="rc-header-sub">Registra clientes y mascotas desde una sola vista y mantén una recepción más ordenada, clara y lista para agendar.</p>
+    </div>
+  </div>
+  <div class="rc-header-actions">
+    <button class="rc-btn rc-btn-primary" onclick="showTab('clientes')">＋ Nuevo cliente</button>
+    <button class="rc-btn rc-btn-outline" onclick="showTab('mascotas')">＋ Nueva mascota</button>
+    <a class="rc-btn rc-btn-outline" href="{% url 'citas' %}">📅 Agendar cita</a>
+  </div>
 </div>
 
-<div id="clientes" class="tab-content">
-<div class="row g-4">
-<div class="col-lg-5">
-<div class="recepcion-panel">
-<h3 class="panel-title">Registrar Cliente</h3>
-<p class="panel-copy">Captura informacion basica del propietario para tener la recepcion al dia.</p>
-
-<form method="POST">
-{% csrf_token %}
-<div class="mb-3">
-<label class="form-label" for="nombre">Nombre completo</label>
-<input class="form-control" id="nombre" type="text" name="nombre" placeholder="Ej. Andrea Salinas" required>
-</div>
-<div class="mb-3">
-<label class="form-label" for="telefono">Telefono</label>
-<input class="form-control" id="telefono" type="text" name="telefono" placeholder="Ej. 5512345678" required>
-</div>
-<div class="mb-4">
-<label class="form-label" for="email">Email</label>
-<input class="form-control" id="email" type="email" name="email" placeholder="Ej. correo@cliente.com">
-</div>
-<button class="btn-premium" name="registrar_cliente">Registrar cliente</button>
-</form>
-</div>
-</div>
-
-<div class="col-lg-7">
-<div class="recepcion-panel">
-<h3 class="panel-title">Clientes Registrados</h3>
-<p class="panel-copy">Vista rapida de los propietarios activos dentro del sistema.</p>
-
-{% if clientes %}
-<div class="record-list">
-{% for cliente in clientes %}
-<div class="record-item">
-<div class="record-name">{{ cliente.nombre }}</div>
-<p class="record-meta">{{ cliente.telefono }}{% if cliente.email %} | {{ cliente.email }}{% endif %}</p>
-</div>
-{% endfor %}
-</div>
-{% else %}
-<div class="empty-state">No hay clientes registrados.</div>
-{% endif %}
-</div>
-</div>
-</div>
+<div class="rc-metrics">
+  <div class="rc-metric">
+    <div class="rc-metric-icon purple">👥</div>
+    <div>
+      <div class="rc-metric-label">Clientes</div>
+      <div class="rc-metric-value">{{ total_clientes }}</div>
+      <div class="rc-metric-delta">↑ {{ clientes_recientes|length }} recientes <span>en el sistema</span></div>
+    </div>
+  </div>
+  <div class="rc-metric">
+    <div class="rc-metric-icon blue">🐶</div>
+    <div>
+      <div class="rc-metric-label">Mascotas</div>
+      <div class="rc-metric-value">{{ total_mascotas }}</div>
+      <div class="rc-metric-delta">↑ {{ mascotas_recientes|length }} recientes <span>en el sistema</span></div>
+    </div>
+  </div>
+  <div class="rc-metric">
+    <div class="rc-metric-icon green">📅</div>
+    <div>
+      <div class="rc-metric-label">Últimos Clientes</div>
+      <div class="rc-metric-value">{{ clientes_recientes|length }}</div>
+      <div class="rc-metric-delta">↑ {{ clientes_recientes|length }} <span>registros recientes</span></div>
+    </div>
+  </div>
+  <div class="rc-metric">
+    <div class="rc-metric-icon orange">🐾</div>
+    <div>
+      <div class="rc-metric-label">Últimas Mascotas</div>
+      <div class="rc-metric-value">{{ mascotas_recientes|length }}</div>
+      <div class="rc-metric-delta">↑ {{ mascotas_recientes|length }} <span>registros recientes</span></div>
+    </div>
+  </div>
 </div>
 
-<div id="mascotas" class="tab-content" style="display:none;">
-<div class="row g-4">
-<div class="col-lg-5">
-<div class="recepcion-panel">
-<h3 class="panel-title">Registrar Mascota</h3>
-<p class="panel-copy">Asocia cada mascota a su dueno y deja lista la ficha para futuras citas.</p>
-
-<form method="POST">
-{% csrf_token %}
-<div class="mb-3">
-<label class="form-label" for="nombre_mascota">Nombre de la mascota</label>
-<input class="form-control" id="nombre_mascota" type="text" name="nombre_mascota" placeholder="Ej. Nala" required>
+<div class="rc-toolbar">
+  <div class="rc-tabs">
+    <button class="rc-tab active" id="tab-clientes" onclick="showTab('clientes')">👥 Clientes</button>
+    <button class="rc-tab" id="tab-mascotas" onclick="showTab('mascotas')">🐾 Mascotas</button>
+  </div>
+  <div class="rc-search-wrap">
+    <div class="rc-search">
+      🔍 <input type="text" id="searchInput" placeholder="Buscar cliente..." oninput="filterItems()">
+    </div>
+    <div class="rc-filter">🔽 Todos</div>
+  </div>
 </div>
 
-<div class="row g-3">
-<div class="col-md-6">
-<label class="form-label" for="especie">Especie</label>
-<select class="form-select" id="especie" name="especie">
-<option value="Perro">Perro</option>
-<option value="Gato">Gato</option>
-<option value="Ave">Ave</option>
-<option value="Otro">Otro</option>
-</select>
-</div>
-<div class="col-md-6">
-<label class="form-label" for="edad">Edad</label>
-<input class="form-control" id="edad" type="number" min="0" name="edad" placeholder="Ej. 3">
-</div>
+<div class="rc-body">
+  <div>
+    <!-- PANEL CLIENTES -->
+    <div id="panel-clientes">
+      <div class="rc-list-card">
+        <div class="rc-list-head">
+          <div class="rc-list-title">👥 Clientes Registrados</div>
+          <div class="rc-list-sub">Vista rápida de los propietarios activos dentro del sistema.</div>
+        </div>
+        <div class="rc-list-body" id="clientes-list">
+          {% for cliente in clientes %}
+          <div class="rc-item" data-name="{{ cliente.nombre|lower }}">
+            <div class="rc-avatar av-c{% cycle '0' '1' '2' '3' '4' '5' %}">{{ cliente.nombre|first|upper }}</div>
+            <div style="flex:1;min-width:0">
+              <div class="rc-item-name">{{ cliente.nombre }}</div>
+              <div class="rc-item-meta">{{ cliente.email|default:"sin email" }} • {{ cliente.telefono }}</div>
+            </div>
+            <span class="rc-status activo">Activo</span>
+            <div class="rc-item-actions">
+              <span class="rc-icon-btn" title="Ver detalle"
+                onclick="verCliente('{{ cliente.nombre|escapejs }}','{{ cliente.email|default:'—'|escapejs }}','{{ cliente.telefono|escapejs }}')">👁</span>
+              <span class="rc-icon-btn" title="Editar"
+                onclick="abrirEditarCliente({{ cliente.id }},'{{ cliente.nombre|escapejs }}','{{ cliente.email|default:''|escapejs }}','{{ cliente.telefono|escapejs }}')">✏️</span>
+              <a class="rc-icon-btn" href="{% url 'citas' %}" title="Agendar cita">📅</a>
+              <span class="rc-icon-btn danger" title="Eliminar cliente"
+                onclick="confirmarEliminarCliente({{ cliente.id }},'{{ cliente.nombre|escapejs }}')">🗑️</span>
+            </div>
+          </div>
+          {% empty %}
+          <div style="text-align:center;padding:30px;color:var(--muted);font-size:13px;">No hay clientes registrados.</div>
+          {% endfor %}
+        </div>
+        <a href="#" class="rc-ver-todos">Ver todos los clientes →</a>
+      </div>
+    </div>
+
+    <!-- PANEL MASCOTAS -->
+    <div id="panel-mascotas" style="display:none">
+      <div class="rc-list-card">
+        <div class="rc-list-head">
+          <div class="rc-list-title">🐾 Mascotas Registradas</div>
+          <div class="rc-list-sub">Consulta rápida de pacientes y su propietario asociado.</div>
+        </div>
+        <div class="rc-list-body" id="mascotas-list">
+          {% for mascota in mascotas %}
+          <div class="rc-item" data-name="{{ mascota.nombre|lower }}">
+            <div class="rc-avatar av-c{% cycle '0' '1' '2' '3' '4' '5' %}">{{ mascota.nombre|first|upper }}</div>
+            <div style="flex:1;min-width:0">
+              <div class="rc-item-name">{{ mascota.nombre }} — {{ mascota.especie }}</div>
+              <div class="rc-item-meta">{{ mascota.raza }} • {{ mascota.edad }} años • {{ mascota.dueno.nombre }}</div>
+            </div>
+            <span class="rc-status activo">Activo</span>
+            <div class="rc-item-actions">
+              <span class="rc-icon-btn" title="Ver detalle"
+                onclick="verMascota('{{ mascota.nombre|escapejs }}','{{ mascota.especie|escapejs }}','{{ mascota.raza|escapejs }}','{{ mascota.edad }}','{{ mascota.dueno.nombre|escapejs }}')">👁</span>
+              <span class="rc-icon-btn" title="Editar"
+                onclick="abrirEditarMascota({{ mascota.id }},'{{ mascota.nombre|escapejs }}','{{ mascota.especie|escapejs }}','{{ mascota.raza|escapejs }}','{{ mascota.edad }}',{{ mascota.dueno.id }})">✏️</span>
+              <a class="rc-icon-btn" href="{% url 'citas' %}" title="Agendar cita">📅</a>
+              <span class="rc-icon-btn danger" title="Eliminar mascota"
+                onclick="confirmarEliminarMascota({{ mascota.id }},'{{ mascota.nombre|escapejs }}')">🗑️</span>
+            </div>
+          </div>
+          {% empty %}
+          <div style="text-align:center;padding:30px;color:var(--muted);font-size:13px;">No hay mascotas registradas.</div>
+          {% endfor %}
+        </div>
+        <a href="#" class="rc-ver-todos">Ver todas las mascotas →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORMULARIOS -->
+  <div>
+    <div id="form-clientes" class="rc-form-card">
+      <div class="rc-form-head">
+        <div class="rc-form-title">👤 Registrar Cliente</div>
+        <div class="rc-form-sub">Captura información básica del propietario para tener la recepción al día.</div>
+      </div>
+      <div class="rc-form-body">
+        <form method="POST">
+          {% csrf_token %}
+          <div class="rc-form-grid">
+            <div>
+              <label class="rc-label">Nombre completo</label>
+              <div class="rc-input-wrap"><span class="rc-input-icon">👤</span>
+                <input type="text" name="nombre" placeholder="Ej. Andrea Salinas" required></div>
+            </div>
+            <div>
+              <label class="rc-label">Correo electrónico</label>
+              <div class="rc-input-wrap"><span class="rc-input-icon">✉️</span>
+                <input type="email" name="email" placeholder="ejemplo@correo.com"></div>
+            </div>
+            <div>
+              <label class="rc-label">Teléfono</label>
+              <div class="rc-input-wrap"><span class="rc-input-icon">📞</span>
+                <input type="text" name="telefono" placeholder="Ej. 5512345678" required></div>
+            </div>
+            <div>
+              <label class="rc-label">Dirección</label>
+              <div class="rc-input-wrap"><span class="rc-input-icon">📍</span>
+                <input type="text" name="direccion" placeholder="Ej. Av. Principal 123"></div>
+            </div>
+          </div>
+          <div style="margin-bottom:14px">
+            <label class="rc-label">Notas (opcional)</label>
+            <div class="rc-input-wrap">
+              <span class="rc-input-icon" style="top:14px;transform:none">📋</span>
+              <textarea name="notas" rows="3" placeholder="Información adicional del cliente..."></textarea>
+            </div>
+          </div>
+          <button type="submit" name="registrar_cliente" class="rc-save-btn">💾 Guardar cliente</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="form-mascotas" class="rc-form-card" style="display:none">
+      <div class="rc-form-head">
+        <div class="rc-form-title">🐾 Registrar Mascota</div>
+        <div class="rc-form-sub">Asocia cada mascota a su dueño y deja lista la ficha para futuras citas.</div>
+      </div>
+      <div class="rc-form-body">
+        <form method="POST">
+          {% csrf_token %}
+          <div class="rc-form-grid">
+            <div>
+              <label class="rc-label">Nombre de la mascota</label>
+              <div class="rc-input-wrap"><span class="rc-input-icon">🐾</span>
+                <input type="text" name="nombre_mascota" placeholder="Ej. Nala" required></div>
+            </div>
+            <div>
+              <label class="rc-label">Especie</label>
+              <div class="rc-input-wrap no-icon">
+                <select name="especie">
+                  <option value="Perro">Perro</option>
+                  <option value="Gato">Gato</option>
+                  <option value="Ave">Ave</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="rc-label">Raza</label>
+              <div class="rc-input-wrap"><span class="rc-input-icon">🔖</span>
+                <input type="text" name="raza" placeholder="Ej. Mestizo"></div>
+            </div>
+            <div>
+              <label class="rc-label">Edad</label>
+              <div class="rc-input-wrap"><span class="rc-input-icon">🎂</span>
+                <input type="number" min="0" name="edad" placeholder="Ej. 3"></div>
+            </div>
+          </div>
+          <div style="margin-bottom:14px">
+            <label class="rc-label">Dueño</label>
+            <div class="rc-input-wrap no-icon">
+              <select name="cliente" required>
+                <option value="">Seleccionar dueño</option>
+                {% for cliente in clientes %}
+                <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <button type="submit" name="registrar_mascota" class="rc-save-btn">💾 Guardar mascota</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="mt-3 mb-3">
-<label class="form-label" for="raza">Raza</label>
-<input class="form-control" id="raza" type="text" name="raza" placeholder="Ej. Mestizo">
+<div class="rc-quick">
+  <a class="rc-quick-item" href="{% url 'citas' %}">
+    <div class="rc-quick-icon p">📅</div>
+    <div><div class="rc-quick-title">Nueva cita</div><div class="rc-quick-sub">Agendar una nueva cita</div></div>
+  </a>
+  <a class="rc-quick-item" href="#">
+    <div class="rc-quick-icon b">🔍</div>
+    <div><div class="rc-quick-title">Buscar cliente</div><div class="rc-quick-sub">Buscar en el sistema</div></div>
+  </a>
+  <a class="rc-quick-item" href="#">
+    <div class="rc-quick-icon g">📊</div>
+    <div><div class="rc-quick-title">Reporte diario</div><div class="rc-quick-sub">Ver resumen del día</div></div>
+  </a>
+  <a class="rc-quick-item" href="#">
+    <div class="rc-quick-icon o">🔔</div>
+    <div><div class="rc-quick-title">Recordatorios</div><div class="rc-quick-sub">Ver pendientes</div></div>
+  </a>
 </div>
 
-<div class="mb-4">
-<label class="form-label" for="cliente">Dueno</label>
-<select class="form-select" id="cliente" name="cliente" required>
-<option value="">Seleccionar dueno</option>
-{% for cliente in clientes %}
-<option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
-{% endfor %}
-</select>
+
+<!-- MODAL: VER CLIENTE -->
+<div class="modal-overlay" id="modal-ver-cliente">
+  <div class="modal">
+    <div class="modal-head">
+      <p class="modal-title">👁 Detalle del cliente</p>
+      <button class="modal-close" onclick="cerrarModal('modal-ver-cliente')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-row"><span class="detail-label">Nombre</span><span class="detail-value" id="vcliente-nombre">—</span></div>
+      <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value" id="vcliente-email">—</span></div>
+      <div class="detail-row"><span class="detail-label">Teléfono</span><span class="detail-value" id="vcliente-tel">—</span></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="cerrarModal('modal-ver-cliente')">Cerrar</button>
+    </div>
+  </div>
 </div>
 
-<button class="btn-premium" name="registrar_mascota">Registrar mascota</button>
-</form>
-</div>
+<!-- MODAL: EDITAR CLIENTE -->
+<div class="modal-overlay" id="modal-editar-cliente">
+  <div class="modal">
+    <div class="modal-head">
+      <p class="modal-title">✏️ Editar cliente</p>
+      <button class="modal-close" onclick="cerrarModal('modal-editar-cliente')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form method="POST" id="form-editar-cliente">
+        {% csrf_token %}
+        <div style="margin-bottom:12px">
+          <label class="rc-label">Nombre completo</label>
+          <div class="rc-input-wrap"><span class="rc-input-icon">👤</span>
+            <input type="text" name="nombre" id="ec-nombre" required></div>
+        </div>
+        <div style="margin-bottom:12px">
+          <label class="rc-label">Email</label>
+          <div class="rc-input-wrap"><span class="rc-input-icon">✉️</span>
+            <input type="email" name="email" id="ec-email"></div>
+        </div>
+        <div>
+          <label class="rc-label">Teléfono</label>
+          <div class="rc-input-wrap"><span class="rc-input-icon">📞</span>
+            <input type="text" name="telefono" id="ec-tel" required></div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="cerrarModal('modal-editar-cliente')">Cancelar</button>
+      <button class="modal-btn modal-btn-save" onclick="document.getElementById('form-editar-cliente').submit()">💾 Guardar cambios</button>
+    </div>
+  </div>
 </div>
 
-<div class="col-lg-7">
-<div class="recepcion-panel">
-<h3 class="panel-title">Mascotas Registradas</h3>
-<p class="panel-copy">Consulta rapida de pacientes y su propietario asociado.</p>
+<!-- MODAL: ELIMINAR CLIENTE -->
+<div class="modal-overlay" id="modal-del-cliente">
+  <div class="modal">
+    <div class="modal-head">
+      <p class="modal-title">🗑️ Eliminar cliente</p>
+      <button class="modal-close" onclick="cerrarModal('modal-del-cliente')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--text);margin:0 0 8px">
+        ¿Seguro que quieres eliminar a <strong id="del-cliente-nombre"></strong>?
+      </p>
+      <p style="font-size:12px;color:#dc2626;margin:0">Esta acción eliminará también todas las mascotas y citas asociadas.</p>
+      <form method="POST" id="form-del-cliente" style="display:none">{% csrf_token %}</form>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="cerrarModal('modal-del-cliente')">Cancelar</button>
+      <button class="modal-btn modal-btn-danger" onclick="document.getElementById('form-del-cliente').submit()">🗑️ Sí, eliminar</button>
+    </div>
+  </div>
+</div>
 
-{% if mascotas %}
-<div class="record-list">
-{% for mascota in mascotas %}
-<div class="record-item">
-<div class="record-name">{{ mascota.nombre }} - {{ mascota.especie }}</div>
-<p class="record-meta">{{ mascota.raza }} | {{ mascota.edad }} anos | Dueno: {{ mascota.dueno.nombre }}</p>
+<!-- MODAL: VER MASCOTA -->
+<div class="modal-overlay" id="modal-ver-mascota">
+  <div class="modal">
+    <div class="modal-head">
+      <p class="modal-title">👁 Detalle de la mascota</p>
+      <button class="modal-close" onclick="cerrarModal('modal-ver-mascota')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-row"><span class="detail-label">Nombre</span><span class="detail-value" id="vmasc-nombre">—</span></div>
+      <div class="detail-row"><span class="detail-label">Especie</span><span class="detail-value" id="vmasc-especie">—</span></div>
+      <div class="detail-row"><span class="detail-label">Raza</span><span class="detail-value" id="vmasc-raza">—</span></div>
+      <div class="detail-row"><span class="detail-label">Edad</span><span class="detail-value" id="vmasc-edad">—</span></div>
+      <div class="detail-row"><span class="detail-label">Dueño</span><span class="detail-value" id="vmasc-dueno">—</span></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="cerrarModal('modal-ver-mascota')">Cerrar</button>
+    </div>
+  </div>
 </div>
-{% endfor %}
+
+<!-- MODAL: EDITAR MASCOTA -->
+<div class="modal-overlay" id="modal-editar-mascota">
+  <div class="modal">
+    <div class="modal-head">
+      <p class="modal-title">✏️ Editar mascota</p>
+      <button class="modal-close" onclick="cerrarModal('modal-editar-mascota')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form method="POST" id="form-editar-mascota">
+        {% csrf_token %}
+        <div class="rc-form-grid" style="margin-bottom:12px">
+          <div>
+            <label class="rc-label">Nombre</label>
+            <div class="rc-input-wrap"><span class="rc-input-icon">🐾</span>
+              <input type="text" name="nombre_mascota" id="em-nombre" required></div>
+          </div>
+          <div>
+            <label class="rc-label">Especie</label>
+            <div class="rc-input-wrap no-icon">
+              <select name="especie" id="em-especie">
+                <option value="Perro">Perro</option>
+                <option value="Gato">Gato</option>
+                <option value="Ave">Ave</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="rc-label">Raza</label>
+            <div class="rc-input-wrap"><span class="rc-input-icon">🔖</span>
+              <input type="text" name="raza" id="em-raza"></div>
+          </div>
+          <div>
+            <label class="rc-label">Edad</label>
+            <div class="rc-input-wrap"><span class="rc-input-icon">🎂</span>
+              <input type="number" min="0" name="edad" id="em-edad"></div>
+          </div>
+        </div>
+        <div>
+          <label class="rc-label">Dueño</label>
+          <div class="rc-input-wrap no-icon">
+            <select name="cliente" id="em-dueno">
+              {% for c in clientes %}
+              <option value="{{ c.id }}">{{ c.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="cerrarModal('modal-editar-mascota')">Cancelar</button>
+      <button class="modal-btn modal-btn-save" onclick="document.getElementById('form-editar-mascota').submit()">💾 Guardar cambios</button>
+    </div>
+  </div>
 </div>
-{% else %}
-<div class="empty-state">No hay mascotas registradas.</div>
-{% endif %}
+
+<!-- MODAL: ELIMINAR MASCOTA -->
+<div class="modal-overlay" id="modal-del-mascota">
+  <div class="modal">
+    <div class="modal-head">
+      <p class="modal-title">🗑️ Eliminar mascota</p>
+      <button class="modal-close" onclick="cerrarModal('modal-del-mascota')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--text);margin:0 0 8px">
+        ¿Seguro que quieres eliminar a <strong id="del-mascota-nombre"></strong>?
+      </p>
+      <p style="font-size:12px;color:#dc2626;margin:0">Esta acción eliminará también todas las citas asociadas a esta mascota.</p>
+      <form method="POST" id="form-del-mascota" style="display:none">{% csrf_token %}</form>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="cerrarModal('modal-del-mascota')">Cancelar</button>
+      <button class="modal-btn modal-btn-danger" onclick="document.getElementById('form-del-mascota').submit()">🗑️ Sí, eliminar</button>
+    </div>
+  </div>
 </div>
-</div>
-</div>
-</div>
-</div>
+
 
 <script>
-function showTab(tabName, event) {
-document.getElementById('clientes').style.display = 'none';
-document.getElementById('mascotas').style.display = 'none';
-document.getElementById(tabName).style.display = 'block';
-
-document.querySelectorAll('.tab').forEach((tab) => tab.classList.remove('active'));
-if (event && event.currentTarget) {
-event.currentTarget.classList.add('active');
+function showTab(tab) {
+  document.getElementById('panel-clientes').style.display = tab === 'clientes' ? 'block' : 'none';
+  document.getElementById('panel-mascotas').style.display = tab === 'mascotas' ? 'block' : 'none';
+  document.getElementById('form-clientes').style.display  = tab === 'clientes' ? 'block' : 'none';
+  document.getElementById('form-mascotas').style.display  = tab === 'mascotas' ? 'block' : 'none';
+  document.getElementById('tab-clientes').classList.toggle('active', tab === 'clientes');
+  document.getElementById('tab-mascotas').classList.toggle('active', tab === 'mascotas');
+  document.getElementById('searchInput').placeholder = tab === 'clientes' ? 'Buscar cliente...' : 'Buscar mascota...';
 }
+
+function filterItems() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const listId = document.getElementById('tab-clientes').classList.contains('active') ? 'clientes-list' : 'mascotas-list';
+  document.querySelectorAll('#' + listId + ' .rc-item').forEach(item => {
+    item.style.display = item.dataset.name && item.dataset.name.includes(q) ? 'flex' : 'none';
+  });
+}
+
+function abrirModal(id)  { document.getElementById(id).classList.add('open'); }
+function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+
+/* CLIENTES */
+function verCliente(nombre, email, tel) {
+  document.getElementById('vcliente-nombre').textContent = nombre;
+  document.getElementById('vcliente-email').textContent  = email;
+  document.getElementById('vcliente-tel').textContent    = tel;
+  abrirModal('modal-ver-cliente');
+}
+function abrirEditarCliente(id, nombre, email, tel) {
+  document.getElementById('form-editar-cliente').action = '/cliente/' + id + '/editar/';
+  document.getElementById('ec-nombre').value = nombre;
+  document.getElementById('ec-email').value  = email;
+  document.getElementById('ec-tel').value    = tel;
+  abrirModal('modal-editar-cliente');
+}
+function confirmarEliminarCliente(id, nombre) {
+  document.getElementById('del-cliente-nombre').textContent = nombre;
+  document.getElementById('form-del-cliente').action = '/cliente/' + id + '/eliminar/';
+  abrirModal('modal-del-cliente');
+}
+
+/* MASCOTAS */
+function verMascota(nombre, especie, raza, edad, dueno) {
+  document.getElementById('vmasc-nombre').textContent  = nombre;
+  document.getElementById('vmasc-especie').textContent = especie;
+  document.getElementById('vmasc-raza').textContent    = raza;
+  document.getElementById('vmasc-edad').textContent    = edad + ' años';
+  document.getElementById('vmasc-dueno').textContent   = dueno;
+  abrirModal('modal-ver-mascota');
+}
+function abrirEditarMascota(id, nombre, especie, raza, edad, duenoId) {
+  document.getElementById('form-editar-mascota').action = '/mascota/' + id + '/editar/';
+  document.getElementById('em-nombre').value = nombre;
+  document.getElementById('em-raza').value   = raza;
+  document.getElementById('em-edad').value   = edad;
+  const selEsp = document.getElementById('em-especie');
+  for (let o of selEsp.options) o.selected = (o.value === especie);
+  const selDueno = document.getElementById('em-dueno');
+  for (let o of selDueno.options) o.selected = (parseInt(o.value) === duenoId);
+  abrirModal('modal-editar-mascota');
+}
+function confirmarEliminarMascota(id, nombre) {
+  document.getElementById('del-mascota-nombre').textContent = nombre;
+  document.getElementById('form-del-mascota').action = '/mascota/' + id + '/eliminar/';
+  abrirModal('modal-del-mascota');
 }
 </script>
 
