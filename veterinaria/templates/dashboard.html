@@ -7,82 +7,458 @@
 
 {% block content %}
 <style>
-.av-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
-.av-greeting-title { font-size: 24px; font-weight: 700; color: var(--text); margin: 0; }
-.av-greeting-sub   { font-size: 13px; color: var(--muted); margin: 2px 0 0; }
+.av-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.av-greeting-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.av-greeting-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 2px 0 0;
+}
+
 .av-date-badge {
-  display: flex; align-items: center; gap: 7px; background: #fff;
-  border: var(--card-border); border-radius: 10px; padding: 8px 14px;
-  font-size: 13px; color: var(--muted); font-weight: 500; box-shadow: var(--card-shadow);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #fff;
+  border: var(--card-border);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 500;
+  box-shadow: var(--card-shadow);
 }
-.av-metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 20px; }
-.av-metric { background: #fff; border-radius: var(--card-br); border: var(--card-border); padding: 18px 20px; box-shadow: var(--card-shadow); }
-.av-metric-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.av-metric-icon { width: 36px; height: 36px; background: var(--v-bg); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
-.av-metric-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
-.av-metric-value { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 4px; }
-.av-metric-sub   { font-size: 12px; color: var(--muted); }
-.av-metric-delta { font-size: 12px; font-weight: 600; margin-top: 6px; }
-.av-metric-delta.up   { color: #16a34a; }
-.av-metric-delta.flat { color: var(--muted); }
-.av-body { display: grid; grid-template-columns: 1fr 340px; gap: 18px; }
-.av-left  { display: flex; flex-direction: column; gap: 18px; }
-.av-right { display: flex; flex-direction: column; gap: 18px; }
-.av-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
-.av-actions-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+
+.av-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.av-metric {
+  background: #fff;
+  border-radius: var(--card-br);
+  border: var(--card-border);
+  padding: 18px 20px;
+  box-shadow: var(--card-shadow);
+}
+
+.av-metric-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.av-metric-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--v-bg);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+}
+
+.av-metric-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.av-metric-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.av-metric-sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.av-metric-delta {
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.av-metric-delta.up {
+  color: #16a34a;
+}
+
+.av-metric-delta.flat {
+  color: var(--muted);
+}
+
+.av-body {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 18px;
+}
+
+.av-left,
+.av-right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.av-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.av-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
 .av-action {
-  display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px;
-  background: var(--v-bg); border-radius: 12px; text-decoration: none;
-  color: var(--text); transition: .2s; border: 1px solid rgba(91,47,160,.08);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--v-bg);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text);
+  transition: 0.2s;
+  border: 1px solid rgba(91, 47, 160, 0.08);
 }
-.av-action:hover { background: var(--v2); color: #fff; }
-.av-action:hover .av-action-icon { background: rgba(255,255,255,.2); }
-.av-action-icon { width: 38px; height: 38px; background: rgba(91,47,160,.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-.av-action-title { font-size: 13px; font-weight: 700; line-height: 1.2; }
-.av-action-desc  { font-size: 12px; opacity: .7; margin-top: 2px; line-height: 1.3; }
-.av-chart-wrap { position: relative; height: 160px; }
-.av-consult-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(91,47,160,.06); }
-.av-consult-item:last-child { border-bottom: none; }
-.av-consult-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--v-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-.av-consult-name { font-size: 14px; font-weight: 600; color: var(--text); }
-.av-consult-type { font-size: 12px; color: var(--muted); }
-.av-consult-date { font-size: 12px; color: var(--muted); }
-.av-badge-green { font-size: 11px; font-weight: 600; background: #dcfce7; color: #15803d; padding: 3px 10px; border-radius: 20px; }
-.av-tip { display: flex; align-items: flex-start; gap: 10px; background: var(--v-bg); border-radius: 12px; padding: 12px 16px; border: 1px solid rgba(91,47,160,.1); font-size: 13px; color: var(--muted); margin-top: 8px; }
-.av-cal-wrap { padding: 16px 18px; }
-.av-cal-tabs { display: flex; gap: 4px; background: var(--v-bg); border-radius: 10px; padding: 3px; }
-.av-cal-tab { flex: 1; text-align: center; padding: 5px 8px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--muted); transition: .15s; }
-.av-cal-tab.active { background: var(--v2); color: #fff; }
-.fc { --fc-border-color: rgba(91,47,160,.1); --fc-today-bg-color: rgba(124,58,237,.08); --fc-page-bg-color: transparent; }
-.fc .fc-toolbar { display: none; }
-.fc .fc-daygrid-day-number, .fc .fc-col-header-cell-cushion { color: var(--text); font-size: 12px; font-weight: 600; text-decoration: none; }
-.fc .fc-event { background: var(--v2) !important; border: none !important; border-radius: 6px !important; font-size: 10px; padding: 1px 5px; }
-.fc .fc-scrollgrid { border: none !important; }
-.fc table { border: none !important; }
-.fc td, .fc th { border-color: rgba(91,47,160,.08) !important; }
-.fc .fc-daygrid-day.fc-day-today { background: rgba(124,58,237,.07) !important; }
-.fc .fc-daygrid-day-frame { min-height: 36px !important; }
-.av-cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.av-cal-nav-title { font-size: 15px; font-weight: 700; color: var(--text); }
-.av-cal-arrow { width: 28px; height: 28px; border-radius: 8px; background: var(--v-bg); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--v); transition: .15s; }
-.av-cal-arrow:hover { background: var(--v2); color: #fff; }
-.av-day-panel { background: var(--v-bg); border-radius: 12px; padding: 14px 16px; margin-top: 14px; border: 1px solid rgba(91,47,160,.12); }
-.av-day-panel-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
-.av-day-panel-date  { font-size: 14px; font-weight: 700; color: var(--v); margin: 2px 0 12px; }
-.av-day-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-.av-day-stat-val { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1; }
-.av-day-stat-lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.av-empty-citas { text-align: center; padding: 28px 16px; }
-.av-empty-icon  { font-size: 48px; margin-bottom: 8px; }
-.av-empty-title { font-size: 14px; font-weight: 600; color: var(--text); }
-.av-empty-sub   { font-size: 12px; color: var(--muted); margin-top: 4px; }
-.av-cita-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(91,47,160,.06); }
-.av-cita-item:last-child { border-bottom: none; }
-.av-cita-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--v-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; }
-.av-cita-name { font-size: 13px; font-weight: 600; }
-.av-cita-date { font-size: 11px; color: var(--muted); }
-@media (max-width: 1200px) { .av-body { grid-template-columns: 1fr; } .av-metrics { grid-template-columns: repeat(2,1fr); } .av-bottom { grid-template-columns: 1fr; } }
-@media (max-width: 700px)  { .av-metrics { grid-template-columns: 1fr 1fr; } }
+
+.av-action:hover {
+  background: var(--v2);
+  color: #fff;
+}
+
+.av-action:hover .av-action-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.av-action-icon {
+  width: 38px;
+  height: 38px;
+  background: rgba(91, 47, 160, 0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.av-action-title {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.av-action-desc {
+  font-size: 12px;
+  opacity: 0.74;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.av-chart-wrap {
+  position: relative;
+  height: 180px;
+}
+
+.av-consult-item,
+.av-cita-item,
+.av-pending-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(91, 47, 160, 0.06);
+}
+
+.av-consult-item:last-child,
+.av-cita-item:last-child,
+.av-pending-item:last-child {
+  border-bottom: none;
+}
+
+.av-consult-avatar,
+.av-cita-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--v-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.av-consult-name,
+.av-cita-name,
+.av-pending-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.av-consult-type,
+.av-consult-date,
+.av-cita-date,
+.av-pending-desc {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.av-badge-green {
+  font-size: 11px;
+  font-weight: 600;
+  background: #dcfce7;
+  color: #15803d;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.av-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--v-bg);
+  border-radius: 12px;
+  padding: 12px 16px;
+  border: 1px solid rgba(91, 47, 160, 0.1);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.av-cal-wrap {
+  padding: 16px 18px;
+}
+
+.av-cal-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--v-bg);
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.av-cal-tab {
+  flex: 1;
+  text-align: center;
+  padding: 5px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--muted);
+  transition: 0.15s;
+}
+
+.av-cal-tab.active {
+  background: var(--v2);
+  color: #fff;
+}
+
+.fc {
+  --fc-border-color: rgba(91, 47, 160, 0.1);
+  --fc-today-bg-color: rgba(124, 58, 237, 0.08);
+  --fc-page-bg-color: transparent;
+}
+
+.fc .fc-toolbar {
+  display: none;
+}
+
+.fc .fc-daygrid-day-number,
+.fc .fc-col-header-cell-cushion {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.fc .fc-event {
+  background: var(--v2) !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 10px;
+  padding: 1px 5px;
+}
+
+.fc .fc-scrollgrid,
+.fc table {
+  border: none !important;
+}
+
+.fc td,
+.fc th {
+  border-color: rgba(91, 47, 160, 0.08) !important;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+  background: rgba(124, 58, 237, 0.07) !important;
+}
+
+.fc .fc-daygrid-day-frame {
+  min-height: 36px !important;
+}
+
+.av-cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.av-cal-nav-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.av-cal-arrow {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--v-bg);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--v);
+  transition: 0.15s;
+}
+
+.av-cal-arrow:hover {
+  background: var(--v2);
+  color: #fff;
+}
+
+.av-day-panel {
+  background: var(--v-bg);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-top: 14px;
+  border: 1px solid rgba(91, 47, 160, 0.12);
+}
+
+.av-day-panel-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.av-day-panel-date {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--v);
+  margin: 2px 0 12px;
+}
+
+.av-day-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.av-day-stat-val {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.av-day-stat-lbl {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.av-empty {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.av-pending-item {
+  justify-content: space-between;
+}
+
+.av-pending-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.av-pending-actions form {
+  margin: 0;
+}
+
+.av-pending-actions .btn {
+  min-width: 42px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.av-pending-form {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(91, 47, 160, 0.08);
+}
+
+.av-pending-form .form-control {
+  border-radius: 10px;
+  border-color: rgba(91, 47, 160, 0.12);
+}
+
+@media (max-width: 1200px) {
+  .av-body {
+    grid-template-columns: 1fr;
+  }
+
+  .av-metrics,
+  .av-bottom {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .av-metrics,
+  .av-bottom,
+  .av-actions-grid,
+  .av-day-stats {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 
 <script>
@@ -93,81 +469,99 @@ var citasData = [
 ];
 </script>
 
-<!-- TOP BAR -->
 <div class="av-topbar">
   <div>
-    <h1 class="av-greeting-title">¡Bienvenido, {{ request.user.username }}! 👋</h1>
-    <p class="av-greeting-sub">Aquí tienes un resumen de la actividad de hoy en AnaVet.</p>
+    <h1 class="av-greeting-title">Bienvenido, {{ request.user.username }}</h1>
+    <p class="av-greeting-sub">Aqui tienes un resumen de la actividad de hoy en AnaVet.</p>
   </div>
-  <div class="av-date-badge">📅 {{ fecha_actual|date:"l, d \d\e F \d\e Y" }}</div>
+  <div class="av-date-badge">Agenda del dia: {{ fecha_actual|date:"l, d \\d\\e F \\d\\e Y" }}</div>
 </div>
 
-<!-- MÉTRICAS -->
 <div class="av-metrics">
   <div class="av-metric">
-    <div class="av-metric-header"><div class="av-metric-icon">📅</div><div class="av-metric-label">Citas Hoy</div></div>
+    <div class="av-metric-header">
+      <div class="av-metric-icon">C</div>
+      <div class="av-metric-label">Citas Hoy</div>
+    </div>
     <div class="av-metric-value">{{ citas_hoy|length }}</div>
     <div class="av-metric-sub">Agenda inmediata</div>
-    <div class="av-metric-delta flat">— 0% vs ayer</div>
+    <div class="av-metric-delta flat">Operacion del dia</div>
   </div>
   <div class="av-metric">
-    <div class="av-metric-header"><div class="av-metric-icon">🐾</div><div class="av-metric-label">Pacientes Totales</div></div>
+    <div class="av-metric-header">
+      <div class="av-metric-icon">M</div>
+      <div class="av-metric-label">Pacientes Totales</div>
+    </div>
     <div class="av-metric-value">{{ total_mascotas }}</div>
     <div class="av-metric-sub">Mascotas registradas</div>
-    <div class="av-metric-delta up">↑ 100% vs mes pasado</div>
+    <div class="av-metric-delta up">Base clinica activa</div>
   </div>
   <div class="av-metric">
-    <div class="av-metric-header"><div class="av-metric-icon">👤</div><div class="av-metric-label">Clientes</div></div>
+    <div class="av-metric-header">
+      <div class="av-metric-icon">D</div>
+      <div class="av-metric-label">Clientes</div>
+    </div>
     <div class="av-metric-value">{{ total_clientes }}</div>
     <div class="av-metric-sub">Propietarios activos</div>
-    <div class="av-metric-delta up">↑ 100% vs mes pasado</div>
+    <div class="av-metric-delta up">Seguimiento de pacientes</div>
   </div>
   <div class="av-metric">
-    <div class="av-metric-header"><div class="av-metric-icon">⏰</div><div class="av-metric-label">Pendientes Activos</div></div>
+    <div class="av-metric-header">
+      <div class="av-metric-icon">P</div>
+      <div class="av-metric-label">Pendientes Activos</div>
+    </div>
     <div class="av-metric-value">{{ pendientes_pendientes }}</div>
-    <div class="av-metric-sub">Pendientes</div>
-    <div class="av-metric-delta flat">— 0% vs ayer</div>
+    <div class="av-metric-sub">{{ pendientes_completados }} completados</div>
+    <div class="av-metric-delta flat">Control interno</div>
   </div>
 </div>
 
-<!-- BODY -->
 <div class="av-body">
   <div class="av-left">
-
-    <!-- Acciones rápidas -->
     <div class="av-card">
       <div class="av-card-head">
-        <div class="av-card-title">Acciones rápidas</div>
-        <div class="av-card-sub">Realiza las tareas más comunes en un clic</div>
+        <div class="av-card-title">Acciones rapidas</div>
+        <div class="av-card-sub">Realiza las tareas mas comunes en un clic</div>
       </div>
       <div class="av-card-body">
         <div class="av-actions-grid">
           <a class="av-action" href="{% url 'recepcion' %}">
-            <div class="av-action-icon">👤</div>
-            <div><div class="av-action-title">Nuevo cliente</div><div class="av-action-desc">Registra propietarios y mascotas</div></div>
+            <div class="av-action-icon">R</div>
+            <div>
+              <div class="av-action-title">Nuevo cliente</div>
+              <div class="av-action-desc">Registra propietarios y mascotas</div>
+            </div>
           </a>
           <a class="av-action" href="{% url 'citas' %}">
-            <div class="av-action-icon">📋</div>
-            <div><div class="av-action-title">Ver agenda</div><div class="av-action-desc">Abre el módulo completo de citas</div></div>
+            <div class="av-action-icon">A</div>
+            <div>
+              <div class="av-action-title">Nueva Cita</div>
+              <div class="av-action-desc">Abre el modulo completo de citas</div>
+            </div>
           </a>
           <a class="av-action" href="{% url 'consultas' %}">
-            <div class="av-action-icon">🩺</div>
-            <div><div class="av-action-title">Entrar a consultas</div><div class="av-action-desc">Consulta agenda clínica del día</div></div>
+            <div class="av-action-icon">Q</div>
+            <div>
+              <div class="av-action-title">Entrar a consultas</div>
+              <div class="av-action-desc">Consulta agenda clinica del dia</div>
+            </div>
           </a>
           <a class="av-action" href="{% url 'pos' %}">
-            <div class="av-action-icon">🛒</div>
-            <div><div class="av-action-title">Registrar venta</div><div class="av-action-desc">Abre la caja con un clic</div></div>
+            <div class="av-action-icon">V</div>
+            <div>
+              <div class="av-action-title">Registrar venta</div>
+              <div class="av-action-desc">Abre la caja con un clic</div>
+            </div>
           </a>
         </div>
       </div>
     </div>
 
     <div class="av-bottom">
-      <!-- Resumen de actividad -->
       <div class="av-card">
         <div class="av-card-head">
           <div class="av-card-title">Resumen de actividad</div>
-          <div class="av-card-sub">Actividad de los últimos 7 días</div>
+          <div class="av-card-sub">Vision rapida de la semana</div>
         </div>
         <div class="av-card-body">
           <div class="av-chart-wrap">
@@ -176,162 +570,262 @@ var citasData = [
         </div>
       </div>
 
-      <!-- Consultas recientes -->
       <div class="av-card">
         <div class="av-card-head">
-          <div class="av-card-title">Consultas recientes</div>
-          <div class="av-card-sub">Últimas consultas registradas</div>
+          <div class="av-card-title">Proximas Citas</div>
+          <div class="av-card-sub">Agenda inmediata de seguimiento</div>
         </div>
         <div class="av-card-body">
-          {% for cita in futuras_citas|slice:":3" %}
+          {% for cita in futuras_citas|slice:":4" %}
           <div class="av-consult-item">
-            <div class="av-consult-avatar">🐶</div>
+            <div class="av-consult-avatar">M</div>
             <div style="flex:1;min-width:0">
               <div class="av-consult-name">{{ cita.mascota.nombre }}</div>
               <div class="av-consult-type">{{ cita.motivo }}</div>
             </div>
             <div style="text-align:right">
-              <div class="av-consult-date">{{ cita.fecha|date:"d/m/Y" }}</div>
-              <span class="av-badge-green">Completada</span>
+              <div class="av-consult-date">{{ cita.fecha|date:"d/m/Y H:i" }}</div>
             </div>
           </div>
           {% empty %}
-          <div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">No hay consultas recientes</div>
+          <div class="av-empty">No hay consultas futuras registradas.</div>
           {% endfor %}
-          <a href="{% url 'consultas' %}" class="av-btn-purple">Ver todas las consultas</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="av-card">
+      <div class="av-card-head">
+        <div class="av-card-title">Pendientes</div>
+        <div class="av-card-sub">Control interno del equipo</div>
+      </div>
+      <div class="av-card-body">
+        {% for p in pendientes %}
+        <div class="av-pending-item">
+          <div style="flex:1;min-width:0">
+            <div class="av-pending-title">
+              {% if p.completado %}<s>{{ p.titulo }}</s>{% else %}{{ p.titulo }}{% endif %}
+            </div>
+            <div class="av-pending-desc">{{ p.descripcion }}</div>
+          </div>
+          <div class="av-pending-actions">
+            <form method="POST" action="{% url 'completar' p.id %}">
+              {% csrf_token %}
+              <button class="btn btn-success btn-sm" type="submit">OK</button>
+            </form>
+            <form method="POST" action="{% url 'eliminar' p.id %}">
+              {% csrf_token %}
+              <button class="btn btn-danger btn-sm" type="submit">X</button>
+            </form>
+          </div>
+        </div>
+        {% empty %}
+        <div class="av-empty">No hay pendientes registrados.</div>
+        {% endfor %}
+
+        <div class="av-pending-form">
+          <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="titulo" placeholder="Titulo" class="form-control mb-2" required>
+            <textarea name="descripcion" placeholder="Descripcion" class="form-control mb-3"></textarea>
+            <button class="av-btn-purple" type="submit">Agregar pendiente</button>
+          </form>
         </div>
       </div>
     </div>
 
     <div class="av-tip">
-      <span style="font-size:18px">💡</span>
-      <div><strong style="color:var(--text)">Consejo rápido</strong><br>
-      Usa los atajos de teclado (Alt + número) para navegar más rápido entre módulos</div>
+      <span style="font-size:18px">i</span>
+      <div>
+        <strong style="color:var(--text)">Consejo rapido</strong><br>
+        Usa Alt + numero para cambiar de modulo mas rapido.
+      </div>
     </div>
-
   </div>
 
-  <!-- CALENDARIO -->
   <div class="av-right">
     <div class="av-card">
-      <div class="av-card-head" style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div class="av-card-head" style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
         <div>
-          <div class="av-card-title">Calendario de Citas</div>
-          <div class="av-card-sub">Vista mensual</div>
+          <div class="av-card-title">Calendario de citas</div>
+          <div class="av-card-sub">Vista principal de la agenda</div>
         </div>
         <div class="av-cal-tabs">
-          <div class="av-cal-tab active" onclick="setCalView('dayGridMonth',this)">Mes</div>
-          <div class="av-cal-tab" onclick="setCalView('timeGridWeek',this)">Semana</div>
-          <div class="av-cal-tab" onclick="setCalView('timeGridDay',this)">Día</div>
+          <div class="av-cal-tab active" onclick="setCalView('dayGridMonth', this)">Mes</div>
+          <div class="av-cal-tab" onclick="setCalView('timeGridWeek', this)">Semana</div>
+          <div class="av-cal-tab" onclick="setCalView('timeGridDay', this)">Dia</div>
         </div>
       </div>
       <div class="av-cal-wrap">
         <div class="av-cal-nav">
-          <button class="av-cal-arrow" onclick="calNav('prev')">‹</button>
+          <button class="av-cal-arrow" onclick="calNav('prev')" type="button">&lt;</button>
           <span class="av-cal-nav-title" id="calTitle"></span>
-          <button class="av-cal-arrow" onclick="calNav('next')">›</button>
-          <button class="av-cal-arrow" onclick="calNav('today')" style="margin-left:4px;font-size:10px;width:auto;padding:0 8px">Hoy</button>
+          <div style="display:flex;gap:6px">
+            <button class="av-cal-arrow" onclick="calNav('today')" type="button" style="width:auto;padding:0 10px">Hoy</button>
+            <button class="av-cal-arrow" onclick="calNav('next')" type="button">&gt;</button>
+          </div>
         </div>
         <div id="calendar"></div>
         <div class="av-day-panel">
-          <div class="av-day-panel-label">Día seleccionado</div>
-          <div class="av-day-panel-date" id="dayPanelDate">{{ fecha_actual|date:"l, d \d\e F \d\e Y" }}</div>
+          <div class="av-day-panel-label">Dia seleccionado</div>
+          <div class="av-day-panel-date" id="dayPanelDate">{{ fecha_actual|date:"l, d \\d\\e F \\d\\e Y" }}</div>
           <div class="av-day-stats">
-            <div><div class="av-day-stat-val" id="dayCitas">0</div><div class="av-day-stat-lbl">Citas programadas</div></div>
-            <div><div class="av-day-stat-val">0</div><div class="av-day-stat-lbl">Pendientes</div></div>
-            <div><div class="av-day-stat-val">0%</div><div class="av-day-stat-lbl">Completadas</div></div>
+            <div>
+              <div class="av-day-stat-val" id="dayCitas">{{ citas_hoy|length }}</div>
+              <div class="av-day-stat-lbl">Citas</div>
+            </div>
+            <div>
+              <div class="av-day-stat-val">{{ futuras_citas|length }}</div>
+              <div class="av-day-stat-lbl">Futuras</div>
+            </div>
+            <div>
+              <div class="av-day-stat-val">{{ pendientes_pendientes }}</div>
+              <div class="av-day-stat-lbl">Pendientes</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Próximas citas -->
     <div class="av-card">
       <div class="av-card-head">
-        <div class="av-card-title">Próximas citas</div>
-        <div class="av-card-sub">Próximas 5 citas programadas</div>
+        <div class="av-card-title">Citas de hoy</div>
+        <div class="av-card-sub">Pacientes que requieren atencion</div>
       </div>
       <div class="av-card-body">
-        {% if futuras_citas %}
-          {% for cita in futuras_citas|slice:":5" %}
-          <div class="av-cita-item">
-            <div class="av-cita-avatar">🐾</div>
-            <div style="flex:1;min-width:0">
-              <div class="av-cita-name">{{ cita.mascota.nombre }}</div>
-              <div class="av-cita-date">{{ cita.motivo }}</div>
-            </div>
-            <div class="av-cita-date">{{ cita.fecha|date:"d/m" }}</div>
+        {% for cita in citas_hoy %}
+        <div class="av-cita-item">
+          <div class="av-cita-avatar">C</div>
+          <div style="flex:1;min-width:0">
+            <div class="av-cita-name">{{ cita.mascota.nombre }}</div>
+            <div class="av-cita-date">{{ cita.mascota.dueno.nombre }} - {{ cita.motivo }}</div>
           </div>
-          {% endfor %}
-        {% else %}
-          <div class="av-empty-citas">
-            <div class="av-empty-icon">📅</div>
-            <div class="av-empty-title">No hay citas programadas</div>
-            <div class="av-empty-sub">No tienes citas próximas agendadas.</div>
-            <a href="{% url 'citas' %}" class="av-btn-purple-sm">Nueva cita</a>
-          </div>
-        {% endif %}
+          <div class="av-cita-date">{{ cita.fecha|time:"H:i" }}</div>
+        </div>
+        {% empty %}
+        <div class="av-empty">No hay citas registradas para hoy.</div>
+        {% endfor %}
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// Gráfica de actividad
-(function(){
-  const ctx = document.getElementById('activityChart').getContext('2d');
+(function () {
+  const chartCanvas = document.getElementById('activityChart');
+  if (!chartCanvas) {
+    return;
+  }
+
+  const ctx = chartCanvas.getContext('2d');
   new Chart(ctx, {
     type: 'line',
     data: {
-      labels: ['Sáb','Dom','Lun','Mar','Mié','Jue','Vie'],
+      labels: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'],
       datasets: [
-        { label:'Citas', data:[1,0,2,1,3,2,1], borderColor:'#7c3aed', backgroundColor:'rgba(124,58,237,.1)', borderWidth:2, fill:true, tension:.4, pointRadius:3 },
-        { label:'Consultas', data:[0,1,1,2,2,1,0], borderColor:'#a78bfa', backgroundColor:'rgba(167,139,250,.07)', borderWidth:2, fill:true, tension:.4, borderDash:[5,4], pointRadius:3 }
+        {
+          label: 'Citas',
+          data: [1, 2, 2, 3, 2, 1, 1],
+          borderColor: '#7c3aed',
+          backgroundColor: 'rgba(124, 58, 237, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 3
+        },
+        {
+          label: 'Seguimientos',
+          data: [0, 1, 1, 2, 1, 1, 0],
+          borderColor: '#a78bfa',
+          backgroundColor: 'rgba(167, 139, 250, 0.07)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4,
+          borderDash: [5, 4],
+          pointRadius: 3
+        }
       ]
     },
     options: {
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'top', labels:{ font:{size:11}, usePointStyle:true, boxWidth:8 } } },
-      scales:{
-        x:{ grid:{display:false}, ticks:{font:{size:11}} },
-        y:{ grid:{color:'rgba(0,0,0,.05)'}, ticks:{font:{size:11},stepSize:1}, min:0 }
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            font: { size: 11 },
+            usePointStyle: true,
+            boxWidth: 8
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: 11 } }
+        },
+        y: {
+          grid: { color: 'rgba(0,0,0,.05)' },
+          ticks: { font: { size: 11 }, stepSize: 1 },
+          min: 0
+        }
       }
     }
   });
 })();
 
-// Calendario
 var calendarInstance;
-document.addEventListener('DOMContentLoaded', function(){
-  calendarInstance = new FullCalendar.Calendar(document.getElementById('calendar'), {
+document.addEventListener('DOMContentLoaded', function () {
+  const calendarNode = document.getElementById('calendar');
+  if (!calendarNode) {
+    return;
+  }
+
+  calendarInstance = new FullCalendar.Calendar(calendarNode, {
     initialView: 'dayGridMonth',
     headerToolbar: false,
     events: citasData,
-    height: 280,
+    height: 300,
     dayMaxEventRows: 2,
-    dateClick: function(info){
+    dateClick: function (info) {
       document.getElementById('dayPanelDate').textContent = info.dateStr;
-      document.getElementById('dayCitas').textContent = citasData.filter(c => c.start && c.start.startsWith(info.dateStr)).length;
+      document.getElementById('dayCitas').textContent = citasData.filter(function (cita) {
+        return cita.start && cita.start.startsWith(info.dateStr);
+      }).length;
     }
   });
+
   calendarInstance.render();
   document.getElementById('calTitle').textContent = calendarInstance.view.title;
 });
 
-function calNav(action){
-  if(!calendarInstance) return;
-  if(action==='prev') calendarInstance.prev();
-  else if(action==='next') calendarInstance.next();
-  else calendarInstance.today();
+function calNav(action) {
+  if (!calendarInstance) {
+    return;
+  }
+
+  if (action === 'prev') {
+    calendarInstance.prev();
+  } else if (action === 'next') {
+    calendarInstance.next();
+  } else {
+    calendarInstance.today();
+  }
+
   document.getElementById('calTitle').textContent = calendarInstance.view.title;
 }
-function setCalView(view, tab){
-  if(!calendarInstance) return;
+
+function setCalView(view, tab) {
+  if (!calendarInstance) {
+    return;
+  }
+
   calendarInstance.changeView(view);
   document.getElementById('calTitle').textContent = calendarInstance.view.title;
-  document.querySelectorAll('.av-cal-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.av-cal-tab').forEach(function (node) {
+    node.classList.remove('active');
+  });
   tab.classList.add('active');
 }
 </script>
-
 {% endblock %}

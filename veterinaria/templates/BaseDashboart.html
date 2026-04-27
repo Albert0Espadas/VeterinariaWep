@@ -8,178 +8,293 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 <style>
 :root {
-  --v: #5b2fa0; --v2: #7c3aed; --v3: #a78bfa;
-  --v-bg: #f5f0ff; --v-sidebar: #3d1a78;
+  --v: #5b2fa0;
+  --v2: #7c3aed;
+  --v-bg: #f5f0ff;
+  --v-sidebar: #3d1a78;
   --sidebar-w: 220px;
-  --text: #1a1033; --muted: #7a6f90;
+  --text: #1a1033;
+  --muted: #7a6f90;
   --card-br: 14px;
   --card-border: 1px solid rgba(91,47,160,.1);
   --card-shadow: 0 2px 12px rgba(91,47,160,.07);
 }
+
 *, *::before, *::after { box-sizing: border-box; }
 body { margin: 0; background: #f4f1fb; color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; }
 .av-layout { display: flex; min-height: 100vh; }
 .av-sidebar {
-  width: var(--sidebar-w); min-height: 100vh; background: var(--v-sidebar);
-  display: flex; flex-direction: column; flex-shrink: 0;
-  position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--v-sidebar);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
 }
 .av-sidebar-logo {
-  padding: 22px 20px 16px; display: flex; align-items: center; gap: 10px;
+  padding: 22px 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   border-bottom: 1px solid rgba(255,255,255,.1);
 }
-.av-sidebar-logo .logo-icon {
-  width: 38px; height: 38px; background: rgba(255,255,255,.15);
-  border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;
+.logo-icon {
+  width: 38px;
+  height: 38px;
+  background: rgba(255,255,255,.15);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #fff;
+  font-weight: 700;
 }
 .av-sidebar-logo-text .brand { font-size: 15px; font-weight: 700; color: #fff; line-height: 1.2; }
-.av-sidebar-logo-text .sub   { font-size: 11px; color: rgba(255,255,255,.5); }
+.av-sidebar-logo-text .sub { font-size: 11px; color: rgba(255,255,255,.5); }
 .av-nav-section {
-  padding: 18px 14px 4px; font-size: 10px; font-weight: 700;
-  letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.4);
+  padding: 18px 14px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
 }
 .av-nav-link {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 14px; margin: 2px 8px; border-radius: 10px;
-  text-decoration: none; color: rgba(255,255,255,.7);
-  font-size: 14px; font-weight: 500; transition: .2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  margin: 2px 8px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: rgba(255,255,255,.7);
+  font-size: 14px;
+  font-weight: 500;
+  transition: .2s;
 }
-.av-nav-link:hover  { background: rgba(255,255,255,.1); color: #fff; }
+.av-nav-link:hover { background: rgba(255,255,255,.1); color: #fff; }
 .av-nav-link.active { background: rgba(255,255,255,.18); color: #fff; font-weight: 600; }
-.av-nav-link .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.nav-icon {
+  width: 20px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+}
 .av-sidebar-footer { margin-top: auto; padding: 14px; border-top: 1px solid rgba(255,255,255,.1); }
 .av-user-card {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px; border-radius: 10px; background: rgba(255,255,255,.08);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.08);
 }
 .av-user-avatar {
-  width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; color: #fff; font-weight: 700; flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #fff;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 .av-user-name { font-size: 13px; font-weight: 600; color: #fff; line-height: 1.2; }
-.av-user-role { font-size: 11px; color: rgba(255,255,255,.5); }
-.av-user-dot  { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
+.av-user-role { font-size: 11px; color: rgba(255,255,255,.6); }
+.av-user-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
 .av-logout-link {
-  display: flex; align-items: center; gap: 8px;
-  padding: 9px 12px; margin-top: 6px; border-radius: 10px;
-  text-decoration: none; color: rgba(255,255,255,.6); font-size: 13px; font-weight: 500; transition: .15s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  margin-top: 6px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: rgba(255,255,255,.7);
+  font-size: 13px;
+  font-weight: 500;
+  transition: .15s;
 }
-.av-logout-link:hover { background: rgba(255,0,0,.12); color: #ff8080; }
+.av-logout-link:hover { background: rgba(255,0,0,.12); color: #ffb3b3; }
 .av-main { margin-left: var(--sidebar-w); flex: 1; padding: 24px 26px; min-width: 0; }
 .av-card { background: #fff; border-radius: var(--card-br); border: var(--card-border); box-shadow: var(--card-shadow); overflow: hidden; }
 .av-card-head { padding: 16px 20px 12px; border-bottom: 1px solid rgba(91,47,160,.07); }
 .av-card-title { font-size: 15px; font-weight: 700; color: var(--text); margin: 0; }
-.av-card-sub   { font-size: 12px; color: var(--muted); margin: 2px 0 0; }
-.av-card-body  { padding: 16px 20px; }
+.av-card-sub { font-size: 12px; color: var(--muted); margin: 2px 0 0; }
+.av-card-body { padding: 16px 20px; }
 .av-btn-purple {
-  display: block; text-align: center; background: var(--v2); color: #fff;
-  border-radius: 10px; padding: 10px; font-size: 13px; font-weight: 600;
-  text-decoration: none; margin-top: 14px; transition: .2s; border: none; width: 100%; cursor: pointer;
+  display: block;
+  text-align: center;
+  background: var(--v2);
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 14px;
+  transition: .2s;
+  border: none;
+  width: 100%;
+  cursor: pointer;
 }
 .av-btn-purple:hover { background: var(--v); color: #fff; }
 .av-btn-purple-sm {
-  display: inline-block; background: var(--v2); color: #fff;
-  border-radius: 10px; padding: 9px 20px; font-size: 13px; font-weight: 600;
-  text-decoration: none; margin-top: 14px; transition: .2s;
+  display: inline-block;
+  background: var(--v2);
+  color: #fff;
+  border-radius: 10px;
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 14px;
+  transition: .2s;
 }
 .av-btn-purple-sm:hover { background: var(--v); color: #fff; }
 .av-shortcuts { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
 .av-sc {
-  display: flex; align-items: center; gap: 8px;
-  background: #fff; border: var(--card-border); border-radius: 12px;
-  padding: 10px 16px; text-decoration: none; color: var(--text);
-  font-size: 13px; font-weight: 600; transition: .2s;
-  flex: 1; min-width: 100px; box-shadow: var(--card-shadow);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: var(--card-border);
+  border-radius: 12px;
+  padding: 10px 16px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  transition: .2s;
+  flex: 1;
+  min-width: 100px;
+  box-shadow: var(--card-shadow);
 }
 .av-sc:hover { background: var(--v2); color: #fff; transform: translateY(-1px); }
-.av-sc:hover .av-sc-icon { background: rgba(255,255,255,.2); color: #fff; }
 .av-sc-icon {
-  width: 34px; height: 34px; background: var(--v-bg); border-radius: 9px;
-  display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  background: var(--v-bg);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  flex-shrink: 0;
 }
 .av-sc-key { font-size: 10px; color: var(--muted); font-weight: 500; margin-top: 1px; }
 @media (max-width: 900px) {
   .av-sidebar { width: 60px; }
-  .av-sidebar-logo-text, .av-nav-section,
-  .av-nav-link span:not(.nav-icon), .av-user-name, .av-user-role,
-  .av-user-dot, .av-logout-link span:last-child { display: none; }
+  .av-sidebar-logo-text, .av-nav-section, .av-nav-link span:not(.nav-icon), .av-user-name, .av-user-role, .av-user-dot, .av-logout-link span:last-child { display: none; }
   .av-main { margin-left: 60px; padding: 16px; }
   .av-shortcuts { display: none; }
 }
-@media (max-width: 600px) { .av-main { padding: 12px; } }
+@media (max-width: 600px) {
+  .av-main { padding: 12px; }
+}
 </style>
 {% block extra_head %}{% endblock %}
 </head>
 <body>
 <div class="av-layout">
-
   <aside class="av-sidebar">
     <div class="av-sidebar-logo">
-      <div class="logo-icon">🐾</div>
+      <div class="logo-icon">AV</div>
       <div class="av-sidebar-logo-text">
         <div class="brand">Veterinaria AnaVet</div>
         <div class="sub">Sistema Veterinario</div>
       </div>
     </div>
+
     <div class="av-nav-section">Principal</div>
+    {% if anavet_nav.dashboard %}
     <a href="{% url 'dashboard' %}" class="av-nav-link {% if request.path == '/dashboard/' %}active{% endif %}">
-      <span class="nav-icon">📊</span><span>Dashboard</span>
+      <span class="nav-icon">D</span><span>Dashboard</span>
     </a>
+    {% endif %}
+    {% if anavet_nav.recepcion %}
     <a href="{% url 'recepcion' %}" class="av-nav-link {% if request.path == '/recepcion/' %}active{% endif %}">
-      <span class="nav-icon">🏥</span><span>Recepcion</span>
+      <span class="nav-icon">R</span><span>Recepcion</span>
     </a>
+    {% endif %}
+    {% if anavet_nav.pos %}
     <a href="{% url 'pos' %}" class="av-nav-link {% if request.path == '/pos/' %}active{% endif %}">
-      <span class="nav-icon">🛒</span><span>Punto de Venta</span>
+      <span class="nav-icon">V</span><span>Punto de Venta</span>
     </a>
-    <div class="av-nav-section">Módulos</div>
+    {% endif %}
+
+    <div class="av-nav-section">Modulos</div>
+    {% if anavet_nav.consultas %}
     <a href="{% url 'consultas' %}" class="av-nav-link {% if request.path == '/consultas/' %}active{% endif %}">
-      <span class="nav-icon">🩺</span><span>Consultas</span>
+      <span class="nav-icon">Q</span><span>Consultas</span>
     </a>
+    {% endif %}
+    {% if anavet_nav.citas %}
     <a href="{% url 'citas' %}" class="av-nav-link {% if request.path == '/citas/' %}active{% endif %}">
-      <span class="nav-icon">📅</span><span>Citas</span>
+      <span class="nav-icon">C</span><span>Citas</span>
     </a>
+    {% endif %}
+
     <div class="av-sidebar-footer">
       <div class="av-user-card">
         <div class="av-user-avatar">{{ request.user.username|first|upper }}</div>
         <div style="flex:1;min-width:0">
           <div class="av-user-name">{{ request.user.username }}</div>
-          <div class="av-user-role">Administrador</div>
+          <div class="av-user-role">{{ anavet_role }}</div>
         </div>
         <div class="av-user-dot"></div>
       </div>
       <a href="{% url 'logout' %}" class="av-logout-link">
-        <span>🚪</span><span>Cerrar sesión</span>
+        <span>S</span><span>Cerrar sesion</span>
       </a>
     </div>
   </aside>
 
   <main class="av-main">
     <div class="av-shortcuts">
+      {% if anavet_nav.dashboard %}
       <a class="av-sc" href="{% url 'dashboard' %}">
-        <div class="av-sc-icon">🏠</div>
+        <div class="av-sc-icon">1</div>
         <div><div>Inicio</div><div class="av-sc-key">Alt + 1</div></div>
       </a>
+      {% endif %}
+      {% if anavet_nav.recepcion %}
       <a class="av-sc" href="{% url 'recepcion' %}">
-        <div class="av-sc-icon">👥</div>
-        <div><div>Recepción</div><div class="av-sc-key">Alt + 2</div></div>
+        <div class="av-sc-icon">2</div>
+        <div><div>Recepcion</div><div class="av-sc-key">Alt + 2</div></div>
       </a>
+      {% endif %}
+      {% if anavet_nav.pos %}
       <a class="av-sc" href="{% url 'pos' %}">
-        <div class="av-sc-icon">🛒</div>
+        <div class="av-sc-icon">3</div>
         <div><div>Ventas</div><div class="av-sc-key">Alt + 3</div></div>
       </a>
+      {% endif %}
+      {% if anavet_nav.consultas %}
       <a class="av-sc" href="{% url 'consultas' %}">
-        <div class="av-sc-icon">🩺</div>
+        <div class="av-sc-icon">4</div>
         <div><div>Consultas</div><div class="av-sc-key">Alt + 4</div></div>
       </a>
+      {% endif %}
+      {% if anavet_nav.citas %}
       <a class="av-sc" href="{% url 'citas' %}">
-        <div class="av-sc-icon">📅</div>
+        <div class="av-sc-icon">5</div>
         <div><div>Citas</div><div class="av-sc-key">Alt + 5</div></div>
       </a>
+      {% endif %}
     </div>
     {% block content %}{% endblock %}
   </main>
-
 </div>
 <script>
 document.addEventListener('keydown', function(e) {
@@ -193,7 +308,10 @@ document.addEventListener('keydown', function(e) {
     '4': "{% url 'consultas' %}",
     '5': "{% url 'citas' %}"
   };
-  if (routes[e.key]) { e.preventDefault(); window.location.href = routes[e.key]; }
+  if (routes[e.key]) {
+    e.preventDefault();
+    window.location.href = routes[e.key];
+  }
 });
 </script>
 </body>
