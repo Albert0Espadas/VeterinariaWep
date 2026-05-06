@@ -32,6 +32,7 @@ class Cita(models.Model):
     mascota = models.ForeignKey(Mascota, on_delete=models.CASCADE)
     fecha = models.DateTimeField()
     motivo = models.CharField(max_length=200)
+    notas_medicas = models.TextField(blank=True, default="")
 
     class Meta:
         db_table = "anavet_citas"

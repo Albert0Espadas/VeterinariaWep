@@ -1,11 +1,13 @@
 import json
 
+from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
 from .models import Cita, Cliente, Mascota, Pendiente, Venta
+from .roles import ROLE_ADMIN, ROLE_SECRETARIA, ROLE_VETERINARIA
 
 
 class PingViewTests(TestCase):
@@ -21,7 +23,9 @@ class PingViewTests(TestCase):
 
 class AuthenticatedViewsMixin(TestCase):
     def setUp(self):
+        admin_group, _ = Group.objects.get_or_create(name=ROLE_ADMIN)
         self.user = User.objects.create_user(username="demo", password="12345")
+        self.user.groups.add(admin_group)
         self.client.login(username="demo", password="12345")
 
 
@@ -165,3 +169,151 @@ class NewModulesViewTests(AuthenticatedViewsMixin):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Modulo de Citas")
+
+
+class RoleAccessTests(TestCase):
+    def setUp(self):
+        self.secretaria_group, _ = Group.objects.get_or_create(name=ROLE_SECRETARIA)
+        self.veterinaria_group, _ = Group.objects.get_or_create(name=ROLE_VETERINARIA)
+        self.admin_group, _ = Group.objects.get_or_create(name=ROLE_ADMIN)
+
+    def test_registration_assigns_secretaria_role_by_default(self):
+        response = self.client.post(
+            reverse("registro"),
+            {
+                "username": "recepcion1",
+                "password": "ClaveSegura1",
+                "password2": "ClaveSegura1",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(username="recepcion1")
+        self.assertTrue(user.groups.filter(name=ROLE_SECRETARIA).exists())
+
+    def test_veterinaria_cannot_open_recepcion(self):
+        user = User.objects.create_user(username="vet", password="12345")
+        user.groups.add(self.veterinaria_group)
+        self.client.login(username="vet", password="12345")
+
+        response = self.client.get(reverse("recepcion"))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse("dashboard"))
+
+    def test_secretaria_cannot_open_consultas(self):
+        user = User.objects.create_user(username="sec", password="12345")
+        user.groups.add(self.secretaria_group)
+        self.client.login(username="sec", password="12345")
+
+        response = self.client.get(reverse("consultas"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Modo Lectura")
+
+    def test_secretaria_cannot_edit_consulta(self):
+        cliente = Cliente.objects.create(
+            nombre="Ana Perez",
+            telefono="5551234567",
+            email="ana@example.com",
+        )
+        mascota = Mascota.objects.create(
+            nombre="Luna",
+            especie="Perro",
+            raza="Mestizo",
+            edad=4,
+            dueno=cliente,
+        )
+        cita = Cita.objects.create(
+            mascota=mascota,
+            motivo="Vacunacion",
+            fecha=timezone.now() + timezone.timedelta(hours=2),
+        )
+        user = User.objects.create_user(username="sec2", password="12345")
+        user.groups.add(self.secretaria_group)
+        self.client.login(username="sec2", password="12345")
+
+        response = self.client.post(
+            reverse("consultas"),
+            {
+                "cita_id": cita.id,
+                "motivo": "Cambio no permitido",
+                "fecha": "2026-05-01T10:00",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        cita.refresh_from_db()
+        self.assertEqual(cita.motivo, "Vacunacion")
+
+    def test_veterinaria_can_edit_consulta(self):
+        cliente = Cliente.objects.create(
+            nombre="Carlos Ruiz",
+            telefono="5559876543",
+            email="carlos@example.com",
+        )
+        mascota = Mascota.objects.create(
+            nombre="Nina",
+            especie="Gato",
+            raza="Criollo",
+            edad=3,
+            dueno=cliente,
+        )
+        cita = Cita.objects.create(
+            mascota=mascota,
+            motivo="Revision",
+            fecha=timezone.now() + timezone.timedelta(hours=4),
+        )
+        user = User.objects.create_user(username="vet2", password="12345")
+        user.groups.add(self.veterinaria_group)
+        self.client.login(username="vet2", password="12345")
+
+        response = self.client.post(
+            reverse("consultas"),
+            {
+                "cita_id": cita.id,
+                "motivo": "Revision completa",
+                "fecha": "2026-05-01T11:30",
+                "notas_medicas": "Paciente estable. Requiere seguimiento en una semana.",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        cita.refresh_from_db()
+        self.assertEqual(cita.motivo, "Revision completa")
+        self.assertEqual(cita.notas_medicas, "Paciente estable. Requiere seguimiento en una semana.")
+
+    def test_veterinaria_can_adjust_cita_from_citas_module(self):
+        cliente = Cliente.objects.create(
+            nombre="Marta Leon",
+            telefono="5556781234",
+            email="marta@example.com",
+        )
+        mascota = Mascota.objects.create(
+            nombre="Toby",
+            especie="Perro",
+            raza="Beagle",
+            edad=5,
+            dueno=cliente,
+        )
+        cita = Cita.objects.create(
+            mascota=mascota,
+            motivo="Limpieza",
+            fecha=timezone.now() + timezone.timedelta(days=1),
+        )
+        user = User.objects.create_user(username="vet3", password="12345")
+        user.groups.add(self.veterinaria_group)
+        self.client.login(username="vet3", password="12345")
+
+        response = self.client.post(
+            reverse("citas"),
+            {
+                "cita_id": cita.id,
+                "motivo": "Limpieza dental",
+                "fecha": "2026-05-02T09:45",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        cita.refresh_from_db()
+        self.assertEqual(cita.motivo, "Limpieza dental")

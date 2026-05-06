@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -64,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'mascotas.context_processors.anavet_shell',
             ],
         },
     },
@@ -75,11 +77,23 @@ WSGI_APPLICATION = 'veterinaria.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+SQLITE_DATABASE = {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': BASE_DIR / 'db.sqlite3',
+}
+
+POSTGRES_DATABASE = {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': os.getenv('ANAVET_DB_NAME', 'anavet_db'),
+    'USER': os.getenv('ANAVET_DB_USER', 'anavet_user'),
+    'PASSWORD': os.getenv('ANAVET_DB_PASSWORD', '12345678'),
+    'HOST': os.getenv('ANAVET_DB_HOST', 'localhost'),
+    'PORT': os.getenv('ANAVET_DB_PORT', '5432'),
+}
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': POSTGRES_DATABASE if os.getenv('ANAVET_DB_ENGINE', 'postgres') == 'postgres' else SQLITE_DATABASE,
+    'sqlite': SQLITE_DATABASE,
 }
 
 

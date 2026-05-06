@@ -4,6 +4,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -13,13 +14,21 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 
 from .models import Cita, Cliente, Mascota, Pendiente, Venta
+from .roles import (
+    ROLE_ADMIN,
+    ROLE_SECRETARIA,
+    ROLE_VETERINARIA,
+    STAFF_ROLES,
+    roles_required,
+    user_has_allowed_role,
+)
 import re
 
 def ping(request):
     return JsonResponse({"status": "ok", "message": "VeterinariaWep activa"})
 
 
-@login_required
+@roles_required(*STAFF_ROLES)
 @require_POST
 def crear_cita(request):
     try:
@@ -132,13 +141,16 @@ def registro_view(request):
         # Crear usuario
         user = User.objects.create_user(username=username, password=password)
         user.save()
+        secretaria_group = Group.objects.filter(name=ROLE_SECRETARIA).first()
+        if secretaria_group:
+            user.groups.add(secretaria_group)
 
         return redirect('login')
 
     return render(request, 'Registro.html')
 
 
-@login_required
+@roles_required(*STAFF_ROLES)
 @require_POST
 def completar_pendiente(request, id):
     pendiente = get_object_or_404(Pendiente, id=id)
@@ -147,7 +159,7 @@ def completar_pendiente(request, id):
     return redirect("dashboard")
 
 
-@login_required
+@roles_required(*STAFF_ROLES)
 @require_POST
 def eliminar_pendiente(request, id):
     pendiente = get_object_or_404(Pendiente, id=id)
@@ -174,7 +186,7 @@ def _dashboard_context():
     }
 
 
-@login_required
+@roles_required(*STAFF_ROLES)
 def dashboard(request):
     if request.method == "POST":
         titulo = request.POST.get("titulo")
@@ -196,7 +208,7 @@ def logout_view(request):
     return redirect("login")
 
 
-@login_required
+@roles_required(ROLE_SECRETARIA, ROLE_ADMIN)
 def recepcion(request):
     mensaje = None
 
@@ -252,7 +264,7 @@ def recepcion(request):
     )
 
 
-@login_required
+@roles_required(ROLE_SECRETARIA, ROLE_ADMIN)
 def punto_venta(request):
     mensaje = None
     error = None
@@ -318,8 +330,45 @@ def punto_venta(request):
     )
 
 
-@login_required
+@roles_required(*STAFF_ROLES)
 def consultas(request):
+    puede_editar_consultas = user_has_allowed_role(
+        request.user, (ROLE_VETERINARIA, ROLE_ADMIN)
+    )
+
+    if request.method == "POST":
+        if not puede_editar_consultas:
+            messages.error(
+                request,
+                "Solo veterinaria o administracion pueden modificar consultas.",
+            )
+            return redirect("consultas")
+
+        cita = get_object_or_404(Cita, id=request.POST.get("cita_id"))
+        motivo = (request.POST.get("motivo") or "").strip()
+        fecha = request.POST.get("fecha")
+        notas_medicas = (request.POST.get("notas_medicas") or "").strip()
+
+        if motivo:
+            cita.motivo = motivo
+
+        if fecha:
+            try:
+                fecha_consulta = datetime.fromisoformat(fecha)
+                if timezone.is_naive(fecha_consulta):
+                    fecha_consulta = timezone.make_aware(
+                        fecha_consulta, timezone.get_current_timezone()
+                    )
+                cita.fecha = fecha_consulta
+            except ValueError:
+                messages.error(request, "La fecha de consulta no es valida.")
+                return redirect("consultas")
+
+        cita.notas_medicas = notas_medicas
+        cita.save()
+        messages.success(request, "Consulta actualizada correctamente.")
+        return redirect("consultas")
+
     citas = Cita.objects.select_related("mascota", "mascota__dueno").order_by("fecha")
     fecha_actual = now()
     hoy = fecha_actual.date()
@@ -338,11 +387,13 @@ def consultas(request):
             "total_consultas_hoy": citas_hoy.count(),
             "total_proximas": proximas_24h.count(),
             "total_pacientes": Mascota.objects.count(),
+            "puede_editar_consultas": puede_editar_consultas,
+            "consultas_editables": citas.filter(fecha__gte=fecha_actual)[:5],
         },
     )
 
 
-@login_required
+@roles_required(ROLE_SECRETARIA, ROLE_ADMIN)
 @require_POST
 def eliminar_cliente(request, id):
     cliente = get_object_or_404(Cliente, id=id)
@@ -350,7 +401,7 @@ def eliminar_cliente(request, id):
     return redirect("recepcion")
 
 
-@login_required
+@roles_required(ROLE_SECRETARIA, ROLE_ADMIN)
 def editar_cliente(request, id):
     cliente = get_object_or_404(Cliente, id=id)
     if request.method == "POST":
@@ -366,7 +417,7 @@ def editar_cliente(request, id):
     return redirect("recepcion")
 
 
-@login_required
+@roles_required(ROLE_SECRETARIA, ROLE_ADMIN)
 @require_POST
 def eliminar_mascota(request, id):
     mascota = get_object_or_404(Mascota, id=id)
@@ -374,7 +425,7 @@ def eliminar_mascota(request, id):
     return redirect("recepcion")
 
 
-@login_required
+@roles_required(ROLE_SECRETARIA, ROLE_ADMIN)
 def editar_mascota(request, id):
     mascota = get_object_or_404(Mascota, id=id)
     if request.method == "POST":
@@ -394,8 +445,43 @@ def editar_mascota(request, id):
     return redirect("recepcion")
 
 
-@login_required
+@roles_required(*STAFF_ROLES)
 def citas(request):
+    puede_ajustar_citas = user_has_allowed_role(
+        request.user, (ROLE_VETERINARIA, ROLE_ADMIN)
+    )
+
+    if request.method == "POST":
+        if not puede_ajustar_citas:
+            messages.error(
+                request,
+                "Solo veterinaria o administracion pueden ajustar citas desde este modulo.",
+            )
+            return redirect("citas")
+
+        cita = get_object_or_404(Cita, id=request.POST.get("cita_id"))
+        motivo = (request.POST.get("motivo") or "").strip()
+        fecha = request.POST.get("fecha")
+
+        if motivo:
+            cita.motivo = motivo
+
+        if fecha:
+            try:
+                fecha_cita = datetime.fromisoformat(fecha)
+                if timezone.is_naive(fecha_cita):
+                    fecha_cita = timezone.make_aware(
+                        fecha_cita, timezone.get_current_timezone()
+                    )
+                cita.fecha = fecha_cita
+            except ValueError:
+                messages.error(request, "La fecha de la cita no es valida.")
+                return redirect("citas")
+
+        cita.save()
+        messages.success(request, "Cita actualizada correctamente.")
+        return redirect("citas")
+
     context = _dashboard_context()
     context.update(
         {
@@ -405,6 +491,7 @@ def citas(request):
             "citas_pasadas": Cita.objects.select_related("mascota", "mascota__dueno")
             .filter(fecha__lt=now())
             .order_by("-fecha")[:6],
+            "puede_ajustar_citas": puede_ajustar_citas,
         }
     )
     return render(request, "citas.html", context)

@@ -1,0 +1,469 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$OvQtJFiwUUwmyHKJynrNTW$hXhLnNgA8xI0bTmzGyJt2HRGnBQtFkjWllHSJ6oYADs=",
+    "last_login": "2026-03-19T03:28:07.319Z",
+    "is_superuser": false,
+    "username": "Alberto",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-15T01:04:25.061Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$BAYQavRTqXmd4RBkYUCP6p$vDolaubydLhKV1c6tXwsMxqMNbsmiTLfDJqZMrWSy+Q=",
+    "last_login": "2026-04-27T02:40:32.132Z",
+    "is_superuser": false,
+    "username": "Eli",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-19T00:56:04.234Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$XL97uuuEWLpF4sQeYAGvbR$LyV633FkaFLx1nUF+ByLTiwMl03LQnl42tzoIbINEg0=",
+    "last_login": "2026-03-20T02:41:39.088Z",
+    "is_superuser": true,
+    "username": "ELI",
+    "first_name": "",
+    "last_name": "",
+    "email": "rodrigo.23070036@itsmotul.edu.mx",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-03-19T02:57:16.911Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$oPJliNJCPmmwOEYrgyr7gs$BKJVO+JMiFQHoE26a2dcZa0yB01HQfy8dUHiU2ocnUI=",
+    "last_login": "2026-04-17T01:06:26.840Z",
+    "is_superuser": false,
+    "username": "amanda",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-15T20:08:42.558Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$Gp8q9ClLfZ8eqsW7emDVsE$a7XFihvgWyh75V0VYg72fWNJCcX7GyunUG2iKUyNV+0=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "hyuabhfjba",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-15T20:09:06.476Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$uYxanbqdAoDVemU3I5LkeC$JhPVgXDdWQKkzycL1lq7ymF0L+DkURqmTzgC9+YJ9iI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "fasfvba",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-15T20:09:34.036Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$uQx1sswx3UgwpyUnYUdVoZ$sGy7fgTHnU4+9rTwLN4cWVR3n8VlJTCjPmCtV+SQvmo=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "santana",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-15T21:06:21.495Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$wHtv3e7xisgjYEKd66QgAS$jJjjopsrlmnKCZpVQic5ESyo4hXGMxRlWjjurOzuwAc=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "ELIS",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-17T01:16:03.307Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "3zms3mbzcqtut8chk0ly9p4bywnm50ti",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAQAP9lz4YA0t3So_d-A-GxSNVAUtqT8d9Nkx70OjOZNzi_b8XtnVe3JJhAw-WXBR-fXA-RHr7em4itbusSxJGI03Yxt8Sv29n-DYrvBSa4jtooshgCs5LaGGSFiuQQKGYkxGxlVBQRLakUrbFhZEyZ5eB1thk-X7moN2E:1wHBtg:at4trvRmE0wNFXQ1oQVN9NfXPFQuF0B5K9Lm0IKhFqA",
+    "expire_date": "2026-05-11T02:40:32.141Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "8jo9n8cjxm17hr3959n6n25u8kbitqj0",
+  "fields": {
+    "session_data": ".eJxVjEEKwyAQAP-y5yKrpqI59t43yOquNW0xEJNT6N9LIIf2OjPMDpG2tcatyxInhhE0XH5ZovySdgh-UnvMKs9tXaakjkSdtqv7zPK-ne3foFKvMIJjEXGCGFyRwZJPzDoUU0iMHpJFyaaE5DM70swBtc-F5GqtQQxJw-cLF6444w:1w343L:inN5UeTmwcteNIyvuLJcSLOg7feJXUeSLuUnZcypl9g",
+    "expire_date": "2026-04-02T03:28:07.326Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "unjtriq2l12hfi901levvi1vqptnf3va",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAQAP9lz4YA0t3So_d-A-GxSNVAUtqT8d9Nkx70OjOZNzi_b8XtnVe3JJhAw-WXBR-fXA-RHr7em4itbusSxJGI03Yxt8Sv29n-DYrvBSa4jtooshgCs5LaGGSFiuQQKGYkxGxlVBQRLakUrbFhZEyZ5eB1thk-X7moN2E:1wAEhA:S9yfVEeWneA49RPF5kpgZfkEyg0vzCkCZZmUZr3u-CM",
+    "expire_date": "2026-04-21T22:14:52.856Z"
+  }
+},
+{
+  "model": "mascotas.cliente",
+  "pk": 1,
+  "fields": {
+    "nombre": "Rodrigo",
+    "telefono": "9911090112",
+    "email": "rodrigo.23070036@itsmotul.edu.mx"
+  }
+},
+{
+  "model": "mascotas.cliente",
+  "pk": 2,
+  "fields": {
+    "nombre": "Alberto",
+    "telefono": "9994997485",
+    "email": "rodrigo.23070036@itsmotul.edu.mx"
+  }
+},
+{
+  "model": "mascotas.cliente",
+  "pk": 3,
+  "fields": {
+    "nombre": "Marta",
+    "telefono": "Pendiente",
+    "email": "marta@temporal.local"
+  }
+},
+{
+  "model": "mascotas.cliente",
+  "pk": 4,
+  "fields": {
+    "nombre": "Rodrigo",
+    "telefono": "9994997485",
+    "email": "rodrigo.23070036@itsmotul.edu.mx"
+  }
+},
+{
+  "model": "mascotas.cliente",
+  "pk": 5,
+  "fields": {
+    "nombre": "jose",
+    "telefono": "Pendiente",
+    "email": "jose@temporal.local"
+  }
+},
+{
+  "model": "mascotas.cliente",
+  "pk": 6,
+  "fields": {
+    "nombre": "Rodrigo",
+    "telefono": "00000000000",
+    "email": "rodrigo.23070036@itsmotul.edu.mx"
+  }
+},
+{
+  "model": "mascotas.cliente",
+  "pk": 7,
+  "fields": {
+    "nombre": "Ana",
+    "telefono": "Pendiente",
+    "email": "ana@temporal.local"
+  }
+},
+{
+  "model": "mascotas.mascota",
+  "pk": 1,
+  "fields": {
+    "nombre": "Sherma",
+    "especie": "Felino",
+    "raza": "atigrado",
+    "edad": 1,
+    "dueno": 1
+  }
+},
+{
+  "model": "mascotas.mascota",
+  "pk": 2,
+  "fields": {
+    "nombre": "I?AKI",
+    "especie": "Desconocido",
+    "raza": "Desconocido",
+    "edad": 0,
+    "dueno": 1
+  }
+},
+{
+  "model": "mascotas.mascota",
+  "pk": 3,
+  "fields": {
+    "nombre": "salamon",
+    "especie": "Desconocido",
+    "raza": "Desconocido",
+    "edad": 0,
+    "dueno": 1
+  }
+},
+{
+  "model": "mascotas.mascota",
+  "pk": 4,
+  "fields": {
+    "nombre": "jaramillo",
+    "especie": "Desconocido",
+    "raza": "Desconocido",
+    "edad": 0,
+    "dueno": 3
+  }
+},
+{
+  "model": "mascotas.mascota",
+  "pk": 5,
+  "fields": {
+    "nombre": "milo",
+    "especie": "Desconocido",
+    "raza": "Desconocido",
+    "edad": 0,
+    "dueno": 5
+  }
+},
+{
+  "model": "mascotas.mascota",
+  "pk": 6,
+  "fields": {
+    "nombre": "dulce",
+    "especie": "Desconocido",
+    "raza": "Desconocido",
+    "edad": 0,
+    "dueno": 7
+  }
+},
+{
+  "model": "mascotas.cita",
+  "pk": 1,
+  "fields": {
+    "mascota": 1,
+    "fecha": "2026-03-19T03:07:42Z",
+    "motivo": "Anemia y pulgas"
+  }
+},
+{
+  "model": "mascotas.cita",
+  "pk": 2,
+  "fields": {
+    "mascota": 2,
+    "fecha": "2026-03-19T00:00:00Z",
+    "motivo": "PENDEJO"
+  }
+},
+{
+  "model": "mascotas.cita",
+  "pk": 3,
+  "fields": {
+    "mascota": 3,
+    "fecha": "2026-03-20T00:00:00Z",
+    "motivo": "vacuna"
+  }
+},
+{
+  "model": "mascotas.cita",
+  "pk": 4,
+  "fields": {
+    "mascota": 4,
+    "fecha": "2026-04-07T10:00:00Z",
+    "motivo": "pulgas"
+  }
+},
+{
+  "model": "mascotas.cita",
+  "pk": 5,
+  "fields": {
+    "mascota": 5,
+    "fecha": "2026-05-14T10:00:00Z",
+    "motivo": "diarrea"
+  }
+},
+{
+  "model": "mascotas.cita",
+  "pk": 6,
+  "fields": {
+    "mascota": 6,
+    "fecha": "2026-04-07T10:00:00Z",
+    "motivo": "dyjwgfaf"
+  }
+},
+{
+  "model": "mascotas.cita",
+  "pk": 7,
+  "fields": {
+    "mascota": 4,
+    "fecha": "0767-06-07T10:00:00Z",
+    "motivo": "hn"
+  }
+},
+{
+  "model": "mascotas.pendiente",
+  "pk": 7,
+  "fields": {
+    "titulo": "SOBREESCRITURA",
+    "descripcion": "drcdd",
+    "fecha": "2026-04-17T20:35:41.183Z",
+    "completado": true
+  }
+},
+{
+  "model": "mascotas.venta",
+  "pk": 10,
+  "fields": {
+    "total": "1000.00",
+    "metodo_pago": "efectivo",
+    "monto_pagado": "1000.00",
+    "cambio": "0.00",
+    "fecha": "2026-04-07T22:10:56.281Z"
+  }
+},
+{
+  "model": "mascotas.venta",
+  "pk": 11,
+  "fields": {
+    "total": "3000.00",
+    "metodo_pago": "tarjeta",
+    "monto_pagado": "3000.00",
+    "cambio": "0.00",
+    "fecha": "2026-04-17T21:22:43.257Z"
+  }
+},
+{
+  "model": "mascotas.venta",
+  "pk": 12,
+  "fields": {
+    "total": "2000.00",
+    "metodo_pago": "tarjeta",
+    "monto_pagado": "2000.00",
+    "cambio": "0.00",
+    "fecha": "2026-04-17T21:23:19.241Z"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2026-03-19T03:07:32.823Z",
+    "user": [
+      "ELI"
+    ],
+    "content_type": [
+      "mascotas",
+      "cliente"
+    ],
+    "object_id": "1",
+    "object_repr": "Rodrigo",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-03-19T03:07:35.772Z",
+    "user": [
+      "ELI"
+    ],
+    "content_type": [
+      "mascotas",
+      "mascota"
+    ],
+    "object_id": "1",
+    "object_repr": "Sherma",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-03-19T03:07:58.549Z",
+    "user": [
+      "ELI"
+    ],
+    "content_type": [
+      "mascotas",
+      "cita"
+    ],
+    "object_id": "1",
+    "object_repr": "Sherma - 2026-03-19 03:07:42+00:00",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2026-03-20T02:42:14.099Z",
+    "user": [
+      "ELI"
+    ],
+    "content_type": [
+      "mascotas",
+      "cliente"
+    ],
+    "object_id": "2",
+    "object_repr": "Alberto",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+}
+]
