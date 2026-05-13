@@ -3,8 +3,7 @@ from django.urls import path
 
 from mascotas import views
 
-urlpatterns = [
-    path("admin/", admin.site.urls),
+urlpatterns = [    path("admin/", admin.site.urls),
     path("ping/", views.ping, name="ping"),
     path("", views.login_view, name="login"),
     path("registro/", views.registro_view, name="registro"),

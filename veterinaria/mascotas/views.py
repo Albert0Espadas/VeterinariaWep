@@ -32,6 +32,7 @@ def ping(request):
 @require_POST
 def crear_cita(request):
     try:
+        # El frontend envia la cita como JSON; aqui se transforma a dict.
         data = json.loads(request.body)
     except json.JSONDecodeError:
         return JsonResponse({"status": "error", "message": "JSON invalido"}, status=400)
@@ -48,12 +49,15 @@ def crear_cita(request):
         )
 
     try:
+        # La fecha llega como texto ISO y se convierte a datetime real.
         fecha_cita = datetime.fromisoformat(fecha)
+        # Si la fecha no trae zona horaria, se ajusta a la del proyecto.
         if timezone.is_naive(fecha_cita):
             fecha_cita = timezone.make_aware(fecha_cita, timezone.get_current_timezone())
     except ValueError:
         return JsonResponse({"status": "error", "message": "Fecha invalida"}, status=400)
 
+    # Si el dueno no existe, se crea rapido para no frenar recepcion.
     cliente, _ = Cliente.objects.get_or_create(
         nombre=nombre_dueno,
         defaults={
@@ -62,6 +66,7 @@ def crear_cita(request):
         },
     )
 
+    # La mascota tambien puede registrarse aqui si aun no existia.
     mascota, creada = Mascota.objects.get_or_create(
         nombre=nombre_mascota,
         defaults={
@@ -72,6 +77,8 @@ def crear_cita(request):
         },
     )
 
+    # Si la mascota ya tenia otro dueno asociado, se respeta lo que ya esta
+    # guardado para no pisar el historial existente.
     if not creada and mascota.dueno_id != cliente.id:
         cliente = mascota.dueno
 
@@ -141,6 +148,7 @@ def registro_view(request):
         # Crear usuario
         user = User.objects.create_user(username=username, password=password)
         user.save()
+        # Todo usuario nuevo entra como secretaria por defecto.
         secretaria_group = Group.objects.filter(name=ROLE_SECRETARIA).first()
         if secretaria_group:
             user.groups.add(secretaria_group)
@@ -168,6 +176,7 @@ def eliminar_pendiente(request, id):
 
 
 def _dashboard_context():
+    # Este helper concentra los datos reutilizados por el dashboard.
     pendientes = Pendiente.objects.order_by("-fecha")
     citas = Cita.objects.select_related("mascota", "mascota__dueno").order_by("fecha")
     fecha_actual = now()
@@ -218,6 +227,8 @@ def recepcion(request):
         email = (request.POST.get("email") or "").strip() or "sin-correo@temporal.local"
 
         if nombre and telefono:
+            # Se guarda el cliente para que luego pueda tener una o varias
+            # mascotas asociadas.
             Cliente.objects.create(
                 nombre=nombre,
                 telefono=telefono,
@@ -235,6 +246,8 @@ def recepcion(request):
         cliente_id = request.POST.get("cliente")
 
         if nombre and cliente_id:
+            # Cada mascota se vincula a un dueno puntual por medio del
+            # ForeignKey dueno_id.
             Mascota.objects.create(
                 nombre=nombre,
                 especie=especie,
@@ -271,6 +284,7 @@ def punto_venta(request):
 
     if request.method == "POST":
         try:
+            # Decimal se usa para dinero porque evita errores de precision.
             total = Decimal(request.POST.get("total", "0"))
             metodo = request.POST.get("metodo_pago")
             monto_pagado = Decimal(request.POST.get("monto_pagado", "0"))
@@ -288,8 +302,10 @@ def punto_venta(request):
                 error = "El monto recibido no puede ser menor al total."
             else:
                 if metodo == "efectivo":
+                    # En efectivo si existe cambio real.
                     cambio = monto_pagado - total
                 else:
+                    # En tarjeta o transferencia se asume pago exacto.
                     monto_pagado = total
 
                 Venta.objects.create(
@@ -337,6 +353,8 @@ def consultas(request):
     )
 
     if request.method == "POST":
+        # Secretaria puede ver esta pantalla, pero solo veterinaria o admin
+        # pueden cambiar datos clinicos.
         if not puede_editar_consultas:
             messages.error(
                 request,
@@ -354,6 +372,8 @@ def consultas(request):
 
         if fecha:
             try:
+                # Se normaliza la fecha antes de guardarla para no mezclar
+                # datetimes sin zona horaria con datetimes aware.
                 fecha_consulta = datetime.fromisoformat(fecha)
                 if timezone.is_naive(fecha_consulta):
                     fecha_consulta = timezone.make_aware(
@@ -364,6 +384,7 @@ def consultas(request):
                 messages.error(request, "La fecha de consulta no es valida.")
                 return redirect("consultas")
 
+        # Este campo guarda la nota medica escrita dentro del panel clinico.
         cita.notas_medicas = notas_medicas
         cita.save()
         messages.success(request, "Consulta actualizada correctamente.")
@@ -452,6 +473,7 @@ def citas(request):
     )
 
     if request.method == "POST":
+        # Este bloque permite reprogramar citas desde el modulo de agenda.
         if not puede_ajustar_citas:
             messages.error(
                 request,
@@ -468,6 +490,8 @@ def citas(request):
 
         if fecha:
             try:
+                # Igual que en consultas, la fecha se vuelve aware antes de
+                # guardarse para mantener consistencia en la agenda.
                 fecha_cita = datetime.fromisoformat(fecha)
                 if timezone.is_naive(fecha_cita):
                     fecha_cita = timezone.make_aware(
