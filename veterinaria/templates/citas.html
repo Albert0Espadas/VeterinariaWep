@@ -1,260 +1,836 @@
 {% extends "BaseDashboart.html" %}
 
-{% block content %}
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-.citas-shell{background:linear-gradient(180deg,#fcfbff 0%,#f7f2ff 100%);border:1px solid rgba(108,43,217,.08);border-radius:28px;padding:28px;box-shadow:0 18px 42px rgba(58,29,112,.07)}
-.citas-hero,.citas-panel,.citas-metric{background:rgba(255,255,255,.96);border:1px solid rgba(108,43,217,.12);border-radius:24px;box-shadow:0 12px 24px rgba(58,29,112,.05)}
-.citas-hero{padding:24px 26px;margin-bottom:22px;background:radial-gradient(circle at top right, rgba(144,105,255,.18), transparent 30%),linear-gradient(135deg,#fff 0%,#f7f1ff 100%)}
-.citas-title{font-size:2rem;font-weight:800;color:#29144a;margin-bottom:8px}
-.citas-copy,.panel-copy,.item-meta{color:#776d90}
-.citas-metric{padding:18px 20px;height:100%}
-.metric-label{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:#7b6b9f}
-.metric-value{font-size:2rem;font-weight:800;color:#2d1652;margin:8px 0 0}
-.citas-panel{padding:22px;height:100%}
-.panel-title{font-size:1.08rem;font-weight:800;color:#2d1652;margin-bottom:6px}
-.calendar-frame{margin-top:18px;padding:16px;border-radius:22px;background:linear-gradient(180deg,#fff 0%,#faf7ff 100%);border:1px solid rgba(123,74,226,.08)}
-.fc{--fc-border-color:rgba(123,74,226,.12);--fc-page-bg-color:transparent;--fc-today-bg-color:rgba(123,74,226,.08)}
-.fc .fc-toolbar-title{font-size:1.15rem;font-weight:800;color:#25153f}
-.fc .fc-button{background:#fff;border:1px solid rgba(123,74,226,.14);color:#3b1c78;border-radius:12px;font-weight:700;box-shadow:none}
-.fc .fc-button:hover,.fc .fc-button-primary:not(:disabled).fc-button-active{background:linear-gradient(135deg,#5e35b1 0%,#7b4ae2 100%);border-color:transparent;color:#fff}
-.fc .fc-event{border:none;padding:4px 6px;border-radius:10px;background:linear-gradient(135deg,#5e35b1 0%,#8b5cf6 100%);box-shadow:0 10px 16px rgba(94,53,177,.18)}
-.scheduler-feedback{display:none;border-radius:14px;padding:12px 14px;margin-bottom:16px}
-.scheduler-feedback.is-visible{display:block}
-.scheduler-feedback.is-success{background:#eafaf1;color:#146c43;border:1px solid #badbcc}
-.scheduler-feedback.is-error{background:#fdeaea;color:#b02a37;border:1px solid #f1b0b7}
-.form-label{font-weight:700;color:#2d1652}.form-control{border-radius:14px;border-color:rgba(108,43,217,.16);padding:11px 14px}
-.form-control:focus{border-color:rgba(108,43,217,.5);box-shadow:0 0 0 .25rem rgba(108,43,217,.12)}
-.btn-premium{background:linear-gradient(135deg,#5f31b0 0%,#7c4de3 100%);border:none;color:#fff;padding:12px 18px;border-radius:14px;font-weight:700}
-.list-grid{display:grid;gap:12px}
-.list-item{padding:16px 18px;border-radius:18px;border:1px solid rgba(108,43,217,.1);background:linear-gradient(180deg,#fff 0%,#fbf9ff 100%)}
-.item-title{font-weight:800;color:#2d1652;margin-bottom:4px}.item-time{margin-top:8px;color:#5e35b1;font-weight:700}.empty-state{padding:18px;border-radius:18px;background:#faf7ff;border:1px dashed rgba(108,43,217,.18);color:#7b6b9f;text-align:center}
-.citas-shortcuts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
-.shortcut-card{padding:14px 16px;border-radius:18px;background:linear-gradient(180deg,#fff 0%,#fbf9ff 100%);border:1px solid rgba(108,43,217,.12);text-decoration:none;color:#2d1652;transition:.2s ease}
-.shortcut-card:hover{transform:translateY(-2px);background:linear-gradient(135deg,#5f31b0 0%,#7c4de3 100%);color:#fff}
-.shortcut-card strong{display:block;margin-bottom:4px}
-.micro-tip{margin-bottom:16px;padding:12px 14px;border-radius:14px;background:#f6f0ff;border:1px solid rgba(108,43,217,.12);color:#6d5b92}
-.citas-role-banner{padding:18px 20px;margin-bottom:22px;background:linear-gradient(135deg,#fff 0%,#f9f4ff 100%);border:1px solid rgba(108,43,217,.12);border-radius:24px;box-shadow:0 12px 24px rgba(58,29,112,.05)}
-.role-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#efe4ff;color:#5c32a6;font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em}
-.role-copy{color:#776d90;margin:10px 0 0}
-.edit-box{margin-top:14px;padding:16px 18px;border-radius:18px;border:1px solid rgba(108,43,217,.1);background:linear-gradient(180deg,#fff 0%,#fbf9ff 100%)}
-.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.edit-label{display:block;font-size:.82rem;font-weight:700;color:#5f34b3;margin-bottom:6px}
-.edit-input{width:100%;border:1px solid rgba(108,43,217,.16);border-radius:12px;padding:10px 12px}
-.edit-input:focus{outline:none;border-color:#7c4de3;box-shadow:0 0 0 .25rem rgba(108,43,217,.12)}
-@media (max-width: 991px){.edit-grid,.citas-shortcuts{grid-template-columns:1fr}}
+/* ── Reset & Base ── */
+* { box-sizing: border-box; }
+body { font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif !important; }
+
+/* ── Page Layout ── */
+.citas-page { display: flex; flex-direction: column; gap: 20px; }
+
+/* ── Top Header ── */
+.citas-header {
+  display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  background: #fff; border: 1px solid rgba(91,47,160,.1); border-radius: 20px;
+  padding: 22px 26px; box-shadow: 0 2px 12px rgba(91,47,160,.06);
+}
+.citas-header-left h1 {
+  font-size: 1.6rem; font-weight: 800; color: #1a1033; margin: 0 0 4px;
+}
+.citas-header-left p { font-size: .875rem; color: #7a6f90; margin: 0; }
+.btn-nueva-cita {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, #5b2fa0 0%, #7c3aed 100%);
+  color: #fff; border: none; border-radius: 12px; padding: 11px 20px;
+  font-size: .875rem; font-weight: 700; cursor: pointer; transition: .2s;
+  text-decoration: none; white-space: nowrap;
+}
+.btn-nueva-cita:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(124,58,237,.35); color: #fff; }
+
+/* ── Metric Cards ── */
+.metrics-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+.metric-card {
+  background: #fff; border: 1px solid rgba(91,47,160,.1); border-radius: 18px;
+  padding: 18px 20px; box-shadow: 0 2px 10px rgba(91,47,160,.05);
+  display: flex; align-items: center; gap: 14px;
+}
+.metric-icon {
+  width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center;
+  justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+}
+.metric-icon.purple { background: #ede9fe; }
+.metric-icon.green { background: #d1fae5; }
+.metric-icon.orange { background: #ffedd5; }
+.metric-icon.blue { background: #dbeafe; }
+.metric-icon.indigo { background: #e0e7ff; }
+.metric-val { font-size: 1.6rem; font-weight: 800; color: #1a1033; line-height: 1; }
+.metric-lbl { font-size: .75rem; font-weight: 600; color: #7a6f90; margin-top: 3px; }
+.metric-delta { font-size: .72rem; font-weight: 700; margin-top: 2px; }
+.metric-delta.up { color: #059669; }
+.metric-delta.eq { color: #7a6f90; }
+
+/* ── Main Grid ── */
+.citas-grid { display: grid; grid-template-columns: 1fr 360px; gap: 20px; align-items: start; }
+
+/* ── Calendar Panel ── */
+.calendar-panel {
+  background: #fff; border: 1px solid rgba(91,47,160,.1); border-radius: 20px;
+  padding: 22px; box-shadow: 0 2px 12px rgba(91,47,160,.06);
+}
+.panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.panel-title { font-size: 1.05rem; font-weight: 800; color: #1a1033; margin: 0; }
+.panel-sub { font-size: .78rem; color: #7a6f90; margin: 3px 0 0; }
+.view-tabs { display: flex; background: #f4f1fb; border-radius: 10px; padding: 3px; gap: 2px; }
+.view-tab {
+  padding: 6px 14px; border-radius: 8px; font-size: .78rem; font-weight: 700; cursor: pointer;
+  border: none; background: transparent; color: #7a6f90; transition: .15s;
+}
+.view-tab.active { background: #fff; color: #5b2fa0; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+
+/* FullCalendar overrides */
+.fc { --fc-border-color: rgba(91,47,160,.1); --fc-today-bg-color: rgba(124,58,237,.06); --fc-page-bg-color: transparent; }
+.fc .fc-toolbar { margin-bottom: 14px !important; }
+.fc .fc-toolbar-title { font-size: 1rem !important; font-weight: 800 !important; color: #1a1033 !important; font-family: 'Plus Jakarta Sans', sans-serif !important; }
+.fc .fc-button {
+  background: #fff !important; border: 1px solid rgba(91,47,160,.15) !important;
+  color: #5b2fa0 !important; border-radius: 9px !important; font-weight: 700 !important;
+  font-size: .78rem !important; padding: 5px 10px !important; box-shadow: none !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+.fc .fc-button:hover { background: #f4f1fb !important; }
+.fc .fc-button-primary:not(:disabled).fc-button-active { background: linear-gradient(135deg,#5b2fa0,#7c3aed) !important; border-color: transparent !important; color: #fff !important; }
+.fc .fc-col-header-cell { font-size: .78rem !important; font-weight: 700 !important; color: #7a6f90 !important; }
+.fc .fc-timegrid-slot { height: 38px !important; }
+.fc .fc-event {
+  border: none !important; border-radius: 8px !important; padding: 2px 6px !important;
+  font-size: .73rem !important; font-weight: 700 !important; cursor: pointer !important;
+}
+.fc .fc-event.ev-consulta { background: linear-gradient(135deg,#5b2fa0,#7c3aed) !important; }
+.fc .fc-event.ev-vacuna { background: linear-gradient(135deg,#0ea5e9,#38bdf8) !important; }
+.fc .fc-event.ev-emergencia { background: linear-gradient(135deg,#dc2626,#f87171) !important; }
+.fc .fc-event.ev-desparasitacion { background: linear-gradient(135deg,#d97706,#fbbf24) !important; }
+.fc .fc-event.ev-seguimiento { background: linear-gradient(135deg,#059669,#34d399) !important; }
+.fc .fc-event.ev-control { background: linear-gradient(135deg,#7c3aed,#a78bfa) !important; }
+.fc-today-highlight { background: rgba(124,58,237,.05); }
+.fc .fc-daygrid-event { border-radius: 6px !important; }
+
+/* ── Right Panel ── */
+.right-panel { display: flex; flex-direction: column; gap: 16px; }
+
+/* ── Form Card ── */
+.form-card {
+  background: #fff; border: 1px solid rgba(91,47,160,.1); border-radius: 20px;
+  padding: 22px; box-shadow: 0 2px 12px rgba(91,47,160,.06);
+}
+.form-tabs { display: flex; border-bottom: 1px solid rgba(91,47,160,.1); margin-bottom: 18px; gap: 0; }
+.form-tab {
+  padding: 9px 16px; font-size: .82rem; font-weight: 700; cursor: pointer; border: none;
+  background: transparent; color: #7a6f90; border-bottom: 2px solid transparent;
+  margin-bottom: -1px; transition: .15s;
+}
+.form-tab.active { color: #5b2fa0; border-bottom-color: #7c3aed; }
+
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: .78rem; font-weight: 700; color: #2d1652; margin-bottom: 6px; }
+.form-control {
+  width: 100%; border: 1px solid rgba(91,47,160,.18); border-radius: 10px;
+  padding: 9px 12px; font-size: .82rem; color: #1a1033; background: #fafafa;
+  font-family: 'Plus Jakarta Sans', sans-serif; transition: .15s; outline: none;
+}
+.form-control:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,.12); background: #fff; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.search-wrap { position: relative; }
+.search-wrap .form-control { padding-left: 32px; }
+.search-wrap::before { content: '🔍'; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: .75rem; pointer-events: none; }
+.btn-submit {
+  width: 100%; background: linear-gradient(135deg,#5b2fa0 0%,#7c3aed 100%);
+  color: #fff; border: none; border-radius: 12px; padding: 12px; font-size: .875rem;
+  font-weight: 700; cursor: pointer; transition: .2s; font-family: 'Plus Jakarta Sans', sans-serif;
+  margin-top: 4px;
+}
+.btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(124,58,237,.35); }
+.btn-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* Feedback */
+.feedback-box { border-radius: 10px; padding: 10px 14px; font-size: .8rem; font-weight: 600; margin-bottom: 14px; display: none; }
+.feedback-box.visible { display: block; }
+.feedback-box.success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+.feedback-box.error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+/* ── Citas List Panel ── */
+.list-panel {
+  background: #fff; border: 1px solid rgba(91,47,160,.1); border-radius: 20px;
+  padding: 22px; box-shadow: 0 2px 12px rgba(91,47,160,.06); max-height: 420px; overflow-y: auto;
+}
+.list-panel::-webkit-scrollbar { width: 4px; }
+.list-panel::-webkit-scrollbar-track { background: transparent; }
+.list-panel::-webkit-scrollbar-thumb { background: rgba(91,47,160,.2); border-radius: 4px; }
+
+/* ── Cita Items ── */
+.cita-item {
+  display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px;
+  border: 1px solid rgba(91,47,160,.08); border-radius: 12px; margin-bottom: 8px;
+  transition: .15s; background: #fafafa;
+}
+.cita-item:last-child { margin-bottom: 0; }
+.cita-item:hover { border-color: rgba(124,58,237,.25); background: #f9f7ff; }
+.cita-avatar {
+  width: 36px; height: 36px; border-radius: 10px; background: #ede9fe;
+  display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+}
+.cita-body { flex: 1; min-width: 0; }
+.cita-name { font-size: .82rem; font-weight: 800; color: #1a1033; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cita-owner { font-size: .73rem; color: #7a6f90; margin-top: 1px; }
+.cita-time { font-size: .73rem; font-weight: 700; color: #5b2fa0; margin-top: 4px; }
+.cita-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: .68rem;
+  font-weight: 700; text-transform: uppercase; letter-spacing: .04em; flex-shrink: 0;
+}
+.badge-consulta { background: #ede9fe; color: #5b2fa0; }
+.badge-vacuna { background: #dbeafe; color: #1d4ed8; }
+.badge-emergencia { background: #fee2e2; color: #dc2626; }
+.badge-seguimiento { background: #d1fae5; color: #065f46; }
+.badge-desparasitacion { background: #ffedd5; color: #c2410c; }
+.badge-control { background: #e0e7ff; color: #4338ca; }
+.badge-otro { background: #f1f5f9; color: #475569; }
+.cita-actions { display: flex; gap: 4px; }
+.cita-btn {
+  width: 28px; height: 28px; border-radius: 7px; border: 1px solid rgba(91,47,160,.12);
+  background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; transition: .15s; color: #7a6f90;
+}
+.cita-btn:hover { background: #ede9fe; color: #5b2fa0; border-color: rgba(91,47,160,.3); }
+.cita-btn.danger:hover { background: #fee2e2; color: #dc2626; border-color: rgba(220,38,38,.3); }
+
+/* ── Bottom Row ── */
+.bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* ── Proximas / Historial ── */
+.bottom-panel {
+  background: #fff; border: 1px solid rgba(91,47,160,.1); border-radius: 20px;
+  padding: 22px; box-shadow: 0 2px 12px rgba(91,47,160,.06);
+}
+.empty-state {
+  padding: 20px; text-align: center; border: 1px dashed rgba(91,47,160,.18);
+  border-radius: 12px; color: #7a6f90; font-size: .82rem; background: #f9f7ff;
+}
+
+/* ── Acciones Rápidas ── */
+.quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.qa-btn {
+  display: flex; align-items: center; gap: 8px; padding: 10px 12px;
+  border: 1px solid rgba(91,47,160,.12); border-radius: 10px; background: #fafafa;
+  cursor: pointer; text-decoration: none; color: #1a1033; font-size: .78rem; font-weight: 600;
+  transition: .15s;
+}
+.qa-btn:hover { background: #ede9fe; color: #5b2fa0; border-color: rgba(91,47,160,.3); text-decoration: none; }
+.qa-icon { font-size: 1rem; }
+
+/* ── 7-day sidebar ── */
+.week-sidebar { display: flex; flex-direction: column; gap: 6px; }
+.week-day { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-radius: 10px; border: 1px solid rgba(91,47,160,.08); }
+.week-day.has-citas { background: #f9f7ff; border-color: rgba(91,47,160,.18); }
+.week-day-name { font-size: .78rem; font-weight: 700; color: #1a1033; }
+.week-day-date { font-size: .72rem; color: #7a6f90; }
+.week-count { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; font-size: .72rem; font-weight: 800; }
+.week-count.citas { background: #ede9fe; color: #5b2fa0; }
+.week-count.empty { background: #f1f5f9; color: #94a3b8; }
+
+/* ── Role Banner ── */
+.role-banner {
+  display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+  background: linear-gradient(135deg,#f9f7ff,#ede9fe); border: 1px solid rgba(91,47,160,.15);
+  border-radius: 12px; margin-bottom: 16px;
+}
+.role-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; background: #ede9fe; color: #5b2fa0; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; flex-shrink: 0; }
+.role-text { font-size: .78rem; color: #5c4a8a; }
+
+/* ── Modal ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: #fff; border-radius: 20px; padding: 28px; width: 100%; max-width: 480px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25); transform: scale(.95); transition: transform .2s;
+}
+.modal-overlay.open .modal-box { transform: scale(1); }
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.modal-title { font-size: 1.05rem; font-weight: 800; color: #1a1033; margin: 0; }
+.modal-close { width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(91,47,160,.15); background: #fff; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; color: #7a6f90; transition: .15s; }
+.modal-close:hover { background: #fee2e2; color: #dc2626; }
+.modal-footer { display: flex; gap: 10px; margin-top: 20px; }
+.btn-secondary {
+  flex: 1; padding: 11px; border: 1px solid rgba(91,47,160,.2); border-radius: 10px;
+  background: #fff; color: #5b2fa0; font-size: .875rem; font-weight: 700; cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif; transition: .15s;
+}
+.btn-secondary:hover { background: #f4f1fb; }
+.btn-danger {
+  flex: 1; padding: 11px; border: none; border-radius: 10px;
+  background: linear-gradient(135deg,#dc2626,#f87171); color: #fff;
+  font-size: .875rem; font-weight: 700; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; transition: .15s;
+}
+.btn-danger:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(220,38,38,.3); }
+
+/* ── Notification toast ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; background: #1a1033; color: #fff;
+  padding: 12px 18px; border-radius: 12px; font-size: .82rem; font-weight: 600;
+  z-index: 9999; transform: translateY(80px); opacity: 0; transition: .3s;
+  display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: linear-gradient(135deg,#059669,#34d399); }
+.toast.error { background: linear-gradient(135deg,#dc2626,#f87171); }
+
+/* ── Adjustments for vet role ── */
+.vet-only { display: none; }
+{% if puede_ajustar_citas %}.vet-only { display: block; }{% endif %}
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  .citas-grid { grid-template-columns: 1fr; }
+  .metrics-row { grid-template-columns: repeat(3, 1fr); }
+  .right-panel { display: grid; grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 860px) {
+  .metrics-row { grid-template-columns: repeat(2, 1fr); }
+  .bottom-row, .right-panel { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .metrics-row { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+}
 </style>
+{% endblock %}
 
-<div class="citas-shell">
-<div class="citas-hero">
-<h1 class="citas-title">Modulo de Citas</h1>
-<p class="citas-copy">Gestion centralizada para programar, visualizar y seguir la agenda clinica con un calendario mas elegante y legible.</p>
-<div class="citas-shortcuts">
-<a class="shortcut-card" href="{% url 'dashboard' %}"><strong>Volver al panel</strong><span>Resumen general del sistema</span></a>
-<a class="shortcut-card" href="{% url 'consultas' %}"><strong>Ir a consultas</strong><span>Vista clinica del dia</span></a>
-<a class="shortcut-card" href="{% url 'recepcion' %}"><strong>Registrar paciente</strong><span>Alta rapida de dueno y mascota</span></a>
-</div>
+{% block content %}
+
+<!-- ── Toast ── -->
+<div class="toast" id="globalToast">
+  <span id="toastIcon">✓</span>
+  <span id="toastMsg">Acción completada</span>
 </div>
 
-<div class="citas-role-banner">
-<span class="role-chip">{% if puede_ajustar_citas %}Modo Veterinaria{% else %}Modo Secretaria{% endif %}</span>
-<p class="role-copy">
-{% if puede_ajustar_citas %}
-Puedes reprogramar y ajustar motivos de citas sin salir del modulo, manteniendo la agenda lista para recepcion.
-{% else %}
-Aqui puedes agendar y consultar la agenda. Los ajustes clinicos y reprogramaciones avanzadas quedan disponibles para veterinaria o administracion.
-{% endif %}
-</p>
+<!-- ── Delete Confirm Modal ── -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title">⚠️ Eliminar cita</h3>
+      <button class="modal-close" onclick="closeModal('deleteModal')">✕</button>
+    </div>
+    <p style="font-size:.875rem;color:#7a6f90;margin:0 0 8px">¿Seguro que deseas eliminar esta cita? Esta acción <strong>no se puede deshacer</strong>.</p>
+    <div id="deleteModalInfo" style="padding:12px;background:#f9f7ff;border-radius:10px;font-size:.82rem;color:#2d1652;font-weight:600;"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('deleteModal')">Cancelar</button>
+      <button class="btn-danger" onclick="confirmDelete()">Sí, eliminar</button>
+    </div>
+  </div>
 </div>
 
-<div class="row g-4 mb-4">
-<div class="col-md-4"><div class="citas-metric"><div class="metric-label">Citas Hoy</div><div class="metric-value">{{ citas_hoy|length }}</div></div></div>
-<div class="col-md-4"><div class="citas-metric"><div class="metric-label">Siguientes 7 Dias</div><div class="metric-value">{{ proximas_semanales|length }}</div></div></div>
-<div class="col-md-4"><div class="citas-metric"><div class="metric-label">Historial Reciente</div><div class="metric-value">{{ citas_pasadas|length }}</div></div></div>
+<!-- ── Edit Modal (vet only) ── -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title">✏️ Editar cita</h3>
+      <button class="modal-close" onclick="closeModal('editModal')">✕</button>
+    </div>
+    <div class="feedback-box" id="editFeedback"></div>
+    <form method="POST" id="editForm">
+      {% csrf_token %}
+      <input type="hidden" name="cita_id" id="editCitaId">
+      <div class="form-group">
+        <label class="form-label">Motivo de la cita</label>
+        <input class="form-control" type="text" name="motivo" id="editMotivo" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Fecha</label>
+          <input class="form-control" type="date" id="editFecha" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Hora</label>
+          <input class="form-control" type="time" id="editHora" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notas médicas (opcional)</label>
+        <textarea class="form-control" name="notas_medicas" id="editNotas" rows="3" placeholder="Observaciones clínicas..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="closeModal('editModal')">Cancelar</button>
+        <button type="submit" class="btn-submit" style="flex:1;margin-top:0">Guardar cambios</button>
+      </div>
+    </form>
+  </div>
 </div>
+
+<div class="citas-page">
+
+  <!-- ── Header ── -->
+  <div class="citas-header">
+    <div class="citas-header-left">
+      <h1>🗓️ Gestión de Citas</h1>
+      <p>Agenda, programa y administra las citas de la clínica AnaVet.</p>
+    </div>
+    <button class="btn-nueva-cita" onclick="scrollToForm()">
+      + Nueva cita
+    </button>
+  </div>
+
+  <!-- ── Metrics ── -->
+  <div class="metrics-row">
+    <div class="metric-card">
+      <div class="metric-icon purple">📅</div>
+      <div>
+        <div class="metric-val">{{ citas_hoy|length }}</div>
+        <div class="metric-lbl">Citas hoy</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon green">💉</div>
+      <div>
+        <div class="metric-val">{{ vacunas_hoy }}</div>
+        <div class="metric-lbl">Vacunas hoy</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon orange">🚨</div>
+      <div>
+        <div class="metric-val">{{ emergencias_hoy }}</div>
+        <div class="metric-lbl">Emergencias</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon blue">📋</div>
+      <div>
+        <div class="metric-val">{{ proximas_semanales|length }}</div>
+        <div class="metric-lbl">Próximos 7 días</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon indigo">🕐</div>
+      <div>
+        <div class="metric-val" id="nextCitaTime">—</div>
+        <div class="metric-lbl">Próxima cita</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Main Grid ── -->
+  <div class="citas-grid">
+
+    <!-- Calendar -->
+    <div class="calendar-panel">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">Agenda Semanal</p>
+          <p class="panel-sub">Haz clic en cualquier evento para editar · Clic en hora vacía para agendar</p>
+        </div>
+        <div class="view-tabs">
+          <button class="view-tab" onclick="changeView('timeGridDay',this)">Día</button>
+          <button class="view-tab active" onclick="changeView('timeGridWeek',this)">Semana</button>
+          <button class="view-tab" onclick="changeView('dayGridMonth',this)">Mes</button>
+        </div>
+      </div>
+      <div id="calendar"></div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="right-panel">
+
+      <!-- Form Card -->
+      <div class="form-card" id="formCard">
+        <div class="role-banner">
+          <span class="role-chip">{% if puede_ajustar_citas %}🩺 Veterinaria{% else %}💼 Secretaría{% endif %}</span>
+          <span class="role-text">{% if puede_ajustar_citas %}Puedes editar y reprogramar citas{% else %}Puedes agendar y consultar{% endif %}</span>
+        </div>
+        <div class="form-tabs">
+          <button class="form-tab active">Nueva cita</button>
+          <button class="form-tab" onclick="showDetailTab(this)">Detalle de cita</button>
+        </div>
+        <div class="feedback-box" id="schedulerFeedback"></div>
+        <form id="appointmentForm">
+          {% csrf_token %}
+          <div class="form-group">
+            <label class="form-label">Dueño</label>
+            <div class="search-wrap">
+              <input class="form-control" id="apptOwner" type="text" placeholder="Buscar dueño..." list="ownersList">
+              <datalist id="ownersList">
+                {% for cita in proximas_semanales %}
+                  <option value="{{ cita.mascota.dueno.nombre }}">
+                {% endfor %}
+              </datalist>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mascota <span style="color:#dc2626">*</span></label>
+            <div class="search-wrap">
+              <input class="form-control" id="apptPet" type="text" placeholder="Buscar mascota..." required list="petsList">
+              <datalist id="petsList">
+                {% for cita in proximas_semanales %}
+                  <option value="{{ cita.mascota.nombre }}">
+                {% endfor %}
+              </datalist>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fecha y hora <span style="color:#dc2626">*</span></label>
+            <div class="form-row">
+              <input class="form-control" id="apptDate" type="date" required>
+              <input class="form-control" id="apptTime" type="time" value="10:30" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Motivo de la cita <span style="color:#dc2626">*</span></label>
+            <select class="form-control" id="apptReason">
+              <option value="">Seleccionar motivo...</option>
+              <option value="Consulta general">Consulta general</option>
+              <option value="Vacuna anual">Vacuna anual</option>
+              <option value="Vacuna antirrábica">Vacuna antirrábica</option>
+              <option value="Emergencia">Emergencia</option>
+              <option value="Desparasitación">Desparasitación</option>
+              <option value="Seguimiento">Seguimiento</option>
+              <option value="Control general">Control general</option>
+              <option value="Esterilización">Esterilización</option>
+              <option value="Dental">Dental</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notas (opcional)</label>
+            <textarea class="form-control" id="apptNotes" rows="2" placeholder="Añadir notas adicionales..."></textarea>
+          </div>
+          <button class="btn-submit" type="submit" id="submitBtn">Guardar cita</button>
+        </form>
+      </div>
+
+      <!-- Citas de hoy -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div>
+            <div style="font-size:.9rem;font-weight:800;color:#1a1033">Citas de hoy</div>
+            <div style="font-size:.73rem;color:#7a6f90" id="todayDateLabel"></div>
+          </div>
+        </div>
+        <div class="list-panel" style="max-height:260px;">
+          {% if citas_hoy %}
+            {% for cita in citas_hoy %}
+            <div class="cita-item" data-id="{{ cita.id }}">
+              <div class="cita-avatar">{% if cita.mascota.especie == 'Gato' %}🐱{% else %}🐶{% endif %}</div>
+              <div class="cita-body">
+                <div class="cita-name">{{ cita.mascota.nombre }}</div>
+                <div class="cita-owner">{{ cita.mascota.dueno.nombre }} · {{ cita.mascota.dueno.telefono }}</div>
+                <div class="cita-time">{{ cita.fecha|date:"H:i" }} · {{ cita.motivo }}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+                <span class="cita-badge badge-{% if 'vacuna' in cita.motivo|lower %}vacuna{% elif 'emergencia' in cita.motivo|lower %}emergencia{% elif 'seguimiento' in cita.motivo|lower %}seguimiento{% elif 'control' in cita.motivo|lower %}control{% elif 'desparasit' in cita.motivo|lower %}desparasitacion{% else %}consulta{% endif %}">
+                  {{ cita.motivo|truncatechars:12 }}
+                </span>
+                <div class="cita-actions">
+                  {% if puede_ajustar_citas %}
+                  <button class="cita-btn" title="Editar"
+                    onclick="openEditModal('{{ cita.id }}','{{ cita.motivo|escapejs }}','{{ cita.fecha|date:'Y-m-d' }}','{{ cita.fecha|date:'H:i' }}','{{ cita.notas_medicas|escapejs }}')">✏️</button>
+                  <button class="cita-btn danger" title="Eliminar"
+                    onclick="openDeleteModal('{{ cita.id }}','{{ cita.mascota.nombre|escapejs }}','{{ cita.motivo|escapejs }}')">🗑️</button>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="empty-state">No hay citas programadas para hoy.</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div style="background:#fff;border:1px solid rgba(91,47,160,.1);border-radius:20px;padding:18px;box-shadow:0 2px 10px rgba(91,47,160,.05)">
+        <div style="font-size:.82rem;font-weight:800;color:#1a1033;margin-bottom:10px">Acciones rápidas</div>
+        <div class="quick-actions">
+          <a class="qa-btn" href="{% url 'recepcion' %}"><span class="qa-icon">👥</span>Ver pacientes</a>
+          <a class="qa-btn" href="{% url 'citas' %}"><span class="qa-icon">📋</span>Historial citas</a>
+          <a class="qa-btn" href="#"><span class="qa-icon">🔔</span>Recordatorios</a>
+          <a class="qa-btn" href="{% url 'dashboard' %}"><span class="qa-icon">📊</span>Reportes</a>
+        </div>
+      </div>
+
+    </div><!-- /right-panel -->
+  </div><!-- /citas-grid -->
+
+  <!-- ── Bottom Row ── -->
+  <div class="bottom-row">
+
+    <!-- Próximas 7 días -->
+    <div class="bottom-panel">
+      <div class="panel-header" style="margin-bottom:14px">
+        <div>
+          <p class="panel-title">Próximas citas</p>
+          <p class="panel-sub">Los siguientes 7 días</p>
+        </div>
+        <span style="font-size:.72rem;font-weight:700;color:#7c3aed;background:#ede9fe;padding:4px 10px;border-radius:20px">{{ proximas_semanales|length }} citas</span>
+      </div>
+      {% if proximas_semanales %}
+        {% for cita in proximas_semanales %}
+        <div class="cita-item">
+          <div class="cita-avatar">{% if cita.mascota.especie == 'Gato' %}🐱{% else %}🐶{% endif %}</div>
+          <div class="cita-body">
+            <div class="cita-name">{{ cita.mascota.nombre }} <span style="font-weight:500;color:#7a6f90">— {{ cita.mascota.dueno.nombre }}</span></div>
+            <div class="cita-owner">{{ cita.motivo }}</div>
+            <div class="cita-time">{{ cita.fecha|date:"d/m/Y" }} a las {{ cita.fecha|date:"H:i" }}</div>
+            {% if cita.notas_medicas %}
+            <div style="margin-top:6px;padding:6px 8px;background:#f9f7ff;border-radius:8px;font-size:.72rem;color:#5c4a8a">📝 {{ cita.notas_medicas|truncatechars:100 }}</div>
+            {% endif %}
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+            <span class="cita-badge badge-{% if 'vacuna' in cita.motivo|lower %}vacuna{% elif 'emergencia' in cita.motivo|lower %}emergencia{% elif 'seguimiento' in cita.motivo|lower %}seguimiento{% elif 'control' in cita.motivo|lower %}control{% elif 'desparasit' in cita.motivo|lower %}desparasitacion{% else %}consulta{% endif %}">
+              {% if 'vacuna' in cita.motivo|lower %}Vacuna{% elif 'emergencia' in cita.motivo|lower %}Emergencia{% elif 'seguimiento' in cita.motivo|lower %}Seguimiento{% elif 'control' in cita.motivo|lower %}Control{% elif 'desparasit' in cita.motivo|lower %}Desparasit.{% else %}Consulta{% endif %}
+            </span>
+            {% if puede_ajustar_citas %}
+            <div class="cita-actions">
+              <button class="cita-btn" title="Editar"
+                onclick="openEditModal('{{ cita.id }}','{{ cita.motivo|escapejs }}','{{ cita.fecha|date:'Y-m-d' }}','{{ cita.fecha|date:'H:i' }}','{{ cita.notas_medicas|escapejs }}')">✏️</button>
+              <button class="cita-btn danger" title="Eliminar"
+                onclick="openDeleteModal('{{ cita.id }}','{{ cita.mascota.nombre|escapejs }}','{{ cita.motivo|escapejs }}')">🗑️</button>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">No hay citas programadas para los próximos 7 días.</div>
+      {% endif %}
+    </div>
+
+    <!-- Historial reciente -->
+    <div class="bottom-panel">
+      <div class="panel-header" style="margin-bottom:14px">
+        <div>
+          <p class="panel-title">Historial reciente</p>
+          <p class="panel-sub">Últimas citas registradas</p>
+        </div>
+        <span style="font-size:.72rem;font-weight:700;color:#7a6f90;background:#f1f5f9;padding:4px 10px;border-radius:20px">{{ citas_pasadas|length }} registros</span>
+      </div>
+      {% if citas_pasadas %}
+        {% for cita in citas_pasadas %}
+        <div class="cita-item" style="opacity:.85">
+          <div class="cita-avatar" style="background:#f1f5f9">{% if cita.mascota.especie == 'Gato' %}🐱{% else %}🐶{% endif %}</div>
+          <div class="cita-body">
+            <div class="cita-name">{{ cita.mascota.nombre }} <span style="font-weight:500;color:#7a6f90">— {{ cita.mascota.dueno.nombre }}</span></div>
+            <div class="cita-owner">{{ cita.motivo }}</div>
+            <div class="cita-time" style="color:#7a6f90">{{ cita.fecha|date:"d/m/Y H:i" }}</div>
+          </div>
+          <span class="cita-badge" style="background:#f1f5f9;color:#64748b;align-self:flex-start">Pasada</span>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">No hay historial reciente.</div>
+      {% endif %}
+    </div>
+
+  </div><!-- /bottom-row -->
+
+</div><!-- /citas-page -->
 
 <script>
-let citas = [
-{% for cita in citas %}
-{ title: "{{ cita.mascota.nombre|escapejs }} - {{ cita.motivo|escapejs }}", start: "{{ cita.fecha|date:'Y-m-d\\TH:i:s' }}" }{% if not forloop.last %},{% endif %}
-{% endfor %}
+/* ── Calendar Setup ── */
+const rawCitas = [
+  {% for cita in citas %}
+  {
+    id: "{{ cita.id }}",
+    title: "{{ cita.mascota.nombre|escapejs }}",
+    start: "{{ cita.fecha|date:'Y-m-d\\TH:i:s' }}",
+    className: "{% if 'vacuna' in cita.motivo|lower %}ev-vacuna{% elif 'emergencia' in cita.motivo|lower %}ev-emergencia{% elif 'seguimiento' in cita.motivo|lower %}ev-seguimiento{% elif 'desparasit' in cita.motivo|lower %}ev-desparasitacion{% elif 'control' in cita.motivo|lower %}ev-control{% else %}ev-consulta{% endif %}",
+    extendedProps: {
+      motivo: "{{ cita.motivo|escapejs }}",
+      dueno: "{{ cita.mascota.dueno.nombre|escapejs }}",
+      notas: "{{ cita.notas_medicas|escapejs }}"
+    }
+  }{% if not forloop.last %},{% endif %}
+  {% endfor %}
 ];
-</script>
 
-<div class="row g-4">
-<div class="col-xl-8">
-<div class="citas-panel">
-<h3 class="panel-title">Calendario General</h3>
-<p class="panel-copy">Agenda visual con mejor contraste para operacion diaria y semanal.</p>
-<div class="calendar-frame"><div id="calendar"></div></div>
-</div>
-</div>
+let calendarInstance;
 
-<div class="col-xl-4">
-<div class="citas-panel">
-<h3 class="panel-title">Agendar Nueva Cita</h3>
-<p class="panel-copy">Formulario protegido con sesion activa y CSRF para registrar citas nuevas.</p>
-<div id="scheduler-feedback" class="scheduler-feedback"></div>
-<div class="micro-tip">Atajo: presiona <strong>Alt + 2</strong> para ir a recepcion o haz clic en una fecha del calendario para precargarla.</div>
-<form id="appointment-form">
-{% csrf_token %}
-<input type="hidden" id="appointment-datetime" name="fecha">
-<div class="mb-3"><label class="form-label" for="appointment-owner">Dueno</label><input class="form-control" id="appointment-owner" type="text" placeholder="Ej. Andrea Salinas"></div>
-<div class="mb-3"><label class="form-label" for="appointment-pet">Mascota</label><input class="form-control" id="appointment-pet" type="text" placeholder="Ej. Nala" required></div>
-<div class="row g-3">
-<div class="col-md-6"><label class="form-label" for="appointment-date">Fecha</label><input class="form-control" id="appointment-date" type="date" required></div>
-<div class="col-md-6"><label class="form-label" for="appointment-time">Hora</label><input class="form-control" id="appointment-time" type="time" value="10:00" required></div>
-</div>
-<div class="mt-3 mb-3"><label class="form-label" for="appointment-reason">Motivo</label><textarea class="form-control" id="appointment-reason" rows="3" placeholder="Consulta general, vacuna, seguimiento..." required></textarea></div>
-<button class="btn-premium w-100" id="appointment-submit" type="submit">Guardar cita</button>
-</form>
-</div>
-</div>
-
-<div class="col-lg-6">
-<div class="citas-panel">
-<h3 class="panel-title">Proximas Citas Semanales</h3>
-<p class="panel-copy">Bloque operativo para recepcion y seguimiento.</p>
-{% if proximas_semanales %}
-<div class="list-grid">
-{% for cita in proximas_semanales %}
-<div class="list-item">
-<div class="item-title">{{ cita.mascota.nombre }} - {{ cita.mascota.dueno.nombre }}</div>
-<p class="item-meta">{{ cita.motivo }}</p>
-<div class="item-time">{{ cita.fecha|date:"d/m/Y H:i" }}</div>
-{% if cita.notas_medicas %}
-<div class="micro-tip mt-3 mb-0">Notas medicas: {{ cita.notas_medicas|truncatechars:150 }}</div>
-{% endif %}
-</div>
-{% endfor %}
-</div>
-{% else %}
-<div class="empty-state">No hay citas programadas para los proximos siete dias.</div>
-{% endif %}
-</div>
-</div>
-
-<div class="col-lg-6">
-<div class="citas-panel">
-<h3 class="panel-title">Historial Reciente</h3>
-<p class="panel-copy">Ultimas citas registradas en el sistema.</p>
-{% if citas_pasadas %}
-<div class="list-grid">
-{% for cita in citas_pasadas %}
-<div class="list-item">
-<div class="item-title">{{ cita.mascota.nombre }} - {{ cita.mascota.dueno.nombre }}</div>
-<p class="item-meta">{{ cita.motivo }}</p>
-<div class="item-time">{{ cita.fecha|date:"d/m/Y H:i" }}</div>
-</div>
-{% endfor %}
-</div>
-{% else %}
-<div class="empty-state">No hay historial reciente para mostrar.</div>
-{% endif %}
-</div>
-</div>
-
-{% if puede_ajustar_citas %}
-<div class="col-12">
-<div class="citas-panel">
-<h3 class="panel-title">Ajuste Clinico de Citas</h3>
-<p class="panel-copy">Reprograma horario o actualiza el motivo antes de que la consulta llegue al panel medico.</p>
-{% if proximas_semanales %}
-{% for cita in proximas_semanales|slice:":5" %}
-<div class="edit-box">
-<div class="item-title">{{ cita.mascota.nombre }} - {{ cita.mascota.dueno.nombre }}</div>
-<p class="item-meta">Usa este bloque para coordinar la agenda clinica con recepcion.</p>
-<form method="POST">
-{% csrf_token %}
-<input type="hidden" name="cita_id" value="{{ cita.id }}">
-<div class="edit-grid">
-<div>
-<label class="edit-label">Motivo</label>
-<input class="edit-input" type="text" name="motivo" value="{{ cita.motivo }}" required>
-</div>
-<div>
-<label class="edit-label">Fecha y hora</label>
-<input class="edit-input" type="datetime-local" name="fecha" value="{{ cita.fecha|date:'Y-m-d\\TH:i' }}" required>
-</div>
-</div>
-<button class="btn-premium mt-3" type="submit">Guardar ajuste</button>
-</form>
-</div>
-{% endfor %}
-{% else %}
-<div class="empty-state">No hay citas proximas para ajustar.</div>
-{% endif %}
-</div>
-</div>
-{% endif %}
-</div>
-</div>
-
-<script>
 document.addEventListener('DOMContentLoaded', function() {
-const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-initialView: 'timeGridWeek',
-headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
-events: citas,
-height: 760,
-eventColor: '#6a0dad',
-eventTextColor: 'white',
-dayMaxEventRows: 3,
-dateClick: function(info) {
-document.getElementById('appointment-date').value = info.dateStr;
-}
+  // Set today label
+  const now = new Date();
+  document.getElementById('todayDateLabel').textContent = now.toLocaleDateString('es-MX', {weekday:'long', day:'numeric', month:'long'});
+
+  // Set default date
+  document.getElementById('apptDate').value = now.toISOString().split('T')[0];
+
+  // Next cita
+  if (rawCitas.length > 0) {
+    const future = rawCitas.filter(c => new Date(c.start) >= now).sort((a,b) => new Date(a.start)-new Date(b.start));
+    if (future.length > 0) {
+      const t = new Date(future[0].start);
+      document.getElementById('nextCitaTime').textContent = t.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+    }
+  }
+
+  // Calendar
+  calendarInstance = new FullCalendar.Calendar(document.getElementById('calendar'), {
+    initialView: 'timeGridWeek',
+    locale: 'es',
+    headerToolbar: { left: 'prev,next today', center: 'title', right: '' },
+    events: rawCitas,
+    height: 660,
+    slotMinTime: '08:00:00',
+    slotMaxTime: '20:00:00',
+    slotDuration: '00:30:00',
+    dayMaxEventRows: 3,
+    nowIndicator: true,
+    eventClick: function(info) {
+      {% if puede_ajustar_citas %}
+      const p = info.event.extendedProps;
+      const d = info.event.start;
+      const dateStr = d.toISOString().split('T')[0];
+      const timeStr = d.toTimeString().substring(0,5);
+      openEditModal(info.event.id, info.event.extendedProps.motivo, dateStr, timeStr, p.notas);
+      {% else %}
+      showToast(`${info.event.title} — ${info.event.extendedProps.motivo}`, 'info');
+      {% endif %}
+    },
+    dateClick: function(info) {
+      document.getElementById('apptDate').value = info.dateStr.split('T')[0];
+      if (info.dateStr.includes('T')) {
+        document.getElementById('apptTime').value = info.dateStr.substring(11,16);
+      }
+      document.getElementById('formCard').scrollIntoView({behavior:'smooth', block:'nearest'});
+      document.getElementById('apptPet').focus();
+    }
+  });
+  calendarInstance.render();
 });
-calendar.render();
 
-const feedback = document.getElementById('scheduler-feedback');
-const submitButton = document.getElementById('appointment-submit');
-
-function showFeedback(message, type) {
-feedback.textContent = message;
-feedback.className = 'scheduler-feedback is-visible ' + (type === 'success' ? 'is-success' : 'is-error');
+function changeView(view, btn) {
+  calendarInstance.changeView(view);
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
 }
 
-document.getElementById('appointment-form').addEventListener('submit', async function(event) {
-event.preventDefault();
-const date = document.getElementById('appointment-date').value;
-const time = document.getElementById('appointment-time').value;
-const datetime = date && time ? `${date}T${time}:00` : '';
+/* ── Form Submit ── */
+document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  const fb = document.getElementById('schedulerFeedback');
 
-if (!datetime) {
-showFeedback('Selecciona fecha y hora para la cita.', 'error');
-return;
-}
+  const date = document.getElementById('apptDate').value;
+  const time = document.getElementById('apptTime').value;
+  const pet = document.getElementById('apptPet').value.trim();
+  const reason = document.getElementById('apptReason').value;
 
-submitButton.disabled = true;
-submitButton.textContent = 'Guardando...';
+  if (!date || !time || !pet || !reason) {
+    showFeedback(fb, 'Por favor completa todos los campos obligatorios.', false);
+    return;
+  }
 
-try {
-const response = await fetch('/crear-cita/', {
-method: 'POST',
-headers: {
-'Content-Type': 'application/json',
-'X-CSRFToken': '{{ csrf_token }}'
-},
-body: JSON.stringify({
-dueno: document.getElementById('appointment-owner').value,
-mascota: document.getElementById('appointment-pet').value,
-motivo: document.getElementById('appointment-reason').value,
-fecha: datetime
-})
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+
+  try {
+    const resp = await fetch('/crear-cita/', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','X-CSRFToken':'{{ csrf_token }}'},
+      body: JSON.stringify({
+        dueno: document.getElementById('apptOwner').value,
+        mascota: pet,
+        motivo: reason,
+        fecha: `${date}T${time}:00`,
+        notas: document.getElementById('apptNotes').value
+      })
+    });
+    const data = await resp.json();
+    if (!resp.ok) {
+      showFeedback(fb, data.message || 'No se pudo guardar la cita.', false);
+    } else {
+      showFeedback(fb, '✓ ' + data.message, true);
+      showToast('Cita agendada correctamente', 'success');
+      setTimeout(() => location.reload(), 1200);
+    }
+  } catch {
+    showFeedback(fb, 'Error de conexión con el servidor.', false);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Guardar cita';
+  }
 });
-const result = await response.json();
-if (!response.ok) {
-showFeedback(result.message || 'No se pudo guardar la cita.', 'error');
-return;
+
+/* ── Delete Modal ── */
+let pendingDeleteId = null;
+
+function openDeleteModal(id, pet, motivo) {
+  pendingDeleteId = id;
+  document.getElementById('deleteModalInfo').textContent = `🐾 ${pet} · ${motivo}`;
+  openModal('deleteModal');
 }
-showFeedback(result.message, 'success');
-setTimeout(function() { window.location.reload(); }, 900);
-} catch (error) {
-showFeedback('Ocurrio un error al conectar con el servidor.', 'error');
-} finally {
-submitButton.disabled = false;
-submitButton.textContent = 'Guardar cita';
+
+function confirmDelete() {
+  if (!pendingDeleteId) return;
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = `/cita/${pendingDeleteId}/eliminar/`;
+  const csrf = document.createElement('input');
+  csrf.type = 'hidden';
+  csrf.name = 'csrfmiddlewaretoken';
+  csrf.value = '{{ csrf_token }}';
+  form.appendChild(csrf);
+  document.body.appendChild(form);
+  form.submit();
 }
+
+/* ── Edit Modal ── */
+function openEditModal(id, motivo, fecha, hora, notas) {
+  document.getElementById('editCitaId').value = id;
+  document.getElementById('editMotivo').value = motivo;
+  document.getElementById('editFecha').value = fecha;
+  document.getElementById('editHora').value = hora;
+  document.getElementById('editNotas').value = notas || '';
+  openModal('editModal');
+}
+
+document.getElementById('editForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const fecha = document.getElementById('editFecha').value;
+  const hora = document.getElementById('editHora').value;
+  // Add combined datetime
+  const hidden = document.createElement('input');
+  hidden.type = 'hidden';
+  hidden.name = 'fecha';
+  hidden.value = `${fecha}T${hora}`;
+  this.appendChild(hidden);
+  this.submit();
 });
+
+/* ── Modal Helpers ── */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('open'); });
 });
+
+/* ── Toast ── */
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('globalToast');
+  const icon = document.getElementById('toastIcon');
+  document.getElementById('toastMsg').textContent = msg;
+  icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+  t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function showFeedback(el, msg, success) {
+  el.textContent = msg;
+  el.className = 'feedback-box visible ' + (success ? 'success' : 'error');
+  setTimeout(() => el.classList.remove('visible'), 4000);
+}
+
+function scrollToForm() {
+  document.getElementById('formCard').scrollIntoView({behavior:'smooth'});
+  document.getElementById('apptPet').focus();
+}
+
+function showDetailTab(btn) {
+  document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  showToast('Haz clic en una cita del calendario para ver su detalle', 'info');
+}
+
+/* ── Django messages as toasts ── */
+{% if messages %}
+{% for message in messages %}
+  document.addEventListener('DOMContentLoaded', () => {
+    showToast('{{ message|escapejs }}', '{% if message.tags == "success" %}success{% else %}error{% endif %}');
+  });
+{% endfor %}
+{% endif %}
 </script>
+
 {% endblock %}

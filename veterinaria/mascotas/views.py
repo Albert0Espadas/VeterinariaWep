@@ -106,6 +106,18 @@ def crear_cita(request):
     )
 
 
+def eliminar_cita(request, id):
+    """Elimina una cita del sistema. Solo veterinaria o admin pueden hacerlo."""
+    puede = user_has_allowed_role(request.user, (ROLE_VETERINARIA, ROLE_ADMIN))
+    if not puede:
+        messages.error(request, "No tienes permiso para eliminar citas.")
+        return redirect("citas")
+    cita = get_object_or_404(Cita, id=id)
+    cita.delete()
+    messages.success(request, "Cita eliminada correctamente.")
+    return redirect("citas")
+
+
 def login_view(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -550,6 +562,9 @@ def citas(request):
         return redirect("citas")
 
     context = _dashboard_context()
+    from django.utils.timezone import localtime
+    hoy = now().date()
+    citas_hoy_qs = Cita.objects.select_related("mascota", "mascota__dueno").filter(fecha__date=hoy).order_by("fecha")
     context.update(
         {
             "proximas_semanales": Cita.objects.select_related("mascota", "mascota__dueno")
@@ -557,8 +572,12 @@ def citas(request):
             .order_by("fecha"),
             "citas_pasadas": Cita.objects.select_related("mascota", "mascota__dueno")
             .filter(fecha__lt=now())
-            .order_by("-fecha")[:6],
+            .order_by("-fecha")[:8],
             "puede_ajustar_citas": puede_ajustar_citas,
+            "citas_hoy": citas_hoy_qs,
+            "vacunas_hoy": citas_hoy_qs.filter(motivo__icontains="vacuna").count(),
+            "emergencias_hoy": citas_hoy_qs.filter(motivo__icontains="emergencia").count(),
+            "citas": Cita.objects.select_related("mascota", "mascota__dueno").order_by("fecha"),
         }
     )
     return render(request, "citas.html", context)
