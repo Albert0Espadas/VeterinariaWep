@@ -13,6 +13,9 @@ from django.utils.timezone import now
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 
+from django.db import models
+from django.db.models import Q
+
 from .models import Cita, Cliente, Mascota, Pendiente, Venta
 from .roles import (
     ROLE_ADMIN,
@@ -32,6 +35,7 @@ def ping(request):
 @require_POST
 def crear_cita(request):
     try:
+        # El frontend envia la cita como JSON; aqui se transforma a dict.
         data = json.loads(request.body)
     except json.JSONDecodeError:
         return JsonResponse({"status": "error", "message": "JSON invalido"}, status=400)
@@ -48,12 +52,15 @@ def crear_cita(request):
         )
 
     try:
+        # La fecha llega como texto ISO y se convierte a datetime real.
         fecha_cita = datetime.fromisoformat(fecha)
+        # Si la fecha no trae zona horaria, se ajusta a la del proyecto.
         if timezone.is_naive(fecha_cita):
             fecha_cita = timezone.make_aware(fecha_cita, timezone.get_current_timezone())
     except ValueError:
         return JsonResponse({"status": "error", "message": "Fecha invalida"}, status=400)
 
+    # Si el dueno no existe, se crea rapido para no frenar recepcion.
     cliente, _ = Cliente.objects.get_or_create(
         nombre=nombre_dueno,
         defaults={
@@ -62,6 +69,7 @@ def crear_cita(request):
         },
     )
 
+    # La mascota tambien puede registrarse aqui si aun no existia.
     mascota, creada = Mascota.objects.get_or_create(
         nombre=nombre_mascota,
         defaults={
@@ -72,6 +80,8 @@ def crear_cita(request):
         },
     )
 
+    # Si la mascota ya tenia otro dueno asociado, se respeta lo que ya esta
+    # guardado para no pisar el historial existente.
     if not creada and mascota.dueno_id != cliente.id:
         cliente = mascota.dueno
 
@@ -141,6 +151,7 @@ def registro_view(request):
         # Crear usuario
         user = User.objects.create_user(username=username, password=password)
         user.save()
+        # Todo usuario nuevo entra como secretaria por defecto.
         secretaria_group = Group.objects.filter(name=ROLE_SECRETARIA).first()
         if secretaria_group:
             user.groups.add(secretaria_group)
@@ -168,6 +179,7 @@ def eliminar_pendiente(request, id):
 
 
 def _dashboard_context():
+    # Este helper concentra los datos reutilizados por el dashboard.
     pendientes = Pendiente.objects.order_by("-fecha")
     citas = Cita.objects.select_related("mascota", "mascota__dueno").order_by("fecha")
     fecha_actual = now()
@@ -210,6 +222,8 @@ def logout_view(request):
 
 @roles_required(ROLE_SECRETARIA, ROLE_ADMIN)
 def recepcion(request):
+    from django.core.paginator import Paginator
+
     mensaje = None
 
     if request.method == "POST" and "registrar_cliente" in request.POST:
@@ -218,6 +232,8 @@ def recepcion(request):
         email = (request.POST.get("email") or "").strip() or "sin-correo@temporal.local"
 
         if nombre and telefono:
+            # Se guarda el cliente para que luego pueda tener una o varias
+            # mascotas asociadas.
             Cliente.objects.create(
                 nombre=nombre,
                 telefono=telefono,
@@ -235,6 +251,8 @@ def recepcion(request):
         cliente_id = request.POST.get("cliente")
 
         if nombre and cliente_id:
+            # Cada mascota se vincula a un dueno puntual por medio del
+            # ForeignKey dueno_id.
             Mascota.objects.create(
                 nombre=nombre,
                 especie=especie,
@@ -246,20 +264,53 @@ def recepcion(request):
 
         mensaje = "Selecciona un dueno y el nombre de la mascota."
 
-    clientes = Cliente.objects.order_by("nombre")
-    mascotas = Mascota.objects.select_related("dueno").order_by("nombre")
+    # --- Búsqueda server-side (U-02) ---
+    # El parámetro ?q= filtra tanto clientes como mascotas desde la base de datos,
+    # no solo lo que ya cargó el template. Esto permite encontrar cualquier registro
+    # sin importar cuántos haya en el sistema.
+    q = (request.GET.get("q") or "").strip()
+
+    clientes_qs = Cliente.objects.order_by("nombre")
+    mascotas_qs = Mascota.objects.select_related("dueno").order_by("nombre")
+
+    if q:
+        clientes_qs = clientes_qs.filter(nombre__icontains=q)
+        mascotas_qs = mascotas_qs.filter(
+            Q(nombre__icontains=q) | Q(dueno__nombre__icontains=q)
+        )
+
+    # --- Paginación (U-02) ---
+    # Se muestran 15 registros por página para no sobrecargar la vista
+    # con listas largas. La página activa llega por ?page=.
+    PAGE_SIZE = 15
+    clientes_paginator = Paginator(clientes_qs, PAGE_SIZE)
+    mascotas_paginator = Paginator(mascotas_qs, PAGE_SIZE)
+
+    page_c = request.GET.get("page_c", 1)
+    page_m = request.GET.get("page_m", 1)
+
+    clientes_page = clientes_paginator.get_page(page_c)
+    mascotas_page = mascotas_paginator.get_page(page_m)
+
+    # Totales reales (sin filtro) para las métricas del encabezado.
+    total_clientes_real = Cliente.objects.count()
+    total_mascotas_real = Mascota.objects.count()
 
     return render(
         request,
         "recepcion.html",
         {
-            "clientes": clientes,
-            "mascotas": mascotas,
+            "clientes": clientes_page,
+            "mascotas": mascotas_page,
             "mensaje": mensaje,
-            "total_clientes": clientes.count(),
-            "total_mascotas": mascotas.count(),
-            "clientes_recientes": clientes.order_by("-id")[:5],
-            "mascotas_recientes": mascotas.order_by("-id")[:5],
+            "q": q,
+            "total_clientes": total_clientes_real,
+            "total_mascotas": total_mascotas_real,
+            "clientes_recientes": Cliente.objects.order_by("-id")[:5],
+            "mascotas_recientes": Mascota.objects.select_related("dueno").order_by("-id")[:5],
+            # Totales del resultado filtrado para mostrar en la búsqueda.
+            "clientes_encontrados": clientes_qs.count(),
+            "mascotas_encontradas": mascotas_qs.count(),
         },
     )
 
@@ -271,6 +322,7 @@ def punto_venta(request):
 
     if request.method == "POST":
         try:
+            # Decimal se usa para dinero porque evita errores de precision.
             total = Decimal(request.POST.get("total", "0"))
             metodo = request.POST.get("metodo_pago")
             monto_pagado = Decimal(request.POST.get("monto_pagado", "0"))
@@ -288,8 +340,10 @@ def punto_venta(request):
                 error = "El monto recibido no puede ser menor al total."
             else:
                 if metodo == "efectivo":
+                    # En efectivo si existe cambio real.
                     cambio = monto_pagado - total
                 else:
+                    # En tarjeta o transferencia se asume pago exacto.
                     monto_pagado = total
 
                 Venta.objects.create(
@@ -337,6 +391,8 @@ def consultas(request):
     )
 
     if request.method == "POST":
+        # Secretaria puede ver esta pantalla, pero solo veterinaria o admin
+        # pueden cambiar datos clinicos.
         if not puede_editar_consultas:
             messages.error(
                 request,
@@ -354,6 +410,8 @@ def consultas(request):
 
         if fecha:
             try:
+                # Se normaliza la fecha antes de guardarla para no mezclar
+                # datetimes sin zona horaria con datetimes aware.
                 fecha_consulta = datetime.fromisoformat(fecha)
                 if timezone.is_naive(fecha_consulta):
                     fecha_consulta = timezone.make_aware(
@@ -364,6 +422,7 @@ def consultas(request):
                 messages.error(request, "La fecha de consulta no es valida.")
                 return redirect("consultas")
 
+        # Este campo guarda la nota medica escrita dentro del panel clinico.
         cita.notas_medicas = notas_medicas
         cita.save()
         messages.success(request, "Consulta actualizada correctamente.")
@@ -413,7 +472,9 @@ def editar_cliente(request, id):
             cliente.telefono = telefono
             cliente.email = email or "sin-correo@temporal.local"
             cliente.save()
-        return redirect("recepcion")
+            messages.success(request, f"Cliente '{nombre}' actualizado correctamente.")
+        else:
+            messages.error(request, "Nombre y teléfono son obligatorios.")
     return redirect("recepcion")
 
 
@@ -442,6 +503,9 @@ def editar_mascota(request, id):
             if cliente_id:
                 mascota.dueno_id = cliente_id
             mascota.save()
+            messages.success(request, f"Mascota '{nombre}' actualizada correctamente.")
+        else:
+            messages.error(request, "El nombre de la mascota es obligatorio.")
     return redirect("recepcion")
 
 
@@ -452,6 +516,7 @@ def citas(request):
     )
 
     if request.method == "POST":
+        # Este bloque permite reprogramar citas desde el modulo de agenda.
         if not puede_ajustar_citas:
             messages.error(
                 request,
@@ -468,6 +533,8 @@ def citas(request):
 
         if fecha:
             try:
+                # Igual que en consultas, la fecha se vuelve aware antes de
+                # guardarse para mantener consistencia en la agenda.
                 fecha_cita = datetime.fromisoformat(fecha)
                 if timezone.is_naive(fecha_cita):
                     fecha_cita = timezone.make_aware(

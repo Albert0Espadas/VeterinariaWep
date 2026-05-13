@@ -76,12 +76,17 @@ WSGI_APPLICATION = 'veterinaria.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+# Se mantienen dos configuraciones:
+# - PostgreSQL como opcion principal del sistema
+# - SQLite como respaldo rapido para desarrollo o recuperacion
 
 SQLITE_DATABASE = {
     'ENGINE': 'django.db.backends.sqlite3',
     'NAME': BASE_DIR / 'db.sqlite3',
 }
 
+# Estas variables permiten apuntar el proyecto a la base de PostgreSQL sin
+# tener que editar el codigo cada vez que cambie host, puerto o credenciales.
 POSTGRES_DATABASE = {
     'ENGINE': 'django.db.backends.postgresql',
     'NAME': os.getenv('ANAVET_DB_NAME', 'anavet_db'),
@@ -92,7 +97,10 @@ POSTGRES_DATABASE = {
 }
 
 DATABASES = {
+    # Si ANAVET_DB_ENGINE vale "postgres", Django usara PostgreSQL.
+    # En cualquier otro caso, trabajara con SQLite.
     'default': POSTGRES_DATABASE if os.getenv('ANAVET_DB_ENGINE', 'postgres') == 'postgres' else SQLITE_DATABASE,
+    # Esta entrada extra deja SQLite disponible para tareas de soporte.
     'sqlite': SQLITE_DATABASE,
 }
 

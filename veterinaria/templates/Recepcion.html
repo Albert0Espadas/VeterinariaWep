@@ -167,11 +167,11 @@
 .av-c3{background:#d97706;} .av-c4{background:#dc2626;} .av-c5{background:#0891b2;}
 
 /* MODAL */
-.av-modal-overlay {
+.av-overlay {
   display: none; position: fixed; inset: 0; z-index: 1000;
   background: rgba(0,0,0,.45); align-items: center; justify-content: center;
 }
-.av-modal-overlay.open { display: flex; }
+.av-overlay.open { display: flex; }
 .av-modal {
   background: #fff; border-radius: 16px; width: 100%; max-width: 480px;
   box-shadow: 0 20px 60px rgba(0,0,0,.25); overflow: hidden;
@@ -215,6 +215,11 @@
 {% if mensaje %}
 <div class="rc-feedback">{{ mensaje }}</div>
 {% endif %}
+{% for msg in messages %}
+<div class="rc-feedback" style="{% if msg.tags == 'error' %}background:#fef2f2;color:#b91c1c;border:1px solid #fca5a5{% elif msg.tags == 'success' %}background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0{% endif %}">
+  {{ msg }}
+</div>
+{% endfor %}
 
 <div class="rc-header">
   <div class="rc-header-left">
@@ -272,10 +277,14 @@
     <button class="rc-tab" id="tab-mascotas" onclick="showTab('mascotas')">🐾 Mascotas</button>
   </div>
   <div class="rc-search-wrap">
-    <div class="rc-search">
-      🔍 <input type="text" id="searchInput" placeholder="Buscar cliente..." oninput="filterItems()">
-    </div>
-    <div class="rc-filter">🔽 Todos</div>
+    <form method="GET" action="{% url 'recepcion' %}" id="search-form" style="display:flex;gap:8px;align-items:center">
+      <div class="rc-search">
+        🔍 <input type="text" name="q" id="searchInput" placeholder="Buscar cliente o mascota..." value="{{ q }}" oninput="delayedSearch()" autocomplete="off">
+      </div>
+      {% if q %}
+      <a href="{% url 'recepcion' %}" class="rc-btn rc-btn-outline" style="padding:8px 12px;font-size:12px">✕ Limpiar</a>
+      {% endif %}
+    </form>
   </div>
 </div>
 
@@ -286,7 +295,13 @@
       <div class="rc-list-card">
         <div class="rc-list-head">
           <div class="rc-list-title">👥 Clientes Registrados</div>
-          <div class="rc-list-sub">Vista rápida de los propietarios activos dentro del sistema.</div>
+          <div class="rc-list-sub">
+            {% if q %}
+              {{ clientes_encontrados }} resultado{{ clientes_encontrados|pluralize }} para "<strong>{{ q }}</strong>"
+            {% else %}
+              Vista rápida de los propietarios activos dentro del sistema.
+            {% endif %}
+          </div>
         </div>
         <div class="rc-list-body" id="clientes-list">
           {% for cliente in clientes %}
@@ -304,14 +319,30 @@
                 onclick="abrirEditarCliente({{ cliente.id }},'{{ cliente.nombre|escapejs }}','{{ cliente.email|default:''|escapejs }}','{{ cliente.telefono|escapejs }}')">✏️</span>
               <a class="rc-icon-btn" href="{% url 'citas' %}" title="Agendar cita">📅</a>
               <span class="rc-icon-btn danger" title="Eliminar cliente"
-                onclick="confirmarEliminarCliente({{ cliente.id }},'{{ cliente.nombre|escapejs }}')">🗑️</span>
+                onclick="confirmarEliminarCliente({{ cliente.id }},'{{ cliente.nombre|escapejs }}',{{ cliente.mascota_set.count }})">🗑️</span>
             </div>
           </div>
           {% empty %}
-          <div style="text-align:center;padding:30px;color:var(--muted);font-size:13px;">No hay clientes registrados.</div>
+          <div style="text-align:center;padding:30px;color:var(--muted);font-size:13px;">
+            {% if q %}No se encontraron clientes con "{{ q }}".{% else %}No hay clientes registrados.{% endif %}
+          </div>
           {% endfor %}
         </div>
+        <!-- Paginación clientes -->
+        {% if clientes.has_other_pages %}
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:14px;border-top:1px solid rgba(91,47,160,.07);">
+          {% if clientes.has_previous %}
+          <a href="?q={{ q }}&page_c={{ clientes.previous_page_number }}&page_m={{ mascotas.number }}" class="rc-btn rc-btn-outline" style="padding:6px 12px;font-size:12px">‹ Anterior</a>
+          {% endif %}
+          <span style="font-size:12px;color:var(--muted)">Página {{ clientes.number }} de {{ clientes.paginator.num_pages }}</span>
+          {% if clientes.has_next %}
+          <a href="?q={{ q }}&page_c={{ clientes.next_page_number }}&page_m={{ mascotas.number }}" class="rc-btn rc-btn-outline" style="padding:6px 12px;font-size:12px">Siguiente ›</a>
+          {% endif %}
+        </div>
+        {% endif %}
+        {% if not q %}
         <a href="#" class="rc-ver-todos">Ver todos los clientes →</a>
+        {% endif %}
       </div>
     </div>
 
@@ -320,7 +351,13 @@
       <div class="rc-list-card">
         <div class="rc-list-head">
           <div class="rc-list-title">🐾 Mascotas Registradas</div>
-          <div class="rc-list-sub">Consulta rápida de pacientes y su propietario asociado.</div>
+          <div class="rc-list-sub">
+            {% if q %}
+              {{ mascotas_encontradas }} resultado{{ mascotas_encontradas|pluralize }} para "<strong>{{ q }}</strong>"
+            {% else %}
+              Consulta rápida de pacientes y su propietario asociado.
+            {% endif %}
+          </div>
         </div>
         <div class="rc-list-body" id="mascotas-list">
           {% for mascota in mascotas %}
@@ -342,10 +379,26 @@
             </div>
           </div>
           {% empty %}
-          <div style="text-align:center;padding:30px;color:var(--muted);font-size:13px;">No hay mascotas registradas.</div>
+          <div style="text-align:center;padding:30px;color:var(--muted);font-size:13px;">
+            {% if q %}No se encontraron mascotas con "{{ q }}".{% else %}No hay mascotas registradas.{% endif %}
+          </div>
           {% endfor %}
         </div>
+        <!-- Paginación mascotas -->
+        {% if mascotas.has_other_pages %}
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:14px;border-top:1px solid rgba(91,47,160,.07);">
+          {% if mascotas.has_previous %}
+          <a href="?q={{ q }}&page_c={{ clientes.number }}&page_m={{ mascotas.previous_page_number }}" class="rc-btn rc-btn-outline" style="padding:6px 12px;font-size:12px">‹ Anterior</a>
+          {% endif %}
+          <span style="font-size:12px;color:var(--muted)">Página {{ mascotas.number }} de {{ mascotas.paginator.num_pages }}</span>
+          {% if mascotas.has_next %}
+          <a href="?q={{ q }}&page_c={{ clientes.number }}&page_m={{ mascotas.next_page_number }}" class="rc-btn rc-btn-outline" style="padding:6px 12px;font-size:12px">Siguiente ›</a>
+          {% endif %}
+        </div>
+        {% endif %}
+        {% if not q %}
         <a href="#" class="rc-ver-todos">Ver todas las mascotas →</a>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -468,11 +521,8 @@
 </div>
 
 
-{% endblock %}
-
-{% block modals %}
 <!-- MODAL: VER CLIENTE -->
-<div class="av-modal-overlay" id="modal-ver-cliente">
+<div class="av-overlay" id="modal-ver-cliente">
   <div class="av-modal">
     <div class="av-modal-head">
       <p class="av-modal-title">👁 Detalle del cliente</p>
@@ -490,7 +540,7 @@
 </div>
 
 <!-- MODAL: EDITAR CLIENTE -->
-<div class="av-modal-overlay" id="modal-editar-cliente">
+<div class="av-overlay" id="modal-editar-cliente">
   <div class="av-modal">
     <div class="av-modal-head">
       <p class="av-modal-title">✏️ Editar cliente</p>
@@ -524,28 +574,34 @@
 </div>
 
 <!-- MODAL: ELIMINAR CLIENTE -->
-<div class="av-modal-overlay" id="modal-del-cliente">
+<div class="av-overlay" id="modal-del-cliente">
   <div class="av-modal">
     <div class="av-modal-head">
       <p class="av-modal-title">🗑️ Eliminar cliente</p>
       <button class="av-modal-close" onclick="cerrarModal('modal-del-cliente')">✕</button>
     </div>
     <div class="av-modal-body">
-      <p style="font-size:14px;color:var(--text);margin:0 0 8px">
+      <p style="font-size:14px;color:var(--text);margin:0 0 12px">
         ¿Seguro que quieres eliminar a <strong id="del-cliente-nombre"></strong>?
       </p>
-      <p style="font-size:12px;color:#dc2626;margin:0">Esta acción eliminará también todas las mascotas y citas asociadas.</p>
+      <!-- Advertencia de cascada — se rellena con JS según cuántas mascotas tiene -->
+      <div id="del-cliente-cascada" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:12px 14px;margin-bottom:4px">
+        <p style="font-size:13px;font-weight:700;color:#b91c1c;margin:0 0 6px">⚠️ Esta acción es irreversible</p>
+        <p style="font-size:12px;color:#dc2626;margin:0" id="del-cliente-detalle">
+          Se eliminarán también todas las mascotas y sus citas asociadas.
+        </p>
+      </div>
       <form method="POST" id="form-del-cliente" style="display:none">{% csrf_token %}</form>
     </div>
     <div class="av-modal-footer">
       <button class="av-modal-btn av-modal-btn-cancel" onclick="cerrarModal('modal-del-cliente')">Cancelar</button>
-      <button class="av-modal-btn av-modal-btn-danger" onclick="document.getElementById('form-del-cliente').submit()">🗑️ Sí, eliminar</button>
+      <button class="av-modal-btn av-modal-btn-danger" onclick="document.getElementById('form-del-cliente').submit()">🗑️ Sí, eliminar permanentemente</button>
     </div>
   </div>
 </div>
 
 <!-- MODAL: VER MASCOTA -->
-<div class="av-modal-overlay" id="modal-ver-mascota">
+<div class="av-overlay" id="modal-ver-mascota">
   <div class="av-modal">
     <div class="av-modal-head">
       <p class="av-modal-title">👁 Detalle de la mascota</p>
@@ -565,7 +621,7 @@
 </div>
 
 <!-- MODAL: EDITAR MASCOTA -->
-<div class="av-modal-overlay" id="modal-editar-mascota">
+<div class="av-overlay" id="modal-editar-mascota">
   <div class="av-modal">
     <div class="av-modal-head">
       <p class="av-modal-title">✏️ Editar mascota</p>
@@ -622,22 +678,25 @@
 </div>
 
 <!-- MODAL: ELIMINAR MASCOTA -->
-<div class="av-modal-overlay" id="modal-del-mascota">
+<div class="av-overlay" id="modal-del-mascota">
   <div class="av-modal">
     <div class="av-modal-head">
       <p class="av-modal-title">🗑️ Eliminar mascota</p>
       <button class="av-modal-close" onclick="cerrarModal('modal-del-mascota')">✕</button>
     </div>
     <div class="av-modal-body">
-      <p style="font-size:14px;color:var(--text);margin:0 0 8px">
+      <p style="font-size:14px;color:var(--text);margin:0 0 12px">
         ¿Seguro que quieres eliminar a <strong id="del-mascota-nombre"></strong>?
       </p>
-      <p style="font-size:12px;color:#dc2626;margin:0">Esta acción eliminará también todas las citas asociadas a esta mascota.</p>
+      <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:12px 14px;margin-bottom:4px">
+        <p style="font-size:13px;font-weight:700;color:#b91c1c;margin:0 0 6px">⚠️ Esta acción es irreversible</p>
+        <p style="font-size:12px;color:#dc2626;margin:0">Se eliminarán también todas las citas y notas médicas asociadas a esta mascota.</p>
+      </div>
       <form method="POST" id="form-del-mascota" style="display:none">{% csrf_token %}</form>
     </div>
     <div class="av-modal-footer">
       <button class="av-modal-btn av-modal-btn-cancel" onclick="cerrarModal('modal-del-mascota')">Cancelar</button>
-      <button class="av-modal-btn av-modal-btn-danger" onclick="document.getElementById('form-del-mascota').submit()">🗑️ Sí, eliminar</button>
+      <button class="av-modal-btn av-modal-btn-danger" onclick="document.getElementById('form-del-mascota').submit()">🗑️ Sí, eliminar permanentemente</button>
     </div>
   </div>
 </div>
@@ -652,20 +711,33 @@ function showTab(tab) {
   document.getElementById('tab-clientes').classList.toggle('active', tab === 'clientes');
   document.getElementById('tab-mascotas').classList.toggle('active', tab === 'mascotas');
   document.getElementById('searchInput').placeholder = tab === 'clientes' ? 'Buscar cliente...' : 'Buscar mascota...';
+  // Guardar la pestaña activa para después de recargar
+  sessionStorage.setItem('recepcion_tab', tab);
 }
 
-function filterItems() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const listId = document.getElementById('tab-clientes').classList.contains('active') ? 'clientes-list' : 'mascotas-list';
-  document.querySelectorAll('#' + listId + ' .rc-item').forEach(item => {
-    item.style.display = item.dataset.name && item.dataset.name.includes(q) ? 'flex' : 'none';
-  });
+// Recuperar la pestaña activa al volver de una búsqueda
+(function() {
+  const savedTab = sessionStorage.getItem('recepcion_tab');
+  if (savedTab) showTab(savedTab);
+})();
+
+// Búsqueda con debounce — espera 400ms para no disparar una petición por cada tecla
+let _searchTimer = null;
+function delayedSearch() {
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(function() {
+    document.getElementById('search-form').submit();
+  }, 400);
 }
+
+// Compatibilidad: filterItems ya no se usa pero se deja vacía por si algún
+// otro script la llama.
+function filterItems() {}
 
 function abrirModal(id)  { document.getElementById(id).classList.add('open'); }
 function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
 
-document.querySelectorAll('.av-modal-overlay').forEach(overlay => {
+document.querySelectorAll('.av-overlay').forEach(overlay => {
   overlay.addEventListener('click', function(e) {
     if (e.target === this) this.classList.remove('open');
   });
@@ -685,9 +757,16 @@ function abrirEditarCliente(id, nombre, email, tel) {
   document.getElementById('ec-tel').value    = tel;
   abrirModal('modal-editar-cliente');
 }
-function confirmarEliminarCliente(id, nombre) {
+function confirmarEliminarCliente(id, nombre, numMascotas) {
   document.getElementById('del-cliente-nombre').textContent = nombre;
   document.getElementById('form-del-cliente').action = '/cliente/' + id + '/eliminar/';
+  // Detalle de cascada con conteo real de mascotas
+  const detalle = document.getElementById('del-cliente-detalle');
+  if (numMascotas > 0) {
+    detalle.textContent = 'Se eliminarán también ' + numMascotas + ' mascota' + (numMascotas === 1 ? '' : 's') + ' y todas sus citas y notas médicas.';
+  } else {
+    detalle.textContent = 'Este cliente no tiene mascotas registradas, pero la eliminación es permanente.';
+  }
   abrirModal('modal-del-cliente');
 }
 

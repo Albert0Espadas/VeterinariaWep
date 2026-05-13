@@ -2,7 +2,10 @@
 {% load static %}
 
 {% block extra_head %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 {% endblock %}
 
 {% block content %}
@@ -480,7 +483,7 @@ var citasData = [
 <div class="av-metrics">
   <div class="av-metric">
     <div class="av-metric-header">
-      <div class="av-metric-icon">C</div>
+      <div class="av-metric-icon"><i class="bi bi-calendar-range-fill"></i></div>
       <div class="av-metric-label">Citas Hoy</div>
     </div>
     <div class="av-metric-value">{{ citas_hoy|length }}</div>
@@ -489,7 +492,7 @@ var citasData = [
   </div>
   <div class="av-metric">
     <div class="av-metric-header">
-      <div class="av-metric-icon">M</div>
+      <div class="av-metric-icon"><i class="bi bi-people-fill"></i></div>
       <div class="av-metric-label">Pacientes Totales</div>
     </div>
     <div class="av-metric-value">{{ total_mascotas }}</div>
@@ -498,7 +501,7 @@ var citasData = [
   </div>
   <div class="av-metric">
     <div class="av-metric-header">
-      <div class="av-metric-icon">D</div>
+      <div class="av-metric-icon"><i class="bi bi-person-fill-add"></i></div>
       <div class="av-metric-label">Clientes</div>
     </div>
     <div class="av-metric-value">{{ total_clientes }}</div>
@@ -507,7 +510,7 @@ var citasData = [
   </div>
   <div class="av-metric">
     <div class="av-metric-header">
-      <div class="av-metric-icon">P</div>
+      <div class="av-metric-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
       <div class="av-metric-label">Pendientes Activos</div>
     </div>
     <div class="av-metric-value">{{ pendientes_pendientes }}</div>
@@ -828,9 +831,5 @@ function setCalView(view, tab) {
   tab.classList.add('active');
 }
 </script>
-<<<<<<< HEAD
 
 {% endblock %}
-=======
-{% endblock %}
->>>>>>> 415e53f38e1079cfa35d046e735bca4779f1f110

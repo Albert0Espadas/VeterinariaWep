@@ -5,6 +5,8 @@
 <title>AnaVet</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 <style>
 :root {
@@ -209,7 +211,7 @@ body { margin: 0; background: #f4f1fb; color: var(--text); font-family: 'Segoe U
 <div class="av-layout">
   <aside class="av-sidebar">
     <div class="av-sidebar-logo">
-      <div class="logo-icon">AV</div>
+      <div class="logo-icon"> 🐈</div>
       <div class="av-sidebar-logo-text">
         <div class="brand">Veterinaria AnaVet</div>
         <div class="sub">Sistema Veterinario</div>
@@ -219,29 +221,29 @@ body { margin: 0; background: #f4f1fb; color: var(--text); font-family: 'Segoe U
     <div class="av-nav-section">Principal</div>
     {% if anavet_nav.dashboard %}
     <a href="{% url 'dashboard' %}" class="av-nav-link {% if request.path == '/dashboard/' %}active{% endif %}">
-      <span class="nav-icon">D</span><span>Dashboard</span>
+      <span class="nav-icon"><i class="bi bi-bookmark-fill"></i></span><span>Dashboard</span>
     </a>
     {% endif %}
     {% if anavet_nav.recepcion %}
     <a href="{% url 'recepcion' %}" class="av-nav-link {% if request.path == '/recepcion/' %}active{% endif %}">
-      <span class="nav-icon">R</span><span>Recepcion</span>
+      <span class="nav-icon"><i class="bi bi-bookmark-fill"></i></span><span>Recepcion</span>
     </a>
     {% endif %}
     {% if anavet_nav.pos %}
     <a href="{% url 'pos' %}" class="av-nav-link {% if request.path == '/pos/' %}active{% endif %}">
-      <span class="nav-icon">V</span><span>Punto de Venta</span>
+      <span class="nav-icon"><i class="bi bi-bookmark-fill"></i></span><span>Punto de Venta</span>
     </a>
     {% endif %}
 
     <div class="av-nav-section">Modulos</div>
     {% if anavet_nav.consultas %}
     <a href="{% url 'consultas' %}" class="av-nav-link {% if request.path == '/consultas/' %}active{% endif %}">
-      <span class="nav-icon">Q</span><span>Consultas</span>
+      <span class="nav-icon"><i class="bi bi-bookmark-heart-fill"></i></span><span>Consultas</span>
     </a>
     {% endif %}
     {% if anavet_nav.citas %}
     <a href="{% url 'citas' %}" class="av-nav-link {% if request.path == '/citas/' %}active{% endif %}">
-      <span class="nav-icon">C</span><span>Citas</span>
+      <span class="nav-icon"><i class="bi bi-bookmark-heart-fill"></i></i></span><span>Citas</span>
     </a>
     {% endif %}
 
@@ -255,7 +257,7 @@ body { margin: 0; background: #f4f1fb; color: var(--text); font-family: 'Segoe U
         <div class="av-user-dot"></div>
       </div>
       <a href="{% url 'logout' %}" class="av-logout-link">
-        <span>S</span><span>Cerrar sesion</span>
+        <span><i class="bi bi-box-arrow-right"></i></span><span>Cerrar sesion</span>
       </a>
     </div>
   </aside>
